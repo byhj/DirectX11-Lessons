@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch01-Window", "ch01-Window\ch01-Window.vcxproj", "{AC989328-1573-443D-8C19-A2777FEF8D44}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch02-Init-DirectX", "ch02-Init-DirectX\ch02-Init-DirectX.vcxproj", "{9712E435-3359-42A9-8671-8EF996914FB1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch03-Triangle", "ch03-Triangle\ch03-Triangle.vcxproj", "{6A2E049E-EBBE-48E7-B4D2-E16BCBD3DDAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC989328-1573-443D-8C19-A2777FEF8D44}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AC989328-1573-443D-8C19-A2777FEF8D44}.Debug|Win32.Build.0 = Debug|Win32
+		{AC989328-1573-443D-8C19-A2777FEF8D44}.Release|Win32.ActiveCfg = Release|Win32
+		{AC989328-1573-443D-8C19-A2777FEF8D44}.Release|Win32.Build.0 = Release|Win32
+		{9712E435-3359-42A9-8671-8EF996914FB1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9712E435-3359-42A9-8671-8EF996914FB1}.Debug|Win32.Build.0 = Debug|Win32
+		{9712E435-3359-42A9-8671-8EF996914FB1}.Release|Win32.ActiveCfg = Release|Win32
+		{9712E435-3359-42A9-8671-8EF996914FB1}.Release|Win32.Build.0 = Release|Win32
+		{6A2E049E-EBBE-48E7-B4D2-E16BCBD3DDAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6A2E049E-EBBE-48E7-B4D2-E16BCBD3DDAC}.Debug|Win32.Build.0 = Debug|Win32
+		{6A2E049E-EBBE-48E7-B4D2-E16BCBD3DDAC}.Release|Win32.ActiveCfg = Release|Win32
+		{6A2E049E-EBBE-48E7-B4D2-E16BCBD3DDAC}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
