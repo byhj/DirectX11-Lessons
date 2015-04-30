@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6A2E049E-EBBE-48E7-B4D2-E16BCBD3DDAC}</ProjectGuid>
-    <RootNamespace>ch03Triangle</RootNamespace>
+    <ProjectGuid>{258F0BF2-310B-4920-8DED-EC920BA22A52}</ProjectGuid>
+    <RootNamespace>ch04Color</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -64,7 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ch3-Triangle.cpp" />
+    <ClCompile Include="ch04-Color.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="triangle.fx">
