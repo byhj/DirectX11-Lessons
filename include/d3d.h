@@ -21,6 +21,7 @@ public:
 	virtual bool InitShader() { return true;}
 	virtual bool InitBuffer() {return true;}
 	virtual bool InitTexture() {return true;}
+	virtual bool InitStatus() {return true;}
 	virtual LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	//Mouse and Key 
@@ -149,6 +150,9 @@ bool D3D11App::InitScene()
 		return false;
 
 	if(!InitD3D())
+		return false;
+
+	if(!InitStatus())
 		return false;
 
 	if(!InitBuffer())
