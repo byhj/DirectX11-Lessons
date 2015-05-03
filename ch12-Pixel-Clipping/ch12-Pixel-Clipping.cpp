@@ -15,6 +15,7 @@ struct cbPerObject
 {
 	XMMATRIX  MVP;
 };
+
 cbPerObject cbPerObj;
 
 const int Width = 800;

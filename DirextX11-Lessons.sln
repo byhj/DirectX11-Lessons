@@ -27,8 +27,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch12-Pixel-Clipping", "ch12
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch13-Font", "ch13-Font\ch13-Font.vcxproj", "{47A653F9-8688-472A-9EB4-C24473558304}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{0311C000-F2B0-4444-ADDA-E688854C5350}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -87,10 +85,6 @@ Global
 		{47A653F9-8688-472A-9EB4-C24473558304}.Debug|Win32.Build.0 = Debug|Win32
 		{47A653F9-8688-472A-9EB4-C24473558304}.Release|Win32.ActiveCfg = Release|Win32
 		{47A653F9-8688-472A-9EB4-C24473558304}.Release|Win32.Build.0 = Release|Win32
-		{0311C000-F2B0-4444-ADDA-E688854C5350}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0311C000-F2B0-4444-ADDA-E688854C5350}.Debug|Win32.Build.0 = Debug|Win32
-		{0311C000-F2B0-4444-ADDA-E688854C5350}.Release|Win32.ActiveCfg = Release|Win32
-		{0311C000-F2B0-4444-ADDA-E688854C5350}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

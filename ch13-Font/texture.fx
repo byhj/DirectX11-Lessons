@@ -1,7 +1,6 @@
-
 cbuffer cbPerObject
 {
-	float4x4 MVP;
+	float4x4 WVP;
 };
 
 Texture2D ObjTexture;
@@ -17,7 +16,7 @@ VS_OUTPUT VS(float4 inPos : POSITION, float2 inTexCoord : TEXCOORD)
 {
     VS_OUTPUT output;
 
-    output.Pos = mul(inPos, MVP);
+    output.Pos = mul(inPos, WVP);
     output.TexCoord = inTexCoord;
 
     return output;
