@@ -69,7 +69,12 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\include\d3dApp.cpp" />
     <ClCompile Include="ch13-Font.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\include\d3dApp.h" />
+    <ClInclude Include="..\common\include\d3dUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

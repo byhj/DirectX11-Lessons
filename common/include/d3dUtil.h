@@ -37,14 +37,15 @@
 // Simple d3d error checker
 //---------------------------------------------------------------------------------------
 
+
 #if defined(DEBUG) | defined(_DEBUG)
 #ifndef HR
-#define HR(x)                                              \
+#define HR(x)                                                  \
 	{                                                          \
-	HRESULT hr = (x);                                      \
-	if(FAILED(hr))                                         \
+	HRESULT hr = (x);                                          \
+	if(FAILED(hr))                                             \
 		{                                                      \
-		DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \
+		DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true);     \
 		}                                                      \
 	}
 #endif

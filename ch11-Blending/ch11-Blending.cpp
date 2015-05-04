@@ -1,4 +1,4 @@
-#include "d3d.h"
+#include "d3d11App.h"
 
 struct Vertex	
 {
@@ -260,7 +260,7 @@ bool BlendApp::InitBuffer()
 
 bool BlendApp::InitTexture()
 {
-	hr = D3DX11CreateShaderResourceViewFromFile( pDevice, L"../media/texture/byhj.jpg",
+	hr = D3DX11CreateShaderResourceViewFromFile( pDevice, L"../common/media/texture/byhj.jpg",
 		NULL, NULL, &pTexture, NULL );
 
 	// Describe the Sample State

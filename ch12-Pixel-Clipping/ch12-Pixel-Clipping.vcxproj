@@ -72,6 +72,10 @@
       <FileType>Document</FileType>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\include\d3d11App.h" />
+    <ClInclude Include="..\common\include\d3dUtil.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
