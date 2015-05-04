@@ -240,7 +240,7 @@ bool TextureApp::InitTexture()
 void TextureApp::UpdateScene()
 {
 	//Keep the cubes rotating
-	rot += .001f;
+	rot += .0001f;
 	if(rot > 6.28f)
 		rot = 0.0f;
 
