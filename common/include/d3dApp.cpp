@@ -104,6 +104,8 @@ bool D3D11App::InitScene()
 	if(!InitD3D())
 		return false;
 
+	InitD2DScreenTexture();
+
 	if(!InitShader())
 		return false;
 

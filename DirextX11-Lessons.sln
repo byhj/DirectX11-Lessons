@@ -27,6 +27,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch12-Pixel-Clipping", "ch12
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch13-Font", "ch13-Font\ch13-Font.vcxproj", "{47A653F9-8688-472A-9EB4-C24473558304}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch14-Timer", "ch14-Timer\ch14-Timer.vcxproj", "{60901217-009B-4368-983F-183E7BEA1670}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ch15-Simple-Light", "ch15-Simple-Light\ch15-Simple-Light.vcxproj", "{36964E2D-516C-49FC-8B68-09B2170FD5F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -85,6 +89,14 @@ Global
 		{47A653F9-8688-472A-9EB4-C24473558304}.Debug|Win32.Build.0 = Debug|Win32
 		{47A653F9-8688-472A-9EB4-C24473558304}.Release|Win32.ActiveCfg = Release|Win32
 		{47A653F9-8688-472A-9EB4-C24473558304}.Release|Win32.Build.0 = Release|Win32
+		{60901217-009B-4368-983F-183E7BEA1670}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60901217-009B-4368-983F-183E7BEA1670}.Debug|Win32.Build.0 = Debug|Win32
+		{60901217-009B-4368-983F-183E7BEA1670}.Release|Win32.ActiveCfg = Release|Win32
+		{60901217-009B-4368-983F-183E7BEA1670}.Release|Win32.Build.0 = Release|Win32
+		{36964E2D-516C-49FC-8B68-09B2170FD5F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{36964E2D-516C-49FC-8B68-09B2170FD5F5}.Debug|Win32.Build.0 = Debug|Win32
+		{36964E2D-516C-49FC-8B68-09B2170FD5F5}.Release|Win32.ActiveCfg = Release|Win32
+		{36964E2D-516C-49FC-8B68-09B2170FD5F5}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

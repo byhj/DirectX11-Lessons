@@ -15,9 +15,9 @@ public:
 
 public:
 
-	int Run();
+	virtual int Run();
 	bool InitScene();
-	virtual void UpdateScene() {}
+	void UpdateScene() {}
 	virtual void RenderScene() {}
 	virtual bool InitShader() { return true;}
 	virtual bool InitBuffer() {return true;}
