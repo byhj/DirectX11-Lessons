@@ -72,6 +72,7 @@ public:
 	void UpdateScene(double time);
 	void RenderScene();
 	void RenderText(std::wstring text, int inInt);
+	void InitD2DScreenTexture();
 
 private:
 	ID3D11Buffer          *pCubeIndexBuffer;
@@ -163,10 +164,83 @@ TextureApp::~TextureApp()
 {
 }
 
+void TextureApp::InitD2DScreenTexture()
+{
+	//Create the vertex buffer
+	Vertex v[] =
+	{
+		// Front Face
+		Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f,-1.0f, -1.0f, -1.0f),
+		Vertex(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f,-1.0f,  1.0f, -1.0f),
+		Vertex( 1.0f,  1.0f, -1.0f, 1.0f, 0.0f, 1.0f,  1.0f, -1.0f),
+		Vertex( 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f),
+	};
+
+
+	DWORD indices[] = {
+		// Front Face
+		0,  1,  2,
+		0,  2,  3,
+	};
+
+	D3D11_BUFFER_DESC indexBufferDesc;
+	ZeroMemory( &indexBufferDesc, sizeof(indexBufferDesc) );
+
+	indexBufferDesc.Usage          = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth      = sizeof(DWORD) * 2 * 3;
+	indexBufferDesc.BindFlags      = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags      = 0;
+
+	D3D11_SUBRESOURCE_DATA iinitData;
+
+	iinitData.pSysMem = indices;
+	pD3D11Device->CreateBuffer(&indexBufferDesc, &iinitData, &pD2DIndexBuffer);
+
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	ZeroMemory( &vertexBufferDesc, sizeof(vertexBufferDesc) );
+
+	vertexBufferDesc.Usage          = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth      = sizeof( Vertex ) * 4;
+	vertexBufferDesc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags      = 0;
+
+	D3D11_SUBRESOURCE_DATA vertexBufferData; 
+
+	ZeroMemory( &vertexBufferData, sizeof(vertexBufferData) );
+	vertexBufferData.pSysMem = v;
+	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &pD2DVertBuffer);
+
+
+	//Create A shader resource view from the texture D2D will render to,
+	//So we can use it to texture a square which overlays our scene
+	pD3D11Device->CreateShaderResourceView(pSharedTex11, NULL, &pD2DTexture);
+
+}
+
 bool TextureApp::InitScene()
 {
-	if ( !D3D11App::InitScene() )
+	if(!D3D11App::InitWindow())
 		return false;
+
+	if(!D3D11App::InitD3D())
+		return false;
+
+	InitD2DScreenTexture();
+
+	if(!InitShader())
+		return false;
+
+	if(!InitBuffer())
+		return false;
+
+	if(!InitStatus())
+		return false;
+
+	if(!InitTexture())
+		return false;
+
 
 	return true;
 }
@@ -492,7 +566,7 @@ void TextureApp::RenderText(std::wstring text, int inInt)
 		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &pD2DTexture );
 		pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 
-		pD3D11DeviceContext->RSSetState(CWcullMode);
+		//pD3D11DeviceContext->RSSetState(CWcullMode);
 		//Draw the second cube
 		pD3D11DeviceContext->DrawIndexed( 6, 0, 0 );	
 }
