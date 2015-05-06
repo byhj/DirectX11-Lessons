@@ -210,7 +210,6 @@ bool TextureApp::InitBuffer()
 	camUp = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	//Set the View matrix
 	View = XMMatrixLookAtLH( camPos, camTarget, camUp );
-	//Set the Projection matrix
 	Proj = XMMatrixPerspectiveFovLH( 0.4f*3.14f, (float)Width/Height, 1.0f, 1000.0f);
 
 	return true;

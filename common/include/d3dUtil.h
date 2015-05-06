@@ -14,6 +14,7 @@
 #include <d3dx10.h>
 #include <xnamath.h>
 #include <dxerr.h>
+
 #include <cassert>
 #include <ctime>
 #include <algorithm>
