@@ -45,6 +45,25 @@ cbPerObject cbPerObj;
 DIMOUSESTATE mouseLastState;
 LPDIRECTINPUT8 DirectInput;
 
+float rotx = 0;
+float rotz = 0;
+float scaleX = 1.0f;
+float scaleY = 1.0f;
+
+XMMATRIX Rotationx;
+XMMATRIX Rotationz;
+
+XMMATRIX WVP;
+XMMATRIX camView;
+XMMATRIX camProjection;
+
+XMMATRIX d2dWorld;
+
+XMVECTOR camPosition;
+XMVECTOR camTarget;
+XMVECTOR camUp;
+
+///////////////**************new**************////////////////////
 XMVECTOR DefaultForward = XMVectorSet(0.0f,0.0f,1.0f, 0.0f);
 XMVECTOR DefaultRight = XMVectorSet(1.0f,0.0f,0.0f, 0.0f);
 XMVECTOR camForward = XMVectorSet(0.0f,0.0f,1.0f, 0.0f);
@@ -58,6 +77,12 @@ float moveBackForward = 0.0f;
 
 float camYaw = 0.0f;
 float camPitch = 0.0f;
+///////////////**************new**************////////////////////
+
+XMMATRIX Rotation;
+XMMATRIX Scale;
+XMMATRIX Translation;
+float rot = 0.01f;
 
 const int Width = 1000;
 const int Height = 800;
@@ -95,8 +120,9 @@ public:
 	void DetectInput(double time);
 
 private:
-	ID3D11Buffer          *pCubeIndexBuffer;
-	ID3D11Buffer          *pCubeVertBuffer;
+	ID3D11Buffer* squareIndexBuffer;
+	ID3D11Buffer* squareVertBuffer;
+
 	ID3D11VertexShader    *pVS;
 	ID3D11PixelShader     *pPS;
 	ID3D10Blob            *pVS_Buffer;
@@ -108,21 +134,7 @@ private:
 	ID3D10Blob            *pD2D_PS_Buffer;
 	IDirectInputDevice8* DIKeyboard;
 	IDirectInputDevice8* DIMouse;
-	//Matrix
-	XMMATRIX WVP;
-	XMMATRIX camView;
-	XMMATRIX camProjection;
 
-	XMMATRIX d2dWorld;
-
-	XMVECTOR camPosition;
-	XMVECTOR camTarget;
-	XMVECTOR camUp;
-
-	XMMATRIX Rotation;
-	XMMATRIX Scale;
-	XMMATRIX Translation;
-	float rot;
 	HRESULT hr;
 };
 
@@ -176,7 +188,7 @@ int TextureApp::Run()
 }
 
 TextureApp::TextureApp(HINSTANCE hInstance)
-	:D3D11App(hInstance) , rot(0.01f)
+	:D3D11App(hInstance)
 {
 }
 
@@ -353,18 +365,19 @@ bool TextureApp::InitScene()
 	if(!InitBuffer())
 		return false;
 
-	if(!InitStatus())
-		return false;
-
-	if(!InitTexture())
-		return false;
-
 	if(!InitDirectInput(hInstance))
 	{
 		MessageBox(0, L"Direct Input Initialization - Failed",
 			L"Error", MB_OK);
 		return 0;
 	}
+
+	if(!InitStatus())
+		return false;
+
+	if(!InitTexture())
+		return false;
+
 
 
 	return true;
@@ -373,12 +386,9 @@ bool TextureApp::InitScene()
 bool TextureApp::InitBuffer()
 {
 
-
-	//Create the vertex buffer
 	light.dir = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	light.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	light.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
 
 	//Create the vertex buffer
 	Vertex v[] =
@@ -405,7 +415,7 @@ bool TextureApp::InitBuffer()
 
 	D3D11_SUBRESOURCE_DATA iinitData;
 	iinitData.pSysMem = indices;
-	pD3D11Device->CreateBuffer(&indexBufferDesc, &iinitData, &pCubeIndexBuffer);
+	pD3D11Device->CreateBuffer(&indexBufferDesc, &iinitData, &squareIndexBuffer);
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory( &vertexBufferDesc, sizeof(vertexBufferDesc) );
@@ -419,7 +429,7 @@ bool TextureApp::InitBuffer()
 	D3D11_SUBRESOURCE_DATA vertexBufferData; 
 	ZeroMemory( &vertexBufferData, sizeof(vertexBufferData) );
 	vertexBufferData.pSysMem = v;
-	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &pCubeVertBuffer);
+	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &squareVertBuffer);
 
 	return true;
 }
@@ -680,16 +690,16 @@ void TextureApp::RenderScene()
 	cbPerLight.light = light;
 	pD3D11DeviceContext->UpdateSubresource( cbPerFrameBuffer, 0, NULL, &cbPerLight, 0, 0 );
 	pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &cbPerFrameBuffer);	
+	pD3D11DeviceContext->OMSetRenderTargets( 1, &pRenderTargetView, pDepthStencilView );
+	pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 	pD3D11DeviceContext->VSSetShader(pVS, 0, 0);
 	pD3D11DeviceContext->PSSetShader(pPS, 0, 0);
 
-	pD3D11DeviceContext->OMSetRenderTargets( 1, &pRenderTargetView, pDepthStencilView );
-	pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
-
-	pD3D11DeviceContext->IASetIndexBuffer(pCubeIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pD3D11DeviceContext->IASetIndexBuffer( squareIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	//Set the cubes vertex buffer
 	UINT stride = sizeof( Vertex );
 	UINT offset = 0;
-	pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &pCubeVertBuffer, &stride, &offset );
+	pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &squareVertBuffer, &stride, &offset );
 
 	WVP = groundWorld * camView * camProjection;
 	cbPerObj.WVP = XMMatrixTranspose(WVP);	
@@ -698,8 +708,8 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &cbPerObjectBuffer );
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &CubesTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
-	pD3D11DeviceContext->RSSetState(CWcullMode);
-	pD3D11DeviceContext->DrawIndexed( 36, 0, 0 );
+	pD3D11DeviceContext->RSSetState(CCWcullMode);
+	pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
 
 
 	RenderText(L"FPS: ", fps);
