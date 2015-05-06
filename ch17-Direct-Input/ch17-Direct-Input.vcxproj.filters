@@ -15,11 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch1-Window.cpp">
+    <ClCompile Include="ch17-Direct-Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ch21-Load-Model.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\common\include\d3dApp.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\include\d3dApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\include\d3dUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="texture.fx">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

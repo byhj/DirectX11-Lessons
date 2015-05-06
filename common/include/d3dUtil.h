@@ -7,6 +7,7 @@
 #include <DXGI.h>
 #include <D2D1.h>
 #include <dwrite.h>
+#include <dinput.h>
 
 #include <d3d11.h>
 #include <d3dx11.h>
@@ -25,6 +26,7 @@
 #pragma comment (lib, "DXGI.lib")
 #pragma comment (lib, "D2D1.lib")
 #pragma comment (lib, "dwrite.lib")
+#pragma comment (lib, "dinput8.lib")
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")

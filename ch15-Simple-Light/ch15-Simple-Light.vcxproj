@@ -11,15 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AC989328-1573-443D-8C19-A2777FEF8D44}</ProjectGuid>
-    <RootNamespace>ch01Window</RootNamespace>
+    <ProjectGuid>{36964E2D-516C-49FC-8B68-09B2170FD5F5}</ProjectGuid>
+    <RootNamespace>ch15SimpleLight</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -63,8 +63,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ch1-Window.cpp" />
-    <ClCompile Include="ch21-Load-Model.cpp" />
+    <Text Include="texture.fx">
+      <FileType>Document</FileType>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\include\d3dApp.cpp" />
+    <ClCompile Include="ch15-Simple-Light.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\include\d3dApp.h" />
+    <ClInclude Include="..\common\include\d3dUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

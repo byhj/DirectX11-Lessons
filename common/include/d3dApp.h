@@ -16,7 +16,7 @@ public:
 public:
 
 	virtual int Run();
-	bool InitScene();
+	virtual bool InitScene();
 	void UpdateScene() {}
 	virtual void RenderScene() {}
 	virtual bool InitShader() { return true;}
@@ -25,7 +25,7 @@ public:
 	virtual bool InitStatus() {return true;};
 
 	//for draw text
-	bool InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter);
+	virtual bool InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter);
 	void InitD2DScreenTexture();
 	virtual void RenderText(std::wstring text);
 
