@@ -2,11 +2,13 @@
 #include <d3d11.h>
 #include <d3dX11.h>
 #include <d3dX10.h>
+#include <DxErr.h>
 #include <xnamath.h>
 
 #pragma  comment (lib, "d3d11.lib")
 #pragma  comment (lib, "d3dx11.lib")
 #pragma  comment (lib, "d3dx10.lib")
+#pragma  comment (lib, "dxerr.lib")
 
 IDXGISwapChain          *pSwapChain = NULL;
 ID3D11Device            *pDevice = NULL;
@@ -14,6 +16,7 @@ ID3D11DeviceContext     *pDeviceContext = NULL;
 ID3D11RenderTargetView  *pRenderTargetView = NULL;
 
 LPCTSTR WndClassName = "DirectXWindow";
+
 HWND hWnd  = NULL;
 const int Width = 800;
 const int Height = 600;
@@ -79,7 +82,8 @@ bool InitD3D(HINSTANCE hInstance)
 {
    HRESULT hr;
 
-   //create buffer desc
+   //Create buffer desc
+
    DXGI_MODE_DESC bufferDesc;
    ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
    bufferDesc.Width = Width;
@@ -90,7 +94,8 @@ bool InitD3D(HINSTANCE hInstance)
    bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
    bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-   //create swapChain Desc
+   //Create swapChain Desc
+
    DXGI_SWAP_CHAIN_DESC swapChainDesc;
    ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
    swapChainDesc.BufferDesc = bufferDesc;
@@ -107,7 +112,9 @@ bool InitD3D(HINSTANCE hInstance)
 	                                  &swapChainDesc, &pSwapChain, &pDevice,
 	                                  NULL, &pDeviceContext);
 
-   //create backbuffer
+  
+
+   //Create backbuffer
    ID3D11Texture2D *backBuffer;
    hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
    hr = pDevice->CreateRenderTargetView(backBuffer, NULL, &pRenderTargetView);

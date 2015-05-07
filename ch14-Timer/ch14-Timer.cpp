@@ -77,7 +77,7 @@ private:
 	XMMATRIX Scale;
 	XMMATRIX Translation;
 	float rot;
-		HRESULT hr;
+	HRESULT hr;
 };
 
 int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
@@ -366,7 +366,7 @@ double GetFrameTime()
 	if(tickCount < 0.0f)
 		tickCount = 0.0f;
 
-	return float(tickCount)/countsPerSecond;
+	return float(tickCount) / countsPerSecond;
 }
 
 

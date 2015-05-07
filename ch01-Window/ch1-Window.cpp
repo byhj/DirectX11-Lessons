@@ -3,8 +3,8 @@
 LPCTSTR WndClassName = "DirectXWindow";
 HWND hWnd  = NULL;
 
-const int Width = 800;
-const int Height = 600;
+const int Width = 1000;
+const int Height = 800;
 
 bool InitWindow(HINSTANCE hInstance, int ShowCmd, int width, int height, bool windowed);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -31,7 +31,7 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		 else 
 		{
 			   //render();
-		 }
+	    }
 
 	}
 	   return (int)msg.wParam;
@@ -39,6 +39,8 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 bool InitWindow(HINSTANCE hInstance, int ShowCmd, int width, int height, bool windowed)
 {
+
+	//Window Class information
 
 	WNDCLASSEX wc;	
 	wc.cbSize = sizeof(WNDCLASSEX);	
@@ -60,6 +62,8 @@ bool InitWindow(HINSTANCE hInstance, int ShowCmd, int width, int height, bool wi
 		MessageBox(NULL, "Registering Class Failded",	"Error", MB_OK | MB_ICONERROR);
 		return 1;
 	}
+
+	//Create the window and show
 
 	hWnd = CreateWindowEx(	
 		NULL,	           

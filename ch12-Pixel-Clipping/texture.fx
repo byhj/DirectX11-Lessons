@@ -27,6 +27,7 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
 {
    float4 diffuse = ObjTexture.Sample( ObjSamplerState, input.TexCoord );
     
+	 //clip when the alpha is less than 0.25
     clip(diffuse.a - .25);
     
     return diffuse;

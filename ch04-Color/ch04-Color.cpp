@@ -89,27 +89,29 @@ bool InitD3D(HINSTANCE hInstance)
    HRESULT hr;
 
    //create buffer desc
+
    DXGI_MODE_DESC bufferDesc;
    ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
-   bufferDesc.Width = Width;
-   bufferDesc.Height = Height;
-   bufferDesc.RefreshRate.Numerator = 60;
+   bufferDesc.Width                   = Width;
+   bufferDesc.Height                  = Height;
+   bufferDesc.RefreshRate.Numerator   = 60;
    bufferDesc.RefreshRate.Denominator = 1;
-   bufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-   bufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-   bufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+   bufferDesc.Format                  = DXGI_FORMAT_R8G8B8A8_UNORM;
+   bufferDesc.ScanlineOrdering        = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+   bufferDesc.Scaling                 = DXGI_MODE_SCALING_UNSPECIFIED;
 
    //create swapChain Desc
+
    DXGI_SWAP_CHAIN_DESC swapChainDesc;
    ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-   swapChainDesc.BufferDesc = bufferDesc;
-   swapChainDesc.SampleDesc.Count = 1;
+   swapChainDesc.BufferDesc         = bufferDesc;
+   swapChainDesc.SampleDesc.Count   = 1;
    swapChainDesc.SampleDesc.Quality = 0;
-   swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-   swapChainDesc.BufferCount = 1;
-   swapChainDesc.OutputWindow = hWnd;
-   swapChainDesc.Windowed = TRUE;
-   swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+   swapChainDesc.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+   swapChainDesc.BufferCount        = 1;
+   swapChainDesc.OutputWindow       = hWnd;
+   swapChainDesc.Windowed           = TRUE;
+   swapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_DISCARD;
 
    hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE,
 	                                  NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, 
@@ -117,6 +119,7 @@ bool InitD3D(HINSTANCE hInstance)
 	                                  NULL, &pDeviceContext);
 
    //create backbuffer
+
    ID3D11Texture2D *backBuffer;
    hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
    hr = pDevice->CreateRenderTargetView(backBuffer, NULL, &pRenderTargetView);
@@ -149,13 +152,14 @@ bool InitScene()
 
    D3D11_BUFFER_DESC vboDesc;
    ZeroMemory(&vboDesc, sizeof(vboDesc));
-   vboDesc.Usage = D3D11_USAGE_DEFAULT;
-   vboDesc.ByteWidth = sizeof(Vertex) * 3;
-   vboDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+   vboDesc.Usage          = D3D11_USAGE_DEFAULT;
+   vboDesc.ByteWidth      = sizeof(Vertex) * 3;
+   vboDesc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
    vboDesc.CPUAccessFlags = 0;
-   vboDesc.MiscFlags = 0;
+   vboDesc.MiscFlags      = 0;
 
    //set data to vbo
+
    D3D11_SUBRESOURCE_DATA vbo;
    ZeroMemory(&vbo, sizeof(vbo));
    vbo.pSysMem = VertexData;
@@ -165,6 +169,7 @@ bool InitScene()
    pDeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &stride, &offset);
 
    //set input layout
+
    D3D11_INPUT_ELEMENT_DESC layout[] =
    {
 		   { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },  
@@ -180,8 +185,8 @@ bool InitScene()
    ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
    vp.TopLeftX = 0;
    vp.TopLeftY = 0;
-   vp.Width = Width;
-   vp.Height = Height;
+   vp.Width    = Width;
+   vp.Height   = Height;
    pDeviceContext->RSSetViewports(1, &vp);
 
    return true;
@@ -218,18 +223,18 @@ bool InitWindow(HINSTANCE hInstance, int ShowCmd, int width, int height, bool wi
 {
 
 	WNDCLASSEX wc;	
-	wc.cbSize = sizeof(WNDCLASSEX);	
-	wc.style = CS_HREDRAW | CS_VREDRAW;	
-	wc.lpfnWndProc = WndProc;	
-	wc.cbClsExtra = NULL;	
-	wc.cbWndExtra = NULL;	
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);	
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);	
+	wc.cbSize        = sizeof(WNDCLASSEX);	
+	wc.style         = CS_HREDRAW | CS_VREDRAW;	
+	wc.lpfnWndProc   = WndProc;	
+	wc.cbClsExtra    = NULL;	
+	wc.cbWndExtra    = NULL;	
+	wc.hInstance     = hInstance;
+	wc.hIcon         = LoadIcon(NULL, IDI_WINLOGO);	
+	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);	
 	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 2);
-	wc.lpszMenuName = NULL;	
+	wc.lpszMenuName  = NULL;	
 	wc.lpszClassName = WndClassName;	
-	wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO); 
+	wc.hIconSm       = LoadIcon(NULL, IDI_WINLOGO); 
 
 	if (!RegisterClassEx(&wc))
 	{

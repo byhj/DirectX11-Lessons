@@ -248,7 +248,7 @@ bool TextureApp::InitScene()
 bool TextureApp::InitBuffer()
 {
 
-	light.dir = XMFLOAT3(0.25f, 0.5f, -1.0f);
+	light.dir = XMFLOAT3(0.25f, 0.5f, -0.8f);
 	light.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	light.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 

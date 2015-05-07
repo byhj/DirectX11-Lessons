@@ -43,7 +43,7 @@ LPCTSTR WndClassName = "DirectX11-Indices";
 HWND hWnd = NULL;
 HRESULT hr;
 
-const int Width = 800;
+const int Width = 1000;
 const int Height = 800;
 
 struct cbPerObject
@@ -365,7 +365,6 @@ void RenderScene()
 	cbPerObj.MVP = XMMatrixTranspose(MVP);	
 	pDeviceContext->UpdateSubresource(pMVPBuffer, 0, NULL, &cbPerObj, 0, 0 );
 	pDeviceContext->VSSetConstantBuffers( 0, 1, &pMVPBuffer);
-	//Draw the first cube
 	pDeviceContext->DrawIndexed( 36, 0, 0 );
 
 	MVP = cube2World * View * Proj;

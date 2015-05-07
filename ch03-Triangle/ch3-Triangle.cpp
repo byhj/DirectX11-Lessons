@@ -22,8 +22,8 @@ ID3D11InputLayout *pInputLayout;
 
 LPCTSTR WndClassName = "DirectXWindow";
 HWND hWnd  = NULL;
-const int Width = 800;
-const int Height = 600;
+const int Width = 1000;
+const int Height = 800;
 
 bool InitD3D(HINSTANCE hInstance);
 bool InitScene();

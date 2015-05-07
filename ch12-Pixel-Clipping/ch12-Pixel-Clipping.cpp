@@ -232,7 +232,7 @@ bool TextureApp::InitBuffer()
 
 bool TextureApp::InitTexture()
 {
-	hr = D3DX11CreateShaderResourceViewFromFile( pDevice, L"../common/media/texture/byhj.jpg",
+	hr = D3DX11CreateShaderResourceViewFromFile( pDevice, L"../common/media/texture/Cage.png",
 		NULL, NULL, &pTexture, NULL );
 
 	// Describe the Sample State

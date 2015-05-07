@@ -35,8 +35,6 @@ public:
 	void UpdateScene();
 	void RenderScene();
 private:
-	ID3D11Buffer* pMVPBuffer;
-
 	XMMATRIX MVP;
 	XMMATRIX cube1World;
 	XMMATRIX cube2World;
@@ -49,20 +47,21 @@ private:
 	XMVECTOR camPos;
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
-
-	ID3D11Buffer *pVB;
-	ID3D11Buffer *pIB;
-	ID3D11VertexShader *pVS;
-	ID3D11PixelShader *pPS;
-	ID3D10Blob *VS_Buffer;
-	ID3D10Blob *PS_Buffer;
-	ID3D11InputLayout *pInputLayout;
 	LRESULT hr;
-	ID3D11ShaderResourceView* pTexture;
-	ID3D11SamplerState* pTexSamplerState;
-	ID3D11BlendState *pBlendState;
-	ID3D11RasterizerState *pCCW;
-	ID3D11RasterizerState *pCW;
+
+	ID3D11Buffer            *pVB;
+	ID3D11Buffer            *pIB;
+	ID3D11VertexShader      *pVS;
+	ID3D11PixelShader       *pPS;
+	ID3D10Blob              *VS_Buffer;
+	ID3D10Blob              *PS_Buffer;
+	ID3D11InputLayout       *pInputLayout;
+	ID3D11Buffer            *pMVPBuffer;
+	ID3D11ShaderResourceView*pTexture;
+	ID3D11SamplerState      *pTexSamplerState;
+	ID3D11BlendState        *pBlendState;
+	ID3D11RasterizerState   *pCCW;
+	ID3D11RasterizerState   *pCW;
 };
 
 int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 

@@ -26,15 +26,14 @@ struct Light
 	{
 		ZeroMemory(this, sizeof(Light));
 	}
+	XMFLOAT3 dir;
 	float pad1;
 	float pad2;
-	float range;
-
 	XMFLOAT3 pos;
-	XMFLOAT3 att;
-	XMFLOAT3 dir;
 	XMFLOAT4 ambient;
 	XMFLOAT4 diffuse;
+	float range;
+	XMFLOAT3 att;
 };
 
 Light light;
@@ -109,7 +108,7 @@ private:
 	XMMATRIX Scale;
 	XMMATRIX Translation;
 	float rot;
-		HRESULT hr;
+	HRESULT hr;
 };
 
 int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
@@ -137,8 +136,8 @@ int TextureApp::Run()
 		// If there are Window messages then process them.
 		if(PeekMessage( &msg, 0, 0, 0, PM_REMOVE ))
 		{
-				TranslateMessage( &msg );
-				DispatchMessage( &msg );
+			TranslateMessage( &msg );
+			DispatchMessage( &msg );
 		}
 		// Otherwise, do animation/game stuff.
 		else
@@ -157,7 +156,7 @@ int TextureApp::Run()
 		}
 	}
 
-		return (int)msg.wParam;
+	return (int)msg.wParam;
 }
 
 TextureApp::TextureApp(HINSTANCE hInstance)
@@ -397,8 +396,8 @@ bool TextureApp::InitStatus()
 	hr                  = pD3D11Device->CreateBuffer(&cbbd, NULL, &cbPerFrameBuffer);
 
 	camPosition = XMVectorSet( 0.0f, 3.0f, -8.0f, 0.0f );
-	camTarget   = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
-	camUp       = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	camTarget = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
+	camUp = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 
 	camView = XMMatrixLookAtLH( camPosition, camTarget, camUp );
 	camProjection = XMMatrixPerspectiveFovLH( 0.4f*3.14f, (float)Width/Height, 1.0f, 1000.0f);
@@ -437,7 +436,7 @@ bool TextureApp::InitStatus()
 
 	//Create the Sample State
 	hr = pD3D11Device->CreateSamplerState( &sampDesc, &CubesTexSamplerState );
-	
+
 	pD3D11Device->CreateBlendState(&blendDesc, &Transparency);
 
 	D3D11_RASTERIZER_DESC cmdesc;
@@ -447,9 +446,9 @@ bool TextureApp::InitStatus()
 	cmdesc.CullMode = D3D11_CULL_BACK;
 	cmdesc.FrontCounterClockwise = true;
 	hr = pD3D11Device->CreateRasterizerState(&cmdesc, &CCWcullMode);
-	
+
 	cmdesc.FrontCounterClockwise = false;
-	
+
 	hr = pD3D11Device->CreateRasterizerState(&cmdesc, &CWcullMode);
 
 	return true;
@@ -500,13 +499,18 @@ void TextureApp::UpdateScene(double time)
 
 	//Reset cube1World
 	cube1World = XMMatrixIdentity();
+
+	//Define cube1's world space matrix
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	Rotation = XMMatrixRotationAxis( rotaxis, rot);
 	Translation = XMMatrixTranslation( 0.0f, 0.0f, 4.0f );
+
+	//Set cube1's world space using the transformations
 	cube1World = Translation * Rotation;
 
 	//Reset Lights Position
 	XMVECTOR lightVector = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
+
 	lightVector = XMVector3TransformCoord(lightVector,cube1World);
 	light.pos.x = XMVectorGetX(lightVector);
 	light.pos.y = XMVectorGetY(lightVector);
@@ -514,67 +518,71 @@ void TextureApp::UpdateScene(double time)
 
 	//Reset cube2World
 	cube2World = XMMatrixIdentity();
+
+	//Define cube2's world space matrix
 	Rotation = XMMatrixRotationAxis( rotaxis, -rot);
 	Scale = XMMatrixScaling( 1.3f, 1.3f, 1.3f );
+
+	//Set cube2's world space matrix
 	cube2World = Rotation * Scale;
 }
 
 void TextureApp::RenderText(std::wstring text, int inInt)
 {	
-		pkeyedMutex11->ReleaseSync(0);
-		pkeyedMutex10->AcquireSync(0, 5);			
+	pkeyedMutex11->ReleaseSync(0);
+	pkeyedMutex10->AcquireSync(0, 5);			
 
-		pD2DRenderTarget->BeginDraw();	
-		pD2DRenderTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+	pD2DRenderTarget->BeginDraw();	
+	pD2DRenderTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
 
-		//Create our string
-		std::wostringstream printString; 
-		printString << text << inInt;;
-		printText = printString.str();
+	//Create our string
+	std::wostringstream printString; 
+	printString << text << inInt;;
+	printText = printString.str();
 
-		//Set the Font Color
-		D2D1_COLOR_F FontColor = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+	//Set the Font Color
+	D2D1_COLOR_F FontColor = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
 
-		//Set the brush color D2D will use to draw with
-		pBrush->SetColor(FontColor);	
+	//Set the brush color D2D will use to draw with
+	pBrush->SetColor(FontColor);	
 
-		//Create the D2D Render Area
-		D2D1_RECT_F layoutRect = D2D1::RectF(0, 0, Width, Height);
+	//Create the D2D Render Area
+	D2D1_RECT_F layoutRect = D2D1::RectF(0, 0, Width, Height);
 
-		//Draw the Text
-		pD2DRenderTarget->DrawText(
-			printText.c_str(),
-			wcslen(printText.c_str()),
-			pTextFormat,
-			layoutRect,
-			pBrush
-			);
+	//Draw the Text
+	pD2DRenderTarget->DrawText(
+		printText.c_str(),
+		wcslen(printText.c_str()),
+		pTextFormat,
+		layoutRect,
+		pBrush
+		);
 
-		pD2DRenderTarget->EndDraw();	
+	pD2DRenderTarget->EndDraw();	
 
-		pkeyedMutex10->ReleaseSync(1);
-		pkeyedMutex11->AcquireSync(1, 5);
+	pkeyedMutex10->ReleaseSync(1);
+	pkeyedMutex11->AcquireSync(1, 5);
 
-		pD3D11DeviceContext->OMSetBlendState(Transparency, NULL, 0xffffffff);
+	pD3D11DeviceContext->OMSetBlendState(Transparency, NULL, 0xffffffff);
 
-		//Set the d2d Index buffer
-		pD3D11DeviceContext->IASetIndexBuffer(pD2DIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		//Set the d2d vertex buffer
-		UINT stride = sizeof( Vertex );
-		UINT offset = 0;
-		pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &pD2DVertBuffer, &stride, &offset );
+	//Set the d2d Index buffer
+	pD3D11DeviceContext->IASetIndexBuffer(pD2DIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	//Set the d2d vertex buffer
+	UINT stride = sizeof( Vertex );
+	UINT offset = 0;
+	pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &pD2DVertBuffer, &stride, &offset );
 
-		WVP =  XMMatrixIdentity();
-		cbPerObj.World = XMMatrixTranspose(WVP);
-		cbPerObj.WVP = XMMatrixTranspose(WVP);	
-		pD3D11DeviceContext->UpdateSubresource( cbPerObjectBuffer, 0, NULL, &cbPerObj, 0, 0 );
-		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &cbPerObjectBuffer );
-		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &pD2DTexture );
-		pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
+	WVP =  XMMatrixIdentity();
+	cbPerObj.World = XMMatrixTranspose(WVP);
+	cbPerObj.WVP = XMMatrixTranspose(WVP);	
+	pD3D11DeviceContext->UpdateSubresource( cbPerObjectBuffer, 0, NULL, &cbPerObj, 0, 0 );
+	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &cbPerObjectBuffer );
+	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &pD2DTexture );
+	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 
-		pD3D11DeviceContext->RSSetState(CWcullMode);
-		//Draw the second cube
-		pD3D11DeviceContext->DrawIndexed( 6, 0, 0 );	
+	//pD3D11DeviceContext->RSSetState(CWcullMode);
+	//Draw the second cube
+	pD3D11DeviceContext->DrawIndexed( 6, 0, 0 );	
 }
 
 
@@ -584,7 +592,7 @@ bool TextureApp::InitShader()
 	hr = D3DX11CompileFromFile(L"texture.fx", 0, 0, "VS", "vs_4_0", 0, 0, 0, &pVS_Buffer, 0, 0);
 	hr = D3DX11CompileFromFile(L"texture.fx", 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
 	hr = D3DX11CompileFromFile(L"texture.fx", 0, 0, "D2D_PS", "ps_4_0", 0, 0, 0, &pD2D_PS_Buffer, 0, 0);
-	
+
 	//Create the Shader Objects
 	hr = pD3D11Device->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &pVS);
 	hr = pD3D11Device->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &pPS);
@@ -595,12 +603,12 @@ bool TextureApp::InitShader()
 	pD3D11DeviceContext->PSSetShader(pPS, 0, 0);
 
 
-D3D11_INPUT_ELEMENT_DESC layout[] =
-{
-	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },  
-	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },  
-	{ "NORMAL",	  0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
-};
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },  
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },  
+		{ "NORMAL",	  0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
 
 	UINT numElements = ARRAYSIZE(layout);
 	hr = pD3D11Device->CreateInputLayout( layout, numElements, pVS_Buffer->GetBufferPointer(), 
@@ -618,7 +626,7 @@ void TextureApp::RenderScene()
 	float bgColor[4] = {(0.0f, 0.0f, 0.0f, 0.0f)};
 	pD3D11DeviceContext->ClearRenderTargetView(pRenderTargetView, bgColor);	
 	pD3D11DeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-	
+
 	cbPerLight.light = light;
 	pD3D11DeviceContext->UpdateSubresource( cbPerFrameBuffer, 0, NULL, &cbPerLight, 0, 0 );
 	pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &cbPerFrameBuffer);	

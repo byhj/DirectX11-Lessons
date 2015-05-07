@@ -26,8 +26,9 @@ public:
 
 	//for draw text
 	virtual bool InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter);
-	void InitD2DScreenTexture();
 	virtual void RenderText(std::wstring text);
+	void InitD2DScreenTexture();
+
 
 	virtual LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 

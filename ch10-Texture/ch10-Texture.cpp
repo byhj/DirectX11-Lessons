@@ -17,7 +17,7 @@ struct cbPerObject
 };
 cbPerObject cbPerObj;
 
-const int Width = 800;
+const int Width = 1000;
 const int Height = 800;
 
 
@@ -35,7 +35,7 @@ public:
 	void RenderScene();
 
 private:
-	ID3D11Buffer* pMVPBuffer;
+
 
 	XMMATRIX MVP;
 	XMMATRIX cube1World;
@@ -50,16 +50,17 @@ private:
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
 
-	ID3D11Buffer *pVB;
-	ID3D11Buffer *pIB;
-	ID3D11VertexShader *pVS;
-	ID3D11PixelShader *pPS;
-	ID3D10Blob *VS_Buffer;
-	ID3D10Blob *PS_Buffer;
-	ID3D11InputLayout *pInputLayout;
-	LRESULT hr;
+	ID3D11Buffer            * pMVPBuffer;
+	ID3D11Buffer            *pVB;
+	ID3D11Buffer            *pIB;
+	ID3D11VertexShader      *pVS;
+	ID3D11PixelShader       *pPS;
+	ID3D10Blob              *VS_Buffer;
+	ID3D10Blob              *PS_Buffer;
+	ID3D11InputLayout       *pInputLayout;
 	ID3D11ShaderResourceView* pTexture;
-	ID3D11SamplerState* pTexSamplerState;
+	ID3D11SamplerState      * pTexSamplerState;
+	LRESULT hr;
 };
 
 int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
@@ -204,10 +205,12 @@ bool TextureApp::InitBuffer()
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags = 0;
 	hr = pDevice->CreateBuffer(&mvpDesc, NULL, &pMVPBuffer);
+
 	//Camera information
 	camPos = XMVectorSet(0.0f, 3.0f, -8.0f, 0.0f );
 	camTarget = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	camUp = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+
 	//Set the View matrix
 	View = XMMatrixLookAtLH( camPos, camTarget, camUp );
 	Proj = XMMatrixPerspectiveFovLH( 0.4f*3.14f, (float)Width/Height, 1.0f, 1000.0f);
@@ -223,13 +226,13 @@ bool TextureApp::InitTexture()
 	// Describe the Sample State
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory( &sampDesc, sizeof(sampDesc) );
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.Filter         = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU       = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV       = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW       = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sampDesc.MinLOD         = 0;
+	sampDesc.MaxLOD         = D3D11_FLOAT32_MAX;
 
 	//Create the Sample State
 	hr = pDevice->CreateSamplerState( &sampDesc, &pTexSamplerState );

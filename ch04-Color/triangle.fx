@@ -4,6 +4,8 @@ struct VS_OUTPUT
     float4 Color : COLOR;
 };
 
+//input Layout decide the in data 
+
 VS_OUTPUT VS(float4 inPos: POSITION, float4 inColor: COLOR)
 {
    VS_OUTPUT vs_out;
