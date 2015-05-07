@@ -387,7 +387,7 @@ bool TextureApp::InitBuffer()
 {
 
 	light.dir = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	light.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	light.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	light.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Create the vertex buffer
@@ -401,8 +401,8 @@ bool TextureApp::InitBuffer()
 	};
 
 	DWORD indices[] = {
-		0,  1,  2,
-		0,  2,  3,
+		2,  1,  0,
+		3,  2,  0,
 	};
 	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory( &indexBufferDesc, sizeof(indexBufferDesc) );
@@ -708,7 +708,7 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &cbPerObjectBuffer );
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &CubesTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
-	pD3D11DeviceContext->RSSetState(CCWcullMode);
+	pD3D11DeviceContext->RSSetState(CWcullMode);
 	pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
 
 
