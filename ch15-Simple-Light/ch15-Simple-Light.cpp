@@ -515,6 +515,7 @@ void TextureApp::UpdateScene(double time)
 
 void TextureApp::RenderText(std::wstring text, int inInt)
 {	
+	    pD3D11DeviceContext->PSSetShader(pD2D_PS, 0, 0);
 		pkeyedMutex11->ReleaseSync(0);
 		pkeyedMutex10->AcquireSync(0, 5);			
 

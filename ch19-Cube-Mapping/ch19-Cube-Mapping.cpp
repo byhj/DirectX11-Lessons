@@ -767,6 +767,8 @@ void TextureApp::UpdateScene(double time)
 
 void TextureApp::RenderText(std::wstring text, int inInt)
 {	
+	pD3D11DeviceContext->PSSetShader(pD2D_PS, 0, 0);
+
 	pkeyedMutex11->ReleaseSync(0);
 	pkeyedMutex10->AcquireSync(0, 5);			
 
@@ -818,7 +820,7 @@ void TextureApp::RenderText(std::wstring text, int inInt)
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &pD2DTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 
-	//pD3D11DeviceContext->RSSetState(CWcullMode);
+	pD3D11DeviceContext->RSSetState(CWcullMode);
 	//Draw the second cube
 	pD3D11DeviceContext->DrawIndexed( 6, 0, 0 );	
 }
@@ -864,7 +866,7 @@ bool TextureApp::InitShader()
 void TextureApp::RenderScene()
 {
 
-	float bgColor[4] = {(0.0f, 0.0f, 0.0f, 0.0f)};
+    float bgColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	pD3D11DeviceContext->ClearRenderTargetView(pRenderTargetView, bgColor);	
 	pD3D11DeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -890,7 +892,7 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &CubesTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 	pD3D11DeviceContext->RSSetState(CWcullMode);
-	//pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
+	pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
 
 	//Render Skybox
 	pD3D11DeviceContext->IASetIndexBuffer(pSphereIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
