@@ -26,6 +26,9 @@
 *.exe
 *.out
 *.app
+# Texture & Obj
+*.dds
+*.obj
 
 # =========================
 # Operating System Files
