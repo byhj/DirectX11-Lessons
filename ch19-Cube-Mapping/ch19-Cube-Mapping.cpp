@@ -684,7 +684,7 @@ bool TextureApp::InitStatus()
 	//Create the Sample State
 	hr = pD3D11Device->CreateSamplerState( &sampDesc, &CubesTexSamplerState );
 
-	pD3D11Device->CreateBlendState(&blendDesc, &Transparency);
+	pD3D11Device->CreateBlendState(&blendDesc, &d2dTransparency);
 
 	D3D11_RASTERIZER_DESC cmdesc;
 
@@ -801,7 +801,7 @@ void TextureApp::RenderText(std::wstring text, int inInt)
 	pkeyedMutex10->ReleaseSync(1);
 	pkeyedMutex11->AcquireSync(1, 5);
 
-	pD3D11DeviceContext->OMSetBlendState(Transparency, NULL, 0xffffffff);
+	pD3D11DeviceContext->OMSetBlendState(d2dTransparency, NULL, 0xffffffff);
 
 	//Set the d2d Index buffer
 	pD3D11DeviceContext->IASetIndexBuffer(pD2DIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -890,7 +890,7 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &CubesTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 	pD3D11DeviceContext->RSSetState(CWcullMode);
-	pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
+	//pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
 
 	//Render Skybox
 	pD3D11DeviceContext->IASetIndexBuffer(pSphereIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

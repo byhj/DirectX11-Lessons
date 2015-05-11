@@ -77,7 +77,7 @@ protected:
 	IDWriteFactory            *pDWriteFactory;				   
 	IDWriteTextFormat         *pTextFormat;	
 
-	ID3D11BlendState          *Transparency;
+	ID3D11BlendState          *d2dTransparency;
 	ID3D11RasterizerState     *CCWcullMode;
 	ID3D11RasterizerState     *CWcullMode;
 	ID3D11SamplerState        *CubesTexSamplerState;

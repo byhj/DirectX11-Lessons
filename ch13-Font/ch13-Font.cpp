@@ -163,7 +163,7 @@ void TextureApp::RenderText(std::wstring text)
 	pkeyedMutex10->ReleaseSync(1);
 	pkeyedMutex11->AcquireSync(1, 5);
 
-	pD3D11DeviceContext->OMSetBlendState(Transparency, NULL, 0xffffffff);
+	pD3D11DeviceContext->OMSetBlendState(d2dTransparency, NULL, 0xffffffff);
 
 	//Set the d2d Index buffer
 	pD3D11DeviceContext->IASetIndexBuffer(pD2DIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -364,7 +364,7 @@ bool TextureApp::InitStatus()
 	//Create the Sample State
 	hr = pD3D11Device->CreateSamplerState( &sampDesc, &CubesTexSamplerState );
 
-	pD3D11Device->CreateBlendState(&blendDesc, &Transparency);
+	pD3D11Device->CreateBlendState(&blendDesc, &d2dTransparency);
 
 	D3D11_RASTERIZER_DESC cmdesc;
 
