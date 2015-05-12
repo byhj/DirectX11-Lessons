@@ -1,5 +1,4 @@
 #include "d3dApp.h"
-#include <vector>
 
 //Vertex Structure and Vertex Layout (Input Layout)//
 struct Vertex	//Overloaded Vertex Structure
@@ -43,6 +42,17 @@ struct cbPerFrame
 cbPerFrame  cbPerLight;
 cbPerObject cbPerObj;
 
+int NumFaces = 0;
+int NumVertices = 0;
+
+struct HeightMapInfo{		// Heightmap structure
+	int terrainWidth;		// Width of heightmap
+	int terrainHeight;		// Height (Length) of heightmap
+	XMFLOAT3 *heightMap;	// Array to store terrain's vertex positions
+};
+
+bool HeightMapLoad(char* filename, HeightMapInfo &hminfo);
+
 DIMOUSESTATE mouseLastState;
 LPDIRECTINPUT8 DirectInput;
 
@@ -51,9 +61,7 @@ float rotz = 0;
 float scaleX = 1.0f;
 float scaleY = 1.0f;
 
-
 XMMATRIX Rotationx;
-XMMATRIX Rotationy;
 XMMATRIX Rotationz;
 
 XMMATRIX WVP;
@@ -121,7 +129,6 @@ public:
 	void UpdateCamera();
 	bool InitDirectInput(HINSTANCE hInstance);
 	void DetectInput(double time);
-	void CreateSphere(int LatLines, int LongLines);
 
 private:
 	ID3D11Buffer* squareIndexBuffer;
@@ -138,21 +145,6 @@ private:
 	ID3D10Blob            *pD2D_PS_Buffer;
 	IDirectInputDevice8* DIKeyboard;
 	IDirectInputDevice8* DIMouse;
-	
-	//Skybox
-	ID3D11Buffer             *pSphereIndexBuffer;
-	ID3D11Buffer             *pSphereVertexBuffer;
-	ID3D11VertexShader       *pSky_VS;
-	ID3D11PixelShader        *pSky_PS;
-	ID3D10Blob               *pSky_VS_Buffer;
-	ID3D10Blob               *pSky_PS_Buffer;
-	ID3D11ShaderResourceView *pSky_View;
-	ID3D11DepthStencilState  *DSLessEqual;
-	ID3D11RasterizerState    *RSCullNone;
-
-	int NumSphereVertices;
-	int NumSphereFaces;
-	XMMATRIX sphereWorld;
 
 	HRESULT hr;
 };
@@ -172,128 +164,6 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	return  app.Run();
 }
-
-
-void TextureApp::CreateSphere(int LatLines, int LongLines)
-{
-	NumSphereVertices = ((LatLines-2) * LongLines) + 2;
-	NumSphereFaces  = ((LatLines-3)*(LongLines)*2) + (LongLines*2);
-
-	float sphereYaw = 0.0f;
-	float spherePitch = 0.0f;
-
-	std::vector<Vertex> vertices(NumSphereVertices);
-
-	XMVECTOR currVertPos = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-
-	vertices[0].pos.x = 0.0f;
-	vertices[0].pos.y = 0.0f;
-	vertices[0].pos.z = 1.0f;
-
-	for(DWORD i = 0; i < LatLines-2; ++i)
-	{
-		spherePitch = (i+1) * (3.14/(LatLines-1));
-		Rotationx = XMMatrixRotationX(spherePitch);
-		for(DWORD j = 0; j < LongLines; ++j)
-		{
-			sphereYaw = j * (6.28/(LongLines));
-			Rotationy = XMMatrixRotationZ(sphereYaw);
-			currVertPos = XMVector3TransformNormal( XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), (Rotationx * Rotationy) );	
-			currVertPos = XMVector3Normalize( currVertPos );
-			vertices[i*LongLines+j+1].pos.x = XMVectorGetX(currVertPos);
-			vertices[i*LongLines+j+1].pos.y = XMVectorGetY(currVertPos);
-			vertices[i*LongLines+j+1].pos.z = XMVectorGetZ(currVertPos);
-		}
-	}
-
-	vertices[NumSphereVertices-1].pos.x =  0.0f;
-	vertices[NumSphereVertices-1].pos.y =  0.0f;
-	vertices[NumSphereVertices-1].pos.z = -1.0f;
-
-
-	D3D11_BUFFER_DESC vertexBufferDesc;
-	ZeroMemory( &vertexBufferDesc, sizeof(vertexBufferDesc) );
-
-	vertexBufferDesc.Usage          = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth      = sizeof( Vertex ) * NumSphereVertices;
-	vertexBufferDesc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags      = 0;
-
-	D3D11_SUBRESOURCE_DATA vertexBufferData; 
-
-	ZeroMemory( &vertexBufferData, sizeof(vertexBufferData) );
-	vertexBufferData.pSysMem = &vertices[0];
-	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &pSphereVertexBuffer);
-
-	std::vector<DWORD> indices(NumSphereFaces * 3);
-
-	int k = 0;
-	for(DWORD l = 0; l < LongLines-1; ++l)
-	{
-		indices[k] = 0;
-		indices[k+1] = l+1;
-		indices[k+2] = l+2;
-		k += 3;
-	}
-
-	indices[k] = 0;
-	indices[k+1] = LongLines;
-	indices[k+2] = 1;
-	k += 3;
-
-	for(DWORD i = 0; i < LatLines-3; ++i)
-	{
-		for(DWORD j = 0; j < LongLines-1; ++j)
-		{
-			indices[k]   = i*LongLines+j+1;
-			indices[k+1] = i*LongLines+j+2;
-			indices[k+2] = (i+1)*LongLines+j+1;
-
-			indices[k+3] = (i+1)*LongLines+j+1;
-			indices[k+4] = i*LongLines+j+2;
-			indices[k+5] = (i+1)*LongLines+j+2;
-
-			k += 6; // next quad
-		}
-
-		indices[k]   = (i*LongLines)+LongLines;
-		indices[k+1] = (i*LongLines)+1;
-		indices[k+2] = ((i+1)*LongLines)+LongLines;
-
-		indices[k+3] = ((i+1)*LongLines)+LongLines;
-		indices[k+4] = (i*LongLines)+1;
-		indices[k+5] = ((i+1)*LongLines)+1;
-
-		k += 6;
-	}
-
-	for(DWORD l = 0; l < LongLines-1; ++l)
-	{
-		indices[k] = NumSphereVertices-1;
-		indices[k+1] = (NumSphereVertices-1)-(l+1);
-		indices[k+2] = (NumSphereVertices-1)-(l+2);
-		k += 3;
-	}
-
-	indices[k] = NumSphereVertices-1;
-	indices[k+1] = (NumSphereVertices-1)-LongLines;
-	indices[k+2] = NumSphereVertices-2;
-
-	D3D11_BUFFER_DESC indexBufferDesc;
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * NumSphereFaces * 3;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA iinitData;
-	iinitData.pSysMem = &indices[0];
-	pD3D11Device->CreateBuffer(&indexBufferDesc, &iinitData, &pSphereIndexBuffer);
-
-}
-
 
 int TextureApp::Run()
 {
@@ -320,6 +190,7 @@ int TextureApp::Run()
 			frameTime = GetFrameTime();
 			DetectInput(frameTime);
 			UpdateScene(frameTime);
+
 			RenderScene();
 		}
 	}
@@ -334,17 +205,78 @@ TextureApp::TextureApp(HINSTANCE hInstance)
 
 TextureApp::~TextureApp()
 {
-	pSphereVertexBuffer->Release();
-	pSphereIndexBuffer->Release();
-	pSky_View->Release();
-	pSky_VS->Release();
-	pSky_PS->Release();
-	pSky_PS_Buffer->Release();
-	pSky_VS_Buffer->Release();
-	RSCullNone->Release();
-
 }
+bool HeightMapLoad(char* filename, HeightMapInfo &hminfo)
+{
+	FILE *filePtr;							// Point to the current position in the file
+	BITMAPFILEHEADER bitmapFileHeader;		// Structure which stores information about file
+	BITMAPINFOHEADER bitmapInfoHeader;		// Structure which stores information about image
+	int imageSize, index;
+	unsigned char height;
 
+	// Open the file
+	filePtr = fopen(filename,"rb");
+	if (filePtr == NULL)
+		return 0;
+
+	// Read bitmaps header
+	fread(&bitmapFileHeader, sizeof(BITMAPFILEHEADER), 1,filePtr);
+
+	// Read the info header
+	fread(&bitmapInfoHeader, sizeof(BITMAPINFOHEADER), 1, filePtr);
+
+	// Get the width and height (width and length) of the image
+	hminfo.terrainWidth = bitmapInfoHeader.biWidth;
+	hminfo.terrainHeight = bitmapInfoHeader.biHeight;
+
+	// Size of the image in bytes. the 3 represents RBG (byte, byte, byte) for each pixel
+	imageSize = hminfo.terrainWidth * hminfo.terrainHeight * 3;
+
+	// Initialize the array which stores the image data
+	unsigned char* bitmapImage = new unsigned char[imageSize];
+
+	// Set the file pointer to the beginning of the image data
+	fseek(filePtr, bitmapFileHeader.bfOffBits, SEEK_SET);
+
+	// Store image data in bitmapImage
+	fread(bitmapImage, 1, imageSize, filePtr);
+
+	// Close file
+	fclose(filePtr);
+
+	// Initialize the heightMap array (stores the vertices of our terrain)
+	hminfo.heightMap = new XMFLOAT3[hminfo.terrainWidth * hminfo.terrainHeight];
+
+	// We use a greyscale image, so all 3 rgb values are the same, but we only need one for the height
+	// So we use this counter to skip the next two components in the image data (we read R, then skip BG)
+	int k=0;
+
+	// We divide the height by this number to "water down" the terrains height, otherwise the terrain will
+	// appear to be "spikey" and not so smooth.
+	float heightFactor = 10.0f;
+
+	// Read the image data into our heightMap array
+	for(int j=0; j< hminfo.terrainHeight; j++)
+	{
+		for(int i=0; i< hminfo.terrainWidth; i++)
+		{
+			height = bitmapImage[k];
+
+			index = ( hminfo.terrainHeight * j) + i;
+
+			hminfo.heightMap[index].x = (float)i;
+			hminfo.heightMap[index].y = (float)height / heightFactor;
+			hminfo.heightMap[index].z = (float)j;
+
+			k+=3;
+		}
+	}
+
+	delete [] bitmapImage;
+	bitmapImage = 0;
+
+	return true;
+}
 void TextureApp::InitD2DScreenTexture()
 {
 	//Create the vertex buffer
@@ -431,21 +363,16 @@ void TextureApp::UpdateCamera()
 	camTarget = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
 	camTarget = XMVector3Normalize(camTarget);
 
-	/*
-	// First-Person Camera
 	XMMATRIX RotateYTempMatrix;
 	RotateYTempMatrix = XMMatrixRotationY(camYaw);
+
 	camRight = XMVector3TransformCoord(DefaultRight, RotateYTempMatrix);
 	camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
-	camForward = XMVector3TransformCoord(DefaultForward, RotateYTempMatrix);*/
-	
-	// Free-Look Camera
-	camRight = XMVector3TransformCoord(DefaultRight, camRotationMatrix);
-	camForward = XMVector3TransformCoord(DefaultForward, camRotationMatrix);
-	camUp = XMVector3Cross(camForward, camRight);
+	camForward = XMVector3TransformCoord(DefaultForward, RotateYTempMatrix);
 
 	camPosition += moveLeftRight*camRight;
 	camPosition += moveBackForward*camForward;
+
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
 
@@ -513,10 +440,10 @@ bool TextureApp::InitScene()
 
 	InitD2DScreenTexture();
 
-	if(!InitBuffer())
+	if(!InitShader())
 		return false;
 
-	if(!InitShader())
+	if(!InitBuffer())
 		return false;
 
 	if(!InitDirectInput(hInstance))
@@ -539,51 +466,170 @@ bool TextureApp::InitScene()
 
 bool TextureApp::InitBuffer()
 {
-	CreateSphere(10, 10);
 
 	light.dir = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	light.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	light.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//Create the vertex buffer
-	Vertex v[] =
-	{
-		// Bottom Face
-		Vertex(-1.0f, -1.0f, -1.0f, 100.0f, 100.0f, 0.0f, 1.0f, 0.0f),
-		Vertex( 1.0f, -1.0f, -1.0f,   0.0f, 100.0f, 0.0f, 1.0f, 0.0f),
-		Vertex( 1.0f, -1.0f,  1.0f,   0.0f,   0.0f, 0.0f, 1.0f, 0.0f),
-		Vertex(-1.0f, -1.0f,  1.0f, 100.0f,   0.0f, 0.0f, 1.0f, 0.0f),
-	};
+	HeightMapInfo hmInfo;
+	HeightMapLoad("heightmap.bmp", hmInfo);		// Load the heightmap and store it into hmInfo
 
-	DWORD indices[] = {
-		2,  1,  0,
-		3,  2,  0,
-	};
+	int cols = hmInfo.terrainWidth;
+	int rows = hmInfo.terrainHeight;
+
+	//Create the grid
+	NumVertices = rows * cols;
+	NumFaces  = (rows-1)*(cols-1)*2;
+
+	std::vector<Vertex> v(NumVertices);
+
+	for(DWORD i = 0; i < rows; ++i)
+	{
+		for(DWORD j = 0; j < cols; ++j)
+		{
+			v[i*cols+j].pos = hmInfo.heightMap[i*cols+j];
+			v[i*cols+j].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+		}
+	}
+
+	std::vector<DWORD> indices(NumFaces * 3);
+
+	int k = 0;
+	int texUIndex = 0;
+	int texVIndex = 0;
+	for(DWORD i = 0; i < rows-1; i++)
+	{
+		for(DWORD j = 0; j < cols-1; j++)
+		{
+			indices[k]   = i*cols+j;		// Bottom left of quad
+			v[i*cols+j].texCoord = XMFLOAT2(texUIndex + 0.0f, texVIndex + 1.0f);
+
+			indices[k+1] = i*cols+j+1;		// Bottom right of quad
+			v[i*cols+j+1].texCoord = XMFLOAT2(texUIndex + 1.0f, texVIndex + 1.0f);
+
+			indices[k+2] = (i+1)*cols+j;	// Top left of quad
+			v[(i+1)*cols+j].texCoord = XMFLOAT2(texUIndex + 0.0f, texVIndex + 0.0f);
+
+
+			indices[k+3] = (i+1)*cols+j;	// Top left of quad
+			v[(i+1)*cols+j].texCoord = XMFLOAT2(texUIndex + 0.0f, texVIndex + 0.0f);
+
+			indices[k+4] = i*cols+j+1;		// Bottom right of quad
+			v[i*cols+j+1].texCoord = XMFLOAT2(texUIndex + 1.0f, texVIndex + 1.0f);
+
+			indices[k+5] = (i+1)*cols+j+1;	// Top right of quad
+			v[(i+1)*cols+j+1].texCoord = XMFLOAT2(texUIndex + 1.0f, texVIndex + 0.0f);
+
+			k += 6; // next quad
+
+			texUIndex++;
+		}
+		texUIndex = 0;
+		texVIndex++;
+	}
+
+	//////////////////////Compute Normals///////////////////////////
+	//Now we will compute the normals for each vertex using normal averaging
+	std::vector<XMFLOAT3> tempNormal;
+
+	//normalized and unnormalized normals
+	XMFLOAT3 unnormalized = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	//Used to get vectors (sides) from the position of the verts
+	float vecX, vecY, vecZ;
+
+	//Two edges of our triangle
+	XMVECTOR edge1 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR edge2 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Compute face normals
+	for(int i = 0; i < NumFaces; ++i)
+	{
+		//Get the vector describing one edge of our triangle (edge 0,2)
+		vecX = v[indices[(i*3)]].pos.x - v[indices[(i*3)+2]].pos.x;
+		vecY = v[indices[(i*3)]].pos.y - v[indices[(i*3)+2]].pos.y;
+		vecZ = v[indices[(i*3)]].pos.z - v[indices[(i*3)+2]].pos.z;		
+		edge1 = XMVectorSet(vecX, vecY, vecZ, 0.0f);	//Create our first edge
+
+		//Get the vector describing another edge of our triangle (edge 2,1)
+		vecX = v[indices[(i*3)+2]].pos.x - v[indices[(i*3)+1]].pos.x;
+		vecY = v[indices[(i*3)+2]].pos.y - v[indices[(i*3)+1]].pos.y;
+		vecZ = v[indices[(i*3)+2]].pos.z - v[indices[(i*3)+1]].pos.z;		
+		edge2 = XMVectorSet(vecX, vecY, vecZ, 0.0f);	//Create our second edge
+
+		//Cross multiply the two edge vectors to get the un-normalized face normal
+		XMStoreFloat3(&unnormalized, XMVector3Cross(edge1, edge2));
+		tempNormal.push_back(unnormalized);			//Save unormalized normal (for normal averaging)
+	}
+
+	//Compute vertex normals (normal Averaging)
+	XMVECTOR normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	int facesUsing = 0;
+	float tX;
+	float tY;
+	float tZ;
+
+	//Go through each vertex
+	for(int i = 0; i < NumVertices; ++i)
+	{
+		//Check which triangles use this vertex
+		for(int j = 0; j < NumFaces; ++j)
+		{
+			if(indices[j*3] == i ||
+				indices[(j*3)+1] == i ||
+				indices[(j*3)+2] == i)
+			{
+				tX = XMVectorGetX(normalSum) + tempNormal[j].x;
+				tY = XMVectorGetY(normalSum) + tempNormal[j].y;
+				tZ = XMVectorGetZ(normalSum) + tempNormal[j].z;
+
+				normalSum = XMVectorSet(tX, tY, tZ, 0.0f);	//If a face is using the vertex, add the unormalized face normal to the normalSum
+				facesUsing++;
+			}
+		}
+
+		//Get the actual normal by dividing the normalSum by the number of faces sharing the vertex
+		normalSum = normalSum / facesUsing;
+
+		//Normalize the normalSum vector
+		normalSum = XMVector3Normalize(normalSum);
+
+		//Store the normal in our current vertex
+		v[i].normal.x = XMVectorGetX(normalSum);
+		v[i].normal.y = XMVectorGetY(normalSum);
+		v[i].normal.z = XMVectorGetZ(normalSum);
+
+		//Clear normalSum and facesUsing for next vertex
+		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		facesUsing = 0;
+	}
+	/*************************************************************************************************/
+
 	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory( &indexBufferDesc, sizeof(indexBufferDesc) );
 
 	indexBufferDesc.Usage          = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth      = sizeof(DWORD) * 2 * 3;
+    indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3;
 	indexBufferDesc.BindFlags      = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags      = 0;
 
 	D3D11_SUBRESOURCE_DATA iinitData;
-	iinitData.pSysMem = indices;
+		iinitData.pSysMem = &indices[0];
 	pD3D11Device->CreateBuffer(&indexBufferDesc, &iinitData, &squareIndexBuffer);
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory( &vertexBufferDesc, sizeof(vertexBufferDesc) );
 
 	vertexBufferDesc.Usage          = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth      = sizeof( Vertex ) * 4;
+	vertexBufferDesc.ByteWidth = sizeof( Vertex ) * NumVertices;
 	vertexBufferDesc.BindFlags      = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags      = 0;
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData; 
 	ZeroMemory( &vertexBufferData, sizeof(vertexBufferData) );
-	vertexBufferData.pSysMem = v;
+	vertexBufferData.pSysMem = &v[0];
 	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &squareVertBuffer);
 
 	return true;
@@ -591,22 +637,6 @@ bool TextureApp::InitBuffer()
 
 bool TextureApp::InitTexture()
 {
-
-	D3DX11_IMAGE_LOAD_INFO loadSMInfo;
-	loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-	ID3D11Texture2D *SMTexture = 0;
-	hr = D3DX11CreateTextureFromFile(pD3D11Device, L"../common/media/texture/skymap.dds",
-		       &loadSMInfo, 0, (ID3D11Resource**)(&SMTexture), 0);
-
-	D3D11_TEXTURE2D_DESC SMTextureDesc;
-	SMTexture->GetDesc(&SMTextureDesc);
-	D3D11_SHADER_RESOURCE_VIEW_DESC SMViewDesc;
-	SMViewDesc.Format = SMTextureDesc.Format;
-	SMViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-	SMViewDesc.TextureCube.MipLevels = SMTextureDesc.MipLevels;
-	SMViewDesc.TextureCube.MostDetailedMip = 0;
-	hr = pD3D11Device->CreateShaderResourceView(SMTexture, &SMViewDesc, &pSky_View);
-
 	return true;
 }
 
@@ -703,17 +733,6 @@ bool TextureApp::InitStatus()
 
 	hr = pD3D11Device->CreateRasterizerState(&cmdesc, &CWcullMode);
 
-
-	//Skybox Render Status
-	cmdesc.CullMode = D3D11_CULL_NONE;
-	hr = pD3D11Device->CreateRasterizerState(&cmdesc, &RSCullNone);
-	D3D11_DEPTH_STENCIL_DESC dssDesc;
-	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC) );
-	dssDesc.DepthEnable  = true;
-	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.DepthFunc = D3D11_COMPARISON_EQUAL;
-	pD3D11Device->CreateDepthStencilState(&dssDesc, &DSLessEqual);
-
 	return true;
 }
 
@@ -755,25 +774,24 @@ double GetFrameTime()
 
 void TextureApp::UpdateScene(double time)
 {
-	//Reset groud matrix
+	//Reset cube1World
 	groundWorld = XMMatrixIdentity();
-	Scale = XMMatrixScaling( 500.0f, 10.0f, 500.0f );
-	Translation = XMMatrixTranslation( 0.0f, 10.0f, 0.0f );
-	groundWorld = Scale * Translation;
 
-	//skybox matrix
-	sphereWorld = XMMatrixIdentity();
-	Scale = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	Translation = XMMatrixTranslation(XMVectorGetX(camPosition), XMVectorGetY(camPosition), 
-		                              XMVectorGetZ(camPosition) );
-	sphereWorld = Scale * Translation;
+	//Define cube1's world space matrix
+	///////////////**************new**************////////////////////
+	//Define terrains's world space matrix
+	Scale = XMMatrixScaling( 10.0f, 10.0f, 10.0f );
+	Translation = XMMatrixTranslation( -100.0f, -100.0f, -100.0f );
+
+	//Set cube1's world space using the transformations
+	groundWorld = Scale * Translation;
+	///////////////**************new**************////////////////////
 
 }
 
 void TextureApp::RenderText(std::wstring text, int inInt)
 {	
 	pD3D11DeviceContext->PSSetShader(pD2D_PS, 0, 0);
-
 	pkeyedMutex11->ReleaseSync(0);
 	pkeyedMutex10->AcquireSync(0, 5);			
 
@@ -825,7 +843,7 @@ void TextureApp::RenderText(std::wstring text, int inInt)
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &pD2DTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 
-	pD3D11DeviceContext->RSSetState(CWcullMode);
+	//pD3D11DeviceContext->RSSetState(CWcullMode);
 	//Draw the second cube
 	pD3D11DeviceContext->DrawIndexed( 6, 0, 0 );	
 }
@@ -833,18 +851,15 @@ void TextureApp::RenderText(std::wstring text, int inInt)
 
 bool TextureApp::InitShader()
 {
+	//Compile Shaders from shader file
+	hr = D3DX11CompileFromFile(L"texture.fx", 0, 0, "VS", "vs_4_0", 0, 0, 0, &pVS_Buffer, 0, 0);
+	hr = D3DX11CompileFromFile(L"texture.fx", 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
+	hr = D3DX11CompileFromFile(L"texture.fx", 0, 0, "D2D_PS", "ps_4_0", 0, 0, 0, &pD2D_PS_Buffer, 0, 0);
 
-	hr = D3DX11CompileFromFile(L"skybox.fx", 0, 0, "VS", "vs_4_0", 0, 0, 0, &pVS_Buffer, 0, 0);
-	hr = D3DX11CompileFromFile(L"skybox.fx", 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
-	hr = D3DX11CompileFromFile(L"skybox.fx", 0, 0, "D2D_PS", "ps_4_0", 0, 0, 0, &pD2D_PS_Buffer, 0, 0);
-	hr = D3DX11CompileFromFile(L"skybox.fx", 0, 0, "SKYMAP_VS", "vs_4_0", 0, 0, 0, &pSky_VS_Buffer, 0, 0);
-	hr = D3DX11CompileFromFile(L"skybox.fx", 0, 0, "SKYMAP_PS", "ps_4_0", 0, 0, 0, &pSky_PS_Buffer, 0, 0);
-
+	//Create the Shader Objects
 	hr = pD3D11Device->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &pVS);
 	hr = pD3D11Device->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &pPS);
 	hr = pD3D11Device->CreatePixelShader(pD2D_PS_Buffer->GetBufferPointer(), pD2D_PS_Buffer->GetBufferSize(), NULL, &pD2D_PS);
-	hr = pD3D11Device->CreateVertexShader(pSky_VS_Buffer->GetBufferPointer(), pSky_VS_Buffer->GetBufferSize(), NULL, &pSky_VS);
-	hr = pD3D11Device->CreatePixelShader(pSky_PS_Buffer->GetBufferPointer(), pSky_PS_Buffer->GetBufferSize(), NULL, &pSky_PS);
 
 	//Set Vertex and Pixel Shaders
 	pD3D11DeviceContext->VSSetShader(pVS, 0, 0);
@@ -871,7 +886,7 @@ bool TextureApp::InitShader()
 void TextureApp::RenderScene()
 {
 
-    float bgColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	float bgColor[4] = {(0.0f, 0.0f, 0.0f, 0.0f)};
 	pD3D11DeviceContext->ClearRenderTargetView(pRenderTargetView, bgColor);	
 	pD3D11DeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -883,12 +898,12 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->VSSetShader(pVS, 0, 0);
 	pD3D11DeviceContext->PSSetShader(pPS, 0, 0);
 
-
 	pD3D11DeviceContext->IASetIndexBuffer( squareIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	//Set the cubes vertex buffer
 	UINT stride = sizeof( Vertex );
 	UINT offset = 0;
 	pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &squareVertBuffer, &stride, &offset );
-	
+
 	WVP = groundWorld * camView * camProjection;
 	cbPerObj.WVP = XMMatrixTranspose(WVP);	
 	cbPerObj.World = XMMatrixTranspose(groundWorld);
@@ -897,29 +912,9 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &CubesTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 	pD3D11DeviceContext->RSSetState(CWcullMode);
-	pD3D11DeviceContext->DrawIndexed(6, 0, 0 );
+	pD3D11DeviceContext->DrawIndexed( NumFaces * 3, 0, 0 );
 
-	//Render Skybox
-	pD3D11DeviceContext->IASetIndexBuffer(pSphereIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &pSphereVertexBuffer, &stride, &offset);
-	WVP = sphereWorld * camView * camProjection;
-	cbPerObj.WVP = XMMatrixTranspose(WVP);	
-	cbPerObj.World = XMMatrixTranspose(sphereWorld);	
-	pD3D11DeviceContext->UpdateSubresource( cbPerObjectBuffer, 0, NULL, &cbPerObj, 0, 0 );
-	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &cbPerObjectBuffer );
-	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &pSky_View);
-	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
 
-	pD3D11DeviceContext->VSSetShader(pSky_VS, 0, 0);
-	pD3D11DeviceContext->PSSetShader(pSky_PS, 0, 0);
-	pD3D11DeviceContext->OMSetDepthStencilState(DSLessEqual, 0);
-	pD3D11DeviceContext->RSSetState(RSCullNone);
-	pD3D11DeviceContext->DrawIndexed( NumSphereFaces * 3, 0, 0 );
-
-	pD3D11DeviceContext->VSSetShader(pVS, 0, 0);
-	pD3D11DeviceContext->OMSetDepthStencilState(NULL, 0);
-
-	//Render Text
 	RenderText(L"FPS: ", fps);
 
 	//Present the backbuffer to the screen
