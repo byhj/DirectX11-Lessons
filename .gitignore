@@ -31,6 +31,8 @@
 *.obj
 *.jpg
 *.mtl
+*.md5anim
+*.md5mesh
 
 # =========================
 # Operating System Files
