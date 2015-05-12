@@ -29,6 +29,8 @@
 # Texture & Obj
 *.dds
 *.obj
+*.jpg
+*.mtl
 
 # =========================
 # Operating System Files
