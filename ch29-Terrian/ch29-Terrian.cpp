@@ -352,7 +352,6 @@ bool TextureApp::InitDirectInput(HINSTANCE hInstance)
 
 	hr = DIMouse->SetDataFormat(&c_dfDIMouse);
 	hr = DIMouse->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
-
 	return true;
 }
 
@@ -363,12 +362,10 @@ void TextureApp::UpdateCamera()
 	camTarget = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
 	camTarget = XMVector3Normalize(camTarget);
 
-	XMMATRIX RotateYTempMatrix;
-	RotateYTempMatrix = XMMatrixRotationY(camYaw);
-
-	camRight = XMVector3TransformCoord(DefaultRight, RotateYTempMatrix);
-	camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
-	camForward = XMVector3TransformCoord(DefaultForward, RotateYTempMatrix);
+	// Free-Look Camera
+	camRight = XMVector3TransformCoord(DefaultRight, camRotationMatrix);
+	camForward = XMVector3TransformCoord(DefaultForward, camRotationMatrix);
+	camUp = XMVector3Cross(camForward, camRight);
 
 	camPosition += moveLeftRight*camRight;
 	camPosition += moveBackForward*camForward;
@@ -468,7 +465,7 @@ bool TextureApp::InitBuffer()
 {
 
 	light.dir = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	light.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	light.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	light.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	HeightMapInfo hmInfo;
@@ -609,7 +606,7 @@ bool TextureApp::InitBuffer()
 	ZeroMemory( &indexBufferDesc, sizeof(indexBufferDesc) );
 
 	indexBufferDesc.Usage          = D3D11_USAGE_DEFAULT;
-    indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3;
+    indexBufferDesc.ByteWidth      = sizeof(DWORD) * NumFaces * 3;
 	indexBufferDesc.BindFlags      = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags      = 0;
@@ -679,7 +676,6 @@ bool TextureApp::InitStatus()
 	camPosition = XMVectorSet( 0.0f, 5.0f, -8.0f, 0.0f );
 	camTarget = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	camUp = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
-
 
 	camView = XMMatrixLookAtLH( camPosition, camTarget, camUp );
 	camProjection = XMMatrixPerspectiveFovLH( 0.4f*3.14f, (float)Width/Height, 1.0f, 1000.0f);
@@ -911,7 +907,7 @@ void TextureApp::RenderScene()
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &cbPerObjectBuffer );
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &CubesTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &CubesTexSamplerState );
-	pD3D11DeviceContext->RSSetState(CWcullMode);
+	pD3D11DeviceContext->RSSetState(CCWcullMode);
 	pD3D11DeviceContext->DrawIndexed( NumFaces * 3, 0, 0 );
 
 
