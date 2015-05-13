@@ -216,16 +216,16 @@ bool D3D11App::InitD3D()
 	// Create DXGI factory to enumerate adapters
 	IDXGIFactory1 *DXGIFactory;
 	hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&DXGIFactory);	
-	
+
 	IDXGIAdapter1 *Adapter;
 	hr = DXGIFactory->EnumAdapters1(0, &Adapter);
-	
+
 	DXGIFactory->Release();	
 
 	//Create our Direct3D 11 Device and SwapChain//////////////////////////////////////////////////////////////////////////
 	hr = D3D11CreateDeviceAndSwapChain(Adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, D3D11_CREATE_DEVICE_DEBUG |	D3D11_CREATE_DEVICE_BGRA_SUPPORT,
 		NULL, NULL,	D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, NULL, &pD3D11DeviceContext);
-	
+
 
 	//Initialize Direct2D, Direct3D 10.1, DirectWrite
 	InitD2D_D3D101_DWrite(Adapter);
@@ -233,9 +233,9 @@ bool D3D11App::InitD3D()
 
 	//Create our BackBuffer and Render Target
 	hr = pSwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), (void**)&pBackBuffer11 );
-	
+
 	hr = pD3D11Device->CreateRenderTargetView( pBackBuffer11, NULL, &pRenderTargetView );
-	
+
 
 	//Describe our Depth/Stencil Buffer
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -254,7 +254,7 @@ bool D3D11App::InitD3D()
 	//Create the Depth/Stencil View
 	hr = pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &pDepthStencilBuffer);
 	hr = pD3D11Device->CreateDepthStencilView(pDepthStencilBuffer, NULL, &pDepthStencilView);
-	
+
 
 	return true;
 }
@@ -265,7 +265,7 @@ bool D3D11App::InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter)
 	//Create our Direc3D 10.1 Device///////////////////////////////////////////////////////////////////////////////////////
 	hr = D3D10CreateDevice1(Adapter, D3D10_DRIVER_TYPE_HARDWARE, NULL,D3D10_CREATE_DEVICE_DEBUG |	D3D10_CREATE_DEVICE_BGRA_SUPPORT,
 		D3D10_FEATURE_LEVEL_9_3, D3D10_1_SDK_VERSION, &pD3D101Device);
-	
+
 
 	//Create Shared Texture that Direct3D 10.1 will render on//////////////////////////////////////////////////////////////
 	D3D11_TEXTURE2D_DESC sharedTexDesc;	
@@ -281,30 +281,30 @@ bool D3D11App::InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter)
 	sharedTexDesc.MiscFlags        = D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;	
 
 	hr = pD3D11Device->CreateTexture2D(&sharedTexDesc, NULL, &pSharedTex11);	
-    
+
 	hr = pSharedTex11->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&pkeyedMutex11);	
-	
+
 
 	IDXGIResource *sharedResource10;
 	HANDLE sharedHandle10;	
 	hr = pSharedTex11->QueryInterface(__uuidof(IDXGIResource), (void**)&sharedResource10);
-	
+
 	hr = sharedResource10->GetSharedHandle(&sharedHandle10);
-	
+
 	sharedResource10->Release();
 
 	// Open the surface for the shared texture in D3D10.1///////////////////////////////////////////////////////////////////
 	IDXGISurface1 *sharedSurface10;	
 
 	hr = pD3D101Device->OpenSharedResource(sharedHandle10, __uuidof(IDXGISurface1), (void**)(&sharedSurface10));
-	
+
 	hr = sharedSurface10->QueryInterface(__uuidof(IDXGIKeyedMutex), (void**)&pkeyedMutex10);	
-    
+
 
 	// Create D2D factory///////////////////////////////////////////////////////////////////////////////////////////////////
 	ID2D1Factory *D2DFactory;	
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), (void**)&D2DFactory);	
-	
+
 	D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties;
 
 	ZeroMemory(&renderTargetProperties, sizeof(renderTargetProperties));
@@ -313,17 +313,17 @@ bool D3D11App::InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter)
 	renderTargetProperties.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED);	
 
 	hr = D2DFactory->CreateDxgiSurfaceRenderTarget(sharedSurface10, &renderTargetProperties, &pD2DRenderTarget);
-	
+
 	sharedSurface10->Release();
 	D2DFactory->Release();	
 
 	// Create a solid color brush to draw something with		
 	hr = pD2DRenderTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 0.0f, 1.0f), &pBrush);
-	
+
 	//DirectWrite///////////////////////////////////////////////////////////////////////////////////////////////////////////
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
 		reinterpret_cast<IUnknown**>(&pDWriteFactory));
-	
+
 	hr = pDWriteFactory->CreateTextFormat(
 		L"Script",
 		NULL,
@@ -334,7 +334,7 @@ bool D3D11App::InitD2D_D3D101_DWrite(IDXGIAdapter1 *Adapter)
 		L"en-us",
 		&pTextFormat
 		);
-	
+
 	hr = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 	hr = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 	pD3D101Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_POINTLIST);	
@@ -389,7 +389,7 @@ void D3D11App::InitD2DScreenTexture()
 	ZeroMemory( &vertexBufferData, sizeof(vertexBufferData) );
 	vertexBufferData.pSysMem = v;
 	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &pD2DVertBuffer);
-	
+
 
 	//Create A shader resource view from the texture D2D will render to,
 	//So we can use it to texture a square which overlays our scene
