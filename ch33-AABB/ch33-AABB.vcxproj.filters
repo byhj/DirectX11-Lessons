@@ -15,11 +15,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch32-Instancing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\include\d3dApp.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ch33-AABB.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

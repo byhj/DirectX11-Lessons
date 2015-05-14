@@ -69,7 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\include\d3dApp.cpp" />
-    <ClCompile Include="ch32-Instancing.cpp" />
+    <ClCompile Include="ch33-AABB.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\include\d3dApp.h" />
