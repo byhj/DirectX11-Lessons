@@ -92,6 +92,12 @@ private:
 	XMMATRIX Model;
 	XMMATRIX View;
 	XMMATRIX Proj;
+	XMMATRIX cube1World;
+	XMMATRIX cube2World;
+
+	XMMATRIX Rotation;
+	XMMATRIX Scale;
+	XMMATRIX Translation;
 
 	XMVECTOR camPos;
 	XMVECTOR camTarget;
@@ -112,38 +118,43 @@ bool D3DInitApp::v_InitD3D()
 
 void D3DInitApp::v_Render()
 {
-	//Render scene 
-
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-
 	static float rot = 0.0f;
 	rot += .005f;
 	if(rot > 6.26f)
 		rot = 0.0f;
 
-	//Define cube1's world space matrix
+	//Reset cube1World
+	cube1World = XMMatrixIdentity();
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	Model  = XMMatrixTranslation( 0.0f, 0.0f, 4.0f );
-	Model *= XMMatrixRotationAxis( rotaxis, rot);
+	Rotation = XMMatrixRotationAxis( rotaxis, rot);
+	Translation = XMMatrixTranslation( 0.0f, 0.0f, 4.0f );
+	cube1World = Translation * Rotation;
 
-	MVP = (Model * View * Proj);
+	//Reset cube2World
+	cube2World = XMMatrixIdentity();
+	Rotation = XMMatrixRotationAxis( rotaxis, -rot);
+	Scale = XMMatrixScaling( 1.3f, 1.3f, 1.3f );
+	cube2World = Rotation * Scale;
+
+	//Render scene 
+	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	//////////////////////Define cube1's world space matrix//////////////////////
+	MVP = cube1World * View * Proj;
+
 	cbMatrix.MVP = XMMatrixTranspose(MVP);	
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-    m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
+	m_pD3D11DeviceContext->DrawIndexed( 36, 0, 0 );
 
-
-	//Define cube2's world space matrix
-	Model  = XMMatrixRotationAxis( rotaxis, -rot);
-	Model *= XMMatrixScaling( 1.3f, 1.3f, 1.3f );
-
-	MVP = (Model * View * Proj);
+	MVP = cube2World * View * Proj;
 	cbMatrix.MVP = XMMatrixTranspose(MVP);	
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
+	m_pD3D11DeviceContext->DrawIndexed( 36, 0, 0 );
+
 	m_pSwapChain->Present(0, 0);
 }
 
@@ -189,30 +200,39 @@ bool D3DInitApp::init_device()
 
 
 	/////////////////////Describe our Depth/Stencil Buffer///////////////////////////
+	//Describe our Depth/Stencil Buffer
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 
-	depthStencilDesc.Width              = m_ScreenWidth;
-	depthStencilDesc.Height             = m_ScreenHeight;
-	depthStencilDesc.MipLevels          = 1;
-	depthStencilDesc.ArraySize          = 1;
-	depthStencilDesc.Format             = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.Width     = m_ScreenWidth;
+	depthStencilDesc.Height    = m_ScreenHeight;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthStencilDesc.SampleDesc.Count   = 1;
 	depthStencilDesc.SampleDesc.Quality = 0;
-	depthStencilDesc.Usage              = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags          = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.CPUAccessFlags     = 0; 
-	depthStencilDesc.MiscFlags          = 0;
+	depthStencilDesc.Usage          = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags      = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0; 
+	depthStencilDesc.MiscFlags      = 0;
 
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
 	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
 	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
 	
 	//////////////////////Raterizer State/////////////////////////////
-	D3D11_RASTERIZER_DESC wfdesc;
-	ZeroMemory(&wfdesc, sizeof(D3D11_RASTERIZER_DESC));
-	wfdesc.FillMode = D3D11_FILL_WIREFRAME;
-	wfdesc.CullMode = D3D11_CULL_NONE;
-	hr = m_pD3D11Device->CreateRasterizerState(&wfdesc, &m_pRasterState);
+	D3D11_RASTERIZER_DESC rasterDesc;
+	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode              = D3D11_CULL_BACK;
+	rasterDesc.DepthBias             = 0;
+	rasterDesc.DepthBiasClamp        = 0.0f;
+	rasterDesc.DepthClipEnable       = true;
+	rasterDesc.FillMode              = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable     = false;
+	rasterDesc.ScissorEnable         = false;
+	rasterDesc.SlopeScaledDepthBias  = 0.0f;
+	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
 
 
@@ -226,15 +246,15 @@ bool D3DInitApp::init_buffer()
 	///////////////////////////Index Buffer ////////////////////////////////
 	m_VertexCount = 8;
 	Vertex VertexData[] =
-	{
-		Vertex( -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f ),
-		Vertex( -1.0f, +1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f ),
-		Vertex( +1.0f, +1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f ),
-		Vertex( +1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f ),
-		Vertex( -1.0f, -1.0f, +1.0f, 0.0f, 1.0f, 1.0f, 1.0f ),
-		Vertex( -1.0f, +1.0f, +1.0f, 1.0f, 1.0f, 1.0f, 1.0f ),
-		Vertex( +1.0f, +1.0f, +1.0f, 1.0f, 0.0f, 1.0f, 1.0f ),
-		Vertex( +1.0f, -1.0f, +1.0f, 1.0f, 0.0f, 0.0f, 1.0f ),
+	{          //Pos                       Color
+		Vertex( -1.0f, -1.0f, -1.0f,   1.0f, 0.0f, 0.0f, 1.0f ),
+		Vertex( -1.0f, +1.0f, -1.0f,   0.0f, 1.0f, 0.0f, 1.0f ),
+		Vertex( +1.0f, +1.0f, -1.0f,   0.0f, 0.0f, 1.0f, 1.0f ),
+		Vertex( +1.0f, -1.0f, -1.0f,   1.0f, 1.0f, 0.0f, 1.0f ),
+		Vertex( -1.0f, -1.0f, +1.0f,   0.0f, 1.0f, 1.0f, 1.0f ),
+		Vertex( -1.0f, +1.0f, +1.0f,   1.0f, 1.0f, 1.0f, 1.0f ),
+		Vertex( +1.0f, +1.0f, +1.0f,   1.0f, 0.0f, 1.0f, 1.0f ),
+		Vertex( +1.0f, -1.0f, +1.0f,   1.0f, 0.0f, 0.0f, 1.0f ),
 	};
 
 	// Set up the description of the static vertex buffer.

@@ -367,7 +367,7 @@ bool D3DInitApp::init_shader()
 	pInputLayoutDesc[1].SemanticIndex        = 0;
 	pInputLayoutDesc[1].Format               = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	pInputLayoutDesc[1].InputSlot            = 0;
-	pInputLayoutDesc[1].AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+	pInputLayoutDesc[1].AlignedByteOffset    = 12;
 	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	pInputLayoutDesc[1].InstanceDataStepRate = 0;
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);

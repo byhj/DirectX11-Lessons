@@ -20,6 +20,7 @@ VS_OUT VS( VS_IN vs_in )
 {	
  
    VS_OUT vs_out;
+   vs_in.Pos.w = 1.0f;
    vs_out.Pos = mul(vs_in.Pos, MVP);
    vs_out.Color = vs_in.Color;
  
