@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IntDir>$(SolutionDir)\temp</IntDir>
-    <OutDir>$(SolutionDir)$(Configuration)\$(ProjectName)</OutDir>
+    <OutDir>$(SolutionDir)\bin</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
