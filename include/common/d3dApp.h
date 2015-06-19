@@ -130,7 +130,7 @@ bool D3DApp::init_window()
 
 	WNDCLASSEX wc;	
 	wc.cbSize = sizeof(WNDCLASSEX);	
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WndProc;	
 	wc.cbClsExtra = NULL;	
 	wc.cbWndExtra = NULL;	
@@ -171,8 +171,6 @@ bool D3DApp::init_window()
 	}
 
 	ShowWindow(m_hWnd, SW_SHOW);
-	SetForegroundWindow(m_hWnd);
-	SetFocus(m_hWnd);
 	UpdateWindow(m_hWnd);	
 
 	return true;
