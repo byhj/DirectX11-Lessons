@@ -69,9 +69,6 @@
   <ItemGroup>
     <ClCompile Include="ch14-Font.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="renderText.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
