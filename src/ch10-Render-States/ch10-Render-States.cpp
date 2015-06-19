@@ -119,7 +119,7 @@ void D3DInitApp::v_Render()
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	static float rot = 0.0f;
-	rot += .005f;
+	rot += .0001f;
 	if(rot > 6.26f)
 		rot = 0.0f;
 
@@ -208,11 +208,12 @@ bool D3DInitApp::init_device()
 	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
 	
 	//////////////////////Raterizer State/////////////////////////////
-	D3D11_RASTERIZER_DESC RasterDesc;
-	ZeroMemory(&RasterDesc, sizeof(D3D11_RASTERIZER_DESC));
-	RasterDesc.FillMode = D3D11_FILL_WIREFRAME;
-	RasterDesc.CullMode = D3D11_CULL_NONE;
-	hr = m_pD3D11Device->CreateRasterizerState(&RasterDesc, &m_pRasterState);
+	D3D11_RASTERIZER_DESC rasterDesc;
+	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.FrontCounterClockwise = false;
+	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
 
 
@@ -260,7 +261,7 @@ bool D3DInitApp::init_buffer()
 	}
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
-	DWORD IndexData[] = {
+	unsigned int IndexData[] = {
 		// front face
 		0, 1, 2,
 		0, 2, 3,
@@ -291,7 +292,7 @@ bool D3DInitApp::init_buffer()
 	// Set up the description of the static index buffer.
 	D3D11_BUFFER_DESC IndexBufferDesc;
 	IndexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
-	IndexBufferDesc.ByteWidth           = sizeof(WORD) * m_IndexCount;
+	IndexBufferDesc.ByteWidth           = sizeof(unsigned int) * m_IndexCount;
 	IndexBufferDesc.BindFlags           = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags      = 0;
 	IndexBufferDesc.MiscFlags           = 0;

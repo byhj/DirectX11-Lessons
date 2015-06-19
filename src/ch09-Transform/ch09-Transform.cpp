@@ -118,7 +118,7 @@ void D3DInitApp::v_Render()
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	static float rot = 0.0f;
-	rot += .005f;
+	rot += .0001f;
 	if(rot > 6.26f)
 		rot = 0.0f;
 
@@ -216,15 +216,15 @@ bool D3DInitApp::init_buffer()
 	///////////////////////////Index Buffer ////////////////////////////////
 	m_VertexCount = 8;
 	Vertex VertexData[] =
-	{
-		Vertex( -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f ),
-		Vertex( -1.0f, +1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f ),
-		Vertex( +1.0f, +1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f ),
-		Vertex( +1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f ),
-		Vertex( -1.0f, -1.0f, +1.0f, 0.0f, 1.0f, 1.0f, 1.0f ),
-		Vertex( -1.0f, +1.0f, +1.0f, 1.0f, 1.0f, 1.0f, 1.0f ),
-		Vertex( +1.0f, +1.0f, +1.0f, 1.0f, 0.0f, 1.0f, 1.0f ),
-		Vertex( +1.0f, -1.0f, +1.0f, 1.0f, 0.0f, 0.0f, 1.0f ),
+	{         //Position                Color
+		Vertex( -1.0f, -1.0f, -1.0f,   1.0f, 0.0f, 0.0f, 1.0f ),
+		Vertex( -1.0f, +1.0f, -1.0f,   0.0f, 1.0f, 0.0f, 1.0f ),
+		Vertex( +1.0f, +1.0f, -1.0f,   0.0f, 0.0f, 1.0f, 1.0f ),
+		Vertex( +1.0f, -1.0f, -1.0f,   1.0f, 1.0f, 0.0f, 1.0f ),
+		Vertex( -1.0f, -1.0f, +1.0f,   0.0f, 1.0f, 1.0f, 1.0f ),
+		Vertex( -1.0f, +1.0f, +1.0f,   1.0f, 1.0f, 1.0f, 1.0f ),
+		Vertex( +1.0f, +1.0f, +1.0f,   1.0f, 0.0f, 1.0f, 1.0f ),
+		Vertex( +1.0f, -1.0f, +1.0f,   1.0f, 0.0f, 0.0f, 1.0f ),
 	};
 
 	// Set up the description of the static vertex buffer.
@@ -250,7 +250,7 @@ bool D3DInitApp::init_buffer()
 	}
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
-	DWORD IndexData[] = {
+	unsigned int IndexData[] = {
 		// front face
 		0, 1, 2,
 		0, 2, 3,
@@ -281,7 +281,7 @@ bool D3DInitApp::init_buffer()
 	// Set up the description of the static index buffer.
 	D3D11_BUFFER_DESC IndexBufferDesc;
 	IndexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
-	IndexBufferDesc.ByteWidth           = sizeof(WORD) * m_IndexCount;
+	IndexBufferDesc.ByteWidth           = sizeof(unsigned int) * m_IndexCount;
 	IndexBufferDesc.BindFlags           = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags      = 0;
 	IndexBufferDesc.MiscFlags           = 0;

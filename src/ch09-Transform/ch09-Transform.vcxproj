@@ -67,7 +67,7 @@
     <None Include="triangle.vsh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch08-Transform.cpp" />
+    <ClCompile Include="ch09-Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
