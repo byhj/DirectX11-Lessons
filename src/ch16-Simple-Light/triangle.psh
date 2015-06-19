@@ -20,7 +20,7 @@ SamplerState texState;
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
    float4 texColor = tex.Sample(texState, ps_in.Tex);
-
+   ps_in.Normal   = normalize(ps_in.Normal);
    float4 ambient = saturate(ambientColor) ;
    float4 diffuse = saturate(dot(lightDir, ps_in.Normal) * diffuseColor );
    float4 result  = ambient + diffuse;
