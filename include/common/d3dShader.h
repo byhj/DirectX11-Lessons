@@ -17,12 +17,9 @@ public:
 	void init(ID3D11Device *pD3D11Device, HWND hWnd);
 	bool attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC *pInputLayoutDesc, unsigned numElements);
 	bool attachPS(WCHAR* Filename);
-	void use() {};
+	void use(ID3D11DeviceContext *pD3D111DeviceContext);
 	void Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName);
-
-	ID3D11VertexShader * GetVS() const { return pVS_Shader; } 
-	ID3D11PixelShader  * GetPS() const { return pPS_Shader; } 
-	ID3D11InputLayout  * GetInputLayout() const { return pInputLayout;}
+	void end();
 
 private:
 	ID3D11VertexShader *pVS_Shader;
@@ -38,6 +35,7 @@ void Shader::init(ID3D11Device *pD3D11Device, HWND hWnd)
 	this->pD3D11Device = pD3D11Device;
 	this->hWnd = hWnd;
 }
+
 void Shader::Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName)
 {
 	char *pCompileErrors;
@@ -113,7 +111,6 @@ bool Shader::attachPS(WCHAR* Filename)
 			MessageBox(hWnd, Filename, L"Can not open Pixel Shader File", MB_OK);
 	}
 
-
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreatePixelShader(PixelShaderBuffer->GetBufferPointer(), PixelShaderBuffer->GetBufferSize(), NULL, &pPS_Shader);
 	if(FAILED(result))
@@ -127,4 +124,18 @@ bool Shader::attachPS(WCHAR* Filename)
 
 	return true;
 }
+
+void Shader::use(ID3D11DeviceContext *pD3D11DeviceContext)
+{
+	pD3D11DeviceContext->IASetInputLayout(pInputLayout);
+	pD3D11DeviceContext->VSSetShader(pVS_Shader, NULL, 0);
+	pD3D11DeviceContext->PSSetShader(pPS_Shader, NULL, 0);
+}
+
+void Shader::end()
+{
+	pD3D11Device = 0;
+	hWnd = 0;
+}
+
 #endif

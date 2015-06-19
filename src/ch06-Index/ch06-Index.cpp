@@ -91,7 +91,7 @@ bool D3DInitApp::v_InitD3D()
 void D3DInitApp::v_Render()
 {
 	//Render scene 
-
+	TestShader.use(m_pD3D11DeviceContext);
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -262,11 +262,7 @@ bool D3DInitApp::init_shader()
 	TestShader.init(m_pD3D11Device, GetHwnd());
 	TestShader.attachVS(L"triangle.vsh", pInputLayoutDesc, numElements);
 	TestShader.attachPS(L"triangle.psh");
-	TestShader.use();
-
-	m_pD3D11DeviceContext->IASetInputLayout(TestShader.GetInputLayout());
-	m_pD3D11DeviceContext->VSSetShader(TestShader.GetVS(), NULL, 0);
-	m_pD3D11DeviceContext->PSSetShader(TestShader.GetPS(), NULL, 0);
+	TestShader.end();
 
 	return true;
 }
