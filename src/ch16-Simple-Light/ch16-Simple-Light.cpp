@@ -1,4 +1,6 @@
+#ifdef _DEBUG
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
+#endif
 
 #ifdef _WIN32
 #define _XM_NO_INTRINSICS_
@@ -68,18 +70,31 @@ private:
 	{
 		Vertex(){}
 		Vertex(float x, float y, float z,
-			float u, float v)
-			: pos(x,y,z), texCoord(u, v){}
+			float u, float v,
+			float nx, float ny, float nz)
+			: pos(x,y,z), texCoord(u, v), normal(nx, ny, nz){}
 
 		XMFLOAT3 pos;
 		XMFLOAT2 texCoord;
+		XMFLOAT3 normal;
 	};
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  MVP;
+		XMMATRIX  model;
+		XMMATRIX  view;
+		XMMATRIX  proj;
 	};
 	MatrixBuffer cbMatrix;
+
+	struct  LightBuffer
+	{
+		XMFLOAT4 ambient;
+		XMFLOAT4 diffuse;
+		XMFLOAT3 lightDir;
+		float    padding;
+	};
+	LightBuffer cbLight;
 
 	ID3D11InputLayout       *m_pInputLayout;
 	ID3D11VertexShader      *m_pVS;
@@ -93,6 +108,7 @@ private:
 	ID3D11RasterizerState   *m_pRasterState;
 	ID3D11Buffer            *m_pVertexBuffer;
 	ID3D11Buffer            *m_pMVPBuffer;
+	ID3D11Buffer            *m_pLightBuffer;
 	ID3D11Buffer            *m_pIndexBuffer;
 	ID3D11ShaderResourceView *m_pTexture;
 	ID3D11SamplerState       *m_pTexSamplerState;
@@ -130,7 +146,7 @@ bool TextureApp::v_InitD3D()
 	init_buffer();
 	init_camera();
 	init_shader();
-	init_texture(L"../../media/textures/byhj.jpg");
+	init_texture(L"../../media/textures/crate.bmp");
 	init_timer();
 
 	return true;
@@ -187,11 +203,20 @@ void TextureApp::v_Render()
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-
+	m_pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
 	TestShader.use(m_pD3D11DeviceContext);
+	// Set vertex buffer stride and offset.=
+	unsigned int stride;
+	unsigned int offset;
+	stride = sizeof(Vertex); 
+	offset = 0;
+	m_pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 
 	static float rot = 0.0f;
-	rot += .01f;
+	rot += .001f;
 	if(rot > 6.26f)
 		rot = 0.0f;
 
@@ -203,8 +228,10 @@ void TextureApp::v_Render()
 	Model  = XMMatrixTranslation( 0.0f, 0.0f, 4.0f );
 	Model *= XMMatrixRotationAxis( rotaxis, rot);
 
-	MVP = (Model * View * Proj);
-	cbMatrix.MVP = XMMatrixTranspose(MVP);	
+	cbMatrix.model = XMMatrixTranspose(Model);
+	cbMatrix.view  = XMMatrixTranspose(View);
+	cbMatrix.proj  = XMMatrixTranspose(Proj);
+
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
     m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -214,8 +241,10 @@ void TextureApp::v_Render()
 	Model  = XMMatrixRotationAxis( rotaxis, -rot);
 	Model *= XMMatrixScaling( 1.3f, 1.3f, 1.3f );
 
-	MVP = (Model * View * Proj);
-	cbMatrix.MVP = XMMatrixTranspose(MVP);	
+	cbMatrix.model = XMMatrixTranspose(Model);
+	cbMatrix.view  = XMMatrixTranspose(View);
+	cbMatrix.proj  = XMMatrixTranspose(Proj);
+
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -304,48 +333,48 @@ bool TextureApp::init_device()
 
 bool TextureApp::init_buffer()
 {
-	HRESULT result;
+	HRESULT hr;
 
 	///////////////////////////Index Buffer ////////////////////////////////
 	m_VertexCount = 24;
 	Vertex VertexData[] =
 	{
 		// Front Face
-		Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex(-1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex( 1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-		Vertex( 1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
+		Vertex(-1.0f, -1.0f, -1.0f,  0.0f, 1.0f,-1.0f,  -1.0f, -1.0f),
+		Vertex(-1.0f,  1.0f, -1.0f,  0.0f, 0.0f,-1.0f,   1.0f, -1.0f),
+		Vertex( 1.0f,  1.0f, -1.0f,  1.0f, 0.0f, 1.0f,   1.0f, -1.0f),
+		Vertex( 1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 1.0f,  -1.0f, -1.0f),
 
 		// Back Face
-		Vertex(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f),
-		Vertex( 1.0f, -1.0f, 1.0f, 0.0f, 1.0f),
-		Vertex( 1.0f,  1.0f, 1.0f, 0.0f, 0.0f),
-		Vertex(-1.0f,  1.0f, 1.0f, 1.0f, 0.0f),
-
-		// Top Face
-		Vertex(-1.0f, 1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex(-1.0f, 1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex( 1.0f, 1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex( 1.0f, 1.0f, -1.0f, 1.0f, 1.0f),
-
-		// Bottom Face
-		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-		Vertex( 1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex( 1.0f, -1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex(-1.0f, -1.0f,  1.0f, 1.0f, 0.0f),
-
-		// Left Face
-		Vertex(-1.0f, -1.0f,  1.0f, 0.0f, 1.0f),
-		Vertex(-1.0f,  1.0f,  1.0f, 0.0f, 0.0f),
-		Vertex(-1.0f,  1.0f, -1.0f, 1.0f, 0.0f),
-		Vertex(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f),
-
-		// Right Face
-		Vertex( 1.0f, -1.0f, -1.0f, 0.0f, 1.0f),
-		Vertex( 1.0f,  1.0f, -1.0f, 0.0f, 0.0f),
-		Vertex( 1.0f,  1.0f,  1.0f, 1.0f, 0.0f),
-		Vertex( 1.0f, -1.0f,  1.0f, 1.0f, 1.0f),
-	};
+		Vertex(-1.0f, -1.0f, 1.0f,  1.0f, 1.0f,-1.0f,   -1.0f, 1.0f),
+		Vertex( 1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 1.0f,   -1.0f, 1.0f),
+		Vertex( 1.0f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,    1.0f, 1.0f),
+		Vertex(-1.0f,  1.0f, 1.0f,  1.0f, 0.0f,-1.0f,    1.0f, 1.0f),
+								    				   
+		// Top Face				    				   
+		Vertex(-1.0f, 1.0f, -1.0f,  0.0f, 1.0f,-1.0f,   1.0f, -1.0f),
+		Vertex(-1.0f, 1.0f,  1.0f,  0.0f, 0.0f,-1.0f,   1.0f,  1.0f),
+		Vertex( 1.0f, 1.0f,  1.0f,  1.0f, 0.0f, 1.0f,   1.0f,  1.0f),
+		Vertex( 1.0f, 1.0f, -1.0f,  1.0f, 1.0f, 1.0f,   1.0f, -1.0f),
+								    
+		// Bottom Face								    
+		Vertex(-1.0f, -1.0f, -1.0f,  1.0f, 1.0f,-1.0f,   -1.0f, -1.0f),
+		Vertex( 1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 1.0f,   -1.0f, -1.0f),
+		Vertex( 1.0f, -1.0f,  1.0f,  0.0f, 0.0f, 1.0f,   -1.0f,  1.0f),
+		Vertex(-1.0f, -1.0f,  1.0f,  1.0f, 0.0f,-1.0f,   -1.0f,  1.0f),
+									  				    
+		// Left Face				  				    
+		Vertex(-1.0f, -1.0f,  1.0f,  0.0f, 1.0f,-1.0f,   -1.0f,  1.0f),
+		Vertex(-1.0f,  1.0f,  1.0f,  0.0f, 0.0f,-1.0f,    1.0f,  1.0f),
+		Vertex(-1.0f,  1.0f, -1.0f,  1.0f, 0.0f,-1.0f,    1.0f, -1.0f),
+		Vertex(-1.0f, -1.0f, -1.0f,  1.0f, 1.0f,-1.0f,   -1.0f, -1.0f),
+									  				    
+		// Right Face				  				    
+		Vertex( 1.0f, -1.0f, -1.0f,  0.0f, 1.0f, 1.0f,   -1.0f, -1.0f),
+		Vertex( 1.0f,  1.0f, -1.0f,  0.0f, 0.0f, 1.0f,    1.0f, -1.0f),
+		Vertex( 1.0f,  1.0f,  1.0f,  1.0f, 0.0f, 1.0f,    1.0f,  1.0f),
+		Vertex( 1.0f, -1.0f,  1.0f,  1.0f, 1.0f, 1.0f,   -1.0f,  1.0f),
+	};												    
 
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC VertexBufferDesc;
@@ -363,11 +392,8 @@ bool TextureApp::init_buffer()
 	VBO.SysMemSlicePitch = 0;
 
 	// Now create the vertex buffer.
-	result = m_pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-	if(FAILED(result))
-	{
-		return false;
-	}
+	hr = m_pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
+    DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 	unsigned int IndexData[] = {
@@ -413,34 +439,42 @@ bool TextureApp::init_buffer()
 	IBO.SysMemPitch      = 0;
 	IBO.SysMemSlicePitch = 0;
 
-	result = m_pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
-	if(FAILED(result))
-	{
-		return false;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////
-
-	// Set vertex buffer stride and offset.=
-	unsigned int stride;
-	unsigned int offset;
-	stride = sizeof(Vertex); 
-	offset = 0;
-	m_pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
+	hr = m_pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
+    DebugHR(hr);
 
 	////////////////////////////////Const Buffer//////////////////////////////////////
 
 	D3D11_BUFFER_DESC mvpDesc;	
 	ZeroMemory(&mvpDesc, sizeof(D3D11_BUFFER_DESC));
 	mvpDesc.Usage          = D3D11_USAGE_DEFAULT;
-	mvpDesc.ByteWidth      = sizeof(XMMATRIX);
+	mvpDesc.ByteWidth      = sizeof(MatrixBuffer);
 	mvpDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags      = 0;
-	m_pD3D11Device->CreateBuffer(&mvpDesc, NULL, &m_pMVPBuffer);
+	hr = m_pD3D11Device->CreateBuffer(&mvpDesc, NULL, &m_pMVPBuffer);
+	DebugHR(hr);
+
+	D3D11_BUFFER_DESC cbLightDesc;
+	ZeroMemory(&cbLightDesc, sizeof(D3D11_BUFFER_DESC));
+	cbLightDesc.Usage          = D3D11_USAGE_DYNAMIC;
+	cbLightDesc.ByteWidth      = sizeof(LightBuffer);
+	cbLightDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
+	cbLightDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cbLightDesc.MiscFlags      = 0;
+	hr = m_pD3D11Device->CreateBuffer(&cbLightDesc, NULL, &m_pLightBuffer);
+	DebugHR(hr);
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	hr = m_pD3D11DeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	DebugHR(hr);
+	LightBuffer *plightData = (LightBuffer *)mappedResource.pData;
+
+	plightData->ambient  = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	plightData->diffuse  = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	plightData->lightDir = XMFLOAT3(0.25f, 0.5f, -1.0f);
+	plightData->padding  = 0.0f;
+	m_pD3D11DeviceContext->Unmap(m_pLightBuffer, 0);
+
 
 	return true;
 }
@@ -472,7 +506,7 @@ bool TextureApp::init_shader()
 {
 	HRESULT result;
 
-	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[2];
+	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[3];
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
 	pInputLayoutDesc[0].SemanticIndex        = 0;
 	pInputLayoutDesc[0].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -485,9 +519,17 @@ bool TextureApp::init_shader()
 	pInputLayoutDesc[1].SemanticIndex        = 0;
 	pInputLayoutDesc[1].Format               = DXGI_FORMAT_R32G32_FLOAT;
 	pInputLayoutDesc[1].InputSlot            = 0;
-	pInputLayoutDesc[1].AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+	pInputLayoutDesc[1].AlignedByteOffset    = 12;
 	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	pInputLayoutDesc[1].InstanceDataStepRate = 0;
+
+	pInputLayoutDesc[2].SemanticName         = "NORMAL";
+	pInputLayoutDesc[2].SemanticIndex        = 0;
+	pInputLayoutDesc[2].Format               = DXGI_FORMAT_R32G32_FLOAT;
+	pInputLayoutDesc[2].InputSlot            = 0;
+	pInputLayoutDesc[2].AlignedByteOffset    = 20;
+	pInputLayoutDesc[2].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	pInputLayoutDesc[2].InstanceDataStepRate = 0;
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
 	TestShader.init(m_pD3D11Device, GetHwnd());
