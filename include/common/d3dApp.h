@@ -197,15 +197,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	switch(umessage)
 	{
-	    case WM_KEYDOWN: 
-	    	switch (wparam) 
-	    	{ 
-	    	    case VK_ESCAPE:
-	    		{
-	    			PostQuitMessage(0);
-	    			return 0;
-	    		}
-	    	} 
 	    case WM_DESTROY:
 	    {
 	    		PostQuitMessage(0);
