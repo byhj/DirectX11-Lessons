@@ -184,7 +184,7 @@ bool TextureApp::v_InitD3D()
 	font.init(m_pD3D11Device);
 	fps = 0.0f;
 	timer.Reset();
-
+	camYaw = 0.0f;
 	if( !InitDirectInput(GetAppInst()) )
 	{
 		MessageBox(0, L"Direct Input Initialization - Failed",
@@ -202,13 +202,8 @@ bool TextureApp::InitDirectInput(HINSTANCE hInstance)
 		(void**)&DirectInput,
 		NULL); 
 
-	hr = DirectInput->CreateDevice(GUID_SysKeyboard,
-		&m_pDIKeyboard,
-		NULL);
-
-	hr = DirectInput->CreateDevice(GUID_SysMouse,
-		&m_pDIMouse,
-		NULL);
+	hr = DirectInput->CreateDevice(GUID_SysKeyboard, &m_pDIKeyboard, NULL);
+	hr = DirectInput->CreateDevice(GUID_SysMouse, &m_pDIMouse, NULL);
 
 	hr = m_pDIKeyboard->SetDataFormat(&c_dfDIKeyboard);
 	hr = m_pDIKeyboard->SetCooperativeLevel(GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
@@ -236,6 +231,8 @@ void TextureApp::DetectInput(double time)
 
 	float speed = 15.0f * time;
 
+	//Enter ADSW to move camera left right back forword
+
 	if(keyboardState[DIK_A] & 0x80)
 	{
 		moveLeftRight -= speed;
@@ -252,10 +249,10 @@ void TextureApp::DetectInput(double time)
 	{
 		moveBackForward -= speed;
 	}
+	//Use mouse to change the rotation matrix
 	if((mouseCurrState.lX != mouseLastState.lX) || (mouseCurrState.lY != mouseLastState.lY))
 	{
-		camYaw += mouseLastState.lX * 0.001f;
-
+		camYaw += mouseCurrState.lX * 0.001f;
 		camPitch += mouseCurrState.lY * 0.001f;
 
 		mouseLastState = mouseCurrState;
@@ -268,6 +265,7 @@ void TextureApp::DetectInput(double time)
 
 void TextureApp::UpdateCamera()
 {	
+	//Rotating the Camera by euler angle
 	camRotationMatrix = XMMatrixRotationRollPitchYaw(camPitch, camYaw, 0);
 	camTarget = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
 	camTarget = XMVector3Normalize(camTarget);
@@ -275,10 +273,12 @@ void TextureApp::UpdateCamera()
 	XMMATRIX RotateYTempMatrix;
 	RotateYTempMatrix = XMMatrixRotationY(camYaw);
 
+	//Update the camera vector
 	camRight = XMVector3TransformCoord(DefaultRight, RotateYTempMatrix);
 	camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
 	camForward = XMVector3TransformCoord(DefaultForward, RotateYTempMatrix);
 
+	//Moving the Camera
 	camPosition += moveLeftRight*camRight;
 	camPosition += moveBackForward*camForward;
 
@@ -287,6 +287,7 @@ void TextureApp::UpdateCamera()
 
 	camTarget = camPosition + camTarget;	
 
+	//Set the camera matrix
 	camView = XMMatrixLookAtLH( camPosition, camTarget, camUp );
 
 }
@@ -511,11 +512,11 @@ bool TextureApp::init_buffer()
 	DebugHR(hr);
 	LightBuffer *plightData = (LightBuffer *)mappedResource.pData;
 
-	plightData->ambient   = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	plightData->ambient   = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	plightData->diffuse   = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	plightData->lightDir  = XMFLOAT3(0.25f, 0.5f, -1.0f);
 	plightData->padding1  = 0.0f;
-	plightData->lightPos  = XMFLOAT3(1.0f, 1.0f, 3.0f);
+	plightData->lightPos  = XMFLOAT3(1.0f, 1.0f, 5.0f);
 	plightData->range     = 100.0f;
 	plightData->att       = XMFLOAT3(0.0f, 0.2f, 0.0f);
     plightData->padding2  = 0.0f;
