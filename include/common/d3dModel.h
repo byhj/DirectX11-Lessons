@@ -25,6 +25,8 @@ public:
 	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
 	{
 		ModelShader.use(pD3D11DeviceContext);
+		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+
 		for (int i = 0; i < this->meshes.size(); i++)
 			this->meshes[i].Render(pD3D11DeviceContext, MVP);
 	}
@@ -43,7 +45,8 @@ public:
 	//Load the texture for material
 	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
-	void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
+	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
+	ID3D11ShaderResourceView * TextureFromFile(const char* path, std::string directory);
 
 private:
 
@@ -54,8 +57,10 @@ private:
 
 	ID3D11Device *pD3D11Device;
 	ID3D11DeviceContext *pD3D11DeviceContext; 
+	ID3D11ShaderResourceView *m_pTexture;
 	HWND hWnd;
 	Shader ModelShader;
+	ID3D11SamplerState   *m_pTexSamplerState;
 };
 
 void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
@@ -64,6 +69,27 @@ void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 	this->pD3D11DeviceContext = pD3D11DeviceContext;
 	this->hWnd = hWnd;
 	init_shader(pD3D11Device, hWnd);
+
+	// Create a texture sampler state description.
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	HRESULT hr;
+	// Create the texture sampler state.
+	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
+	DebugHR(hr);
 }
 
 void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
@@ -144,7 +170,7 @@ std::vector<Texture>  D3DModel::loadMaterialTextures(aiMaterial* mat, aiTextureT
 		if (!skip)
 		{   // If texture hasn't been loaded already, load it
 			Texture texture;
-			texture.id = TextureFromFile(str.C_Str(), this->directory);
+			texture.pTexture = TextureFromFile(str.C_Str(), this->directory);
 			texture.type = typeName;
 			texture.path = str;
 			textures.push_back(texture);
@@ -219,6 +245,7 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		// 1. Diffuse maps
 		std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		
 		// 2. Specular maps
 		std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
@@ -247,8 +274,19 @@ void D3DModel::processNode(aiNode* node, const aiScene* scene)
 
 }
 
-int TextureFromFile(const char* path, std::string directory)
+ID3D11ShaderResourceView * D3DModel::TextureFromFile(const char* path, std::string directory)
 {
-	return 0;
+	//Generate texture ID and load texture data 
+	std::string filename = std::string(path);
+	std::string texFile = directory + '/' + filename;
+
+	std::wstring stemp = std::wstring(texFile.begin(), texFile.end());
+	LPCWSTR sw = stemp.c_str();
+
+	HRESULT hr;
+	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, sw, NULL,NULL, &m_pTexture, NULL);
+	DebugHR(hr);
+	return m_pTexture;
 }
+
 #endif

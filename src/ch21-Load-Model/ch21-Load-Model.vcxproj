@@ -68,8 +68,12 @@
     <ClInclude Include="..\..\include\common\d3dModel.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cubemap.psh" />
+    <None Include="cubemap.vsh" />
     <None Include="model.psh" />
     <None Include="model.vsh" />
+    <None Include="triangle.psh" />
+    <None Include="triangle.vsh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ch21-Load-Model.cpp" />

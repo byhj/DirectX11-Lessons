@@ -26,11 +26,23 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="cubemap.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemap.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="triangle.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="triangle.psh">
+      <Filter>Resource Files</Filter>
+    </None>
     <None Include="model.vsh">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files</Filter>
     </None>
     <None Include="model.psh">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

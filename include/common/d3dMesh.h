@@ -31,7 +31,7 @@ struct Vertex {
 };
 
 struct Texture {
-	unsigned int id;
+	ID3D11ShaderResourceView *pTexture;
 	std::string type;
 	aiString path;
 };
@@ -169,6 +169,26 @@ void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
 }
 void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
 {	
+
+	// Bind appropriate textures
+	int diffuseNr = 1;
+	int specularNr = 1;
+	for (int i = 0; i < this->textures.size(); i++)
+	{
+		// Retrieve texture number (the N in diffuse_textureN)
+		std::stringstream ss;
+		std::string number;
+		std::string name = this->textures[i].type;
+		if (name == "texture_diffuse")
+			ss << diffuseNr++; // Transfer GLuint to stream
+		else if (name == "texture_specular")
+			ss << specularNr++; // Transfer GLuint to stream
+		number = ss.str();	
+	
+		pD3D11DeviceContext->PSSetShaderResources( i, 1, &textures[i].pTexture);
+		// Now set the sampler to the correct texture unit
+	}
+
 	// Set vertex buffer stride and offset.=
 	unsigned int stride;
 	unsigned int offset;
@@ -180,8 +200,6 @@ void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
 	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &MVP, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 
-	//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pShaderResourceView);
-	//pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState);
 	pD3D11DeviceContext->RSSetState(m_pRasterState);
 
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

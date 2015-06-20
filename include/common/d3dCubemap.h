@@ -192,7 +192,6 @@ void D3DSkymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 	HRESULT result;
 
-	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[1];
 	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[3];
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
 	pInputLayoutDesc[0].SemanticIndex        = 0;
