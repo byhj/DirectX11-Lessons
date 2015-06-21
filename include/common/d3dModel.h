@@ -241,6 +241,8 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		// Diffuse: texture_diffuseN
 		// Specular: texture_specularN
 		// Normal: texture_normalN
+		float blend;
+		material->Get(AI_MATKEY_OPACITY , blend);
 
 		// 1. Diffuse maps
 		std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");

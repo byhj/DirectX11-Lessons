@@ -34,6 +34,7 @@ struct Texture {
 	ID3D11ShaderResourceView *pTexture;
 	std::string type;
 	aiString path;
+	bool transparent;
 };
 
 class D3DMesh {
