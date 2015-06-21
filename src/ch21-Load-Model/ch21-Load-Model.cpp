@@ -1,6 +1,3 @@
-
-
-
 #ifdef _DEBUG
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
@@ -377,6 +374,8 @@ void TextureApp::v_Render()
 	XMMATRIX MVP = XMMatrixTranspose(Model * camView * camProjection);
 
 	ObjModel.Render(m_pD3D11DeviceContext, MVP);
+
+	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
 	//////////////////////////////////////SkyBox/////////////////////////////////////////
 

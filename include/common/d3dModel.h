@@ -25,10 +25,22 @@ public:
 	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
 	{
 		ModelShader.use(pD3D11DeviceContext);
+
 		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
 		for (int i = 0; i < this->meshes.size(); i++)
+		{
+			   float blendFactor[] = {0.4f, 0.4f, 0.4f, 0.3f};
+		   if (this->meshes[i].mat.ambient.w < 1.0f)
+			 pD3D11DeviceContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
+		   //"fine-tune" the blending equation
+	
+			pD3D11DeviceContext->UpdateSubresource(m_pMatBuffer, 0, NULL, &this->meshes[i].mat, 0, 0 );
+			pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pMatBuffer);
 			this->meshes[i].Render(pD3D11DeviceContext, MVP);
+
+		   pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
+		}
 	}
 	
 	//Loading the model form file if support this format
@@ -61,6 +73,8 @@ private:
 	HWND hWnd;
 	Shader ModelShader;
 	ID3D11SamplerState   *m_pTexSamplerState;
+	ID3D11Buffer *m_pMatBuffer;
+	ID3D11BlendState* Transparency;
 };
 
 void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
@@ -90,6 +104,33 @@ void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 	// Create the texture sampler state.
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
 	DebugHR(hr);
+
+	///////////////////////////////////////////////////////////////////
+	D3D11_BUFFER_DESC cbMaterialDesc;	
+	ZeroMemory(&cbMaterialDesc, sizeof(D3D11_BUFFER_DESC));
+	cbMaterialDesc.Usage          = D3D11_USAGE_DEFAULT;
+	cbMaterialDesc.ByteWidth      = sizeof(Material);
+	cbMaterialDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
+	cbMaterialDesc.CPUAccessFlags = 0;
+	cbMaterialDesc.MiscFlags      = 0;
+	hr = pD3D11Device->CreateBuffer(&cbMaterialDesc, NULL, &m_pMatBuffer);
+	DebugHR(hr);
+
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory( &blendDesc, sizeof(blendDesc) );
+	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
+	ZeroMemory( &rtbd, sizeof(rtbd) );
+	rtbd.BlendEnable			 = true;
+	rtbd.SrcBlend				 = D3D11_BLEND_SRC_COLOR;
+	rtbd.DestBlend				 = D3D11_BLEND_BLEND_FACTOR;
+	rtbd.BlendOp				 = D3D11_BLEND_OP_ADD;
+	rtbd.SrcBlendAlpha			 = D3D11_BLEND_ONE;
+	rtbd.DestBlendAlpha			 = D3D11_BLEND_ZERO;
+	rtbd.BlendOpAlpha			 = D3D11_BLEND_OP_ADD;
+	rtbd.RenderTargetWriteMask	 = D3D10_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.RenderTarget[0] = rtbd;
+	pD3D11Device->CreateBlendState(&blendDesc, &Transparency);
 }
 
 void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
@@ -180,12 +221,28 @@ std::vector<Texture>  D3DModel::loadMaterialTextures(aiMaterial* mat, aiTextureT
 	return textures;
 }
 
+void setColor(aiColor3D &c, XMFLOAT4 &m)
+{
+	m.x = c[0];
+	m.y = c[1];
+	m.z = c[2];
+}
+
+void setBlend(float blend, Material &mat)
+{
+	mat.ambient.w = blend;
+	mat.specular.w = blend;
+	mat.diffuse.w = blend;
+	mat.emissive.w = blend;
+}
+
 D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	//Mesh Data to fill
 	std::vector<Vertex> vertices;
 	std::vector<unsigned long> indices;
 	std::vector<Texture> textures;
+	std::vector<Material> MaterialData;
 
 	// Walk through each of the mesh's vertices
 	for (int i = 0; i < mesh->mNumVertices; i++)
@@ -230,10 +287,12 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		for (int j = 0; j < face.mNumIndices; j++)
 			indices.push_back(face.mIndices[j]);
 	}
+	Material mat;
 
 	// Process materials
 	if (mesh->mMaterialIndex >= 0)
 	{
+		int tt = mesh->mMaterialIndex;
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 		// We assume a convention for sampler names in the shaders. Each diffuse texture should be named
 		// as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
@@ -241,20 +300,44 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		// Diffuse: texture_diffuseN
 		// Specular: texture_specularN
 		// Normal: texture_normalN
+
+		aiColor3D ambient;
+	    if(AI_SUCCESS == material->Get(AI_MATKEY_COLOR_AMBIENT, ambient) )
+			setColor(ambient, mat.ambient);
+		//std::cout << mat.ambient.w << std::endl;
+	    aiColor3D diffuse;
+		if(AI_SUCCESS == material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse) )
+			setColor(diffuse, mat.diffuse);
+
+		aiColor3D  speucular;
+		if(AI_SUCCESS == material->Get(AI_MATKEY_COLOR_SPECULAR, speucular) )
+			setColor(speucular, mat.specular);
+
+		aiColor3D  emissive;
+		if(AI_SUCCESS == material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive) )
+			setColor(emissive, mat.emissive);
+
+		//float shininess = 0.0;
+		//if(AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininess))
+		//	mat.shininess = shininess;
+		
 		float blend;
 		material->Get(AI_MATKEY_OPACITY , blend);
+		if (blend < 1.0f)
+			setBlend(blend, mat);
+		//std::cout << mat.ambient.w << std::endl;
 
 		// 1. Diffuse maps
 		std::vector<Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-		
+
 		// 2. Specular maps
 		std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
 	// Return a mesh object created from the extracted mesh data
-	return D3DMesh(vertices, indices, textures, pD3D11Device, pD3D11DeviceContext, hWnd);
+	return D3DMesh(vertices, indices, textures, mat, pD3D11Device, pD3D11DeviceContext, hWnd);
 }
 
 void D3DModel::processNode(aiNode* node, const aiScene* scene)

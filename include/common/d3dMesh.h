@@ -1,6 +1,10 @@
 #ifndef D3DMESH_H
 #define D3DMESH_H
 
+#ifdef _WIN32
+#define _XM_NO_INTRINSICS_
+#endif 
+
 #include <d3d11.h>
 #include <D3DX11.h>
 #include <xnamath.h>
@@ -30,11 +34,53 @@ struct Vertex {
 	XMFLOAT2 TexCoords;
 };
 
+
+
+struct Material
+{
+	Material()
+	{
+	   ambient   = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	   diffuse   = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	   specular  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	   emissive  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	  // shininess = 32.0f;
+	}
+	Material (const Material &mat)
+	{
+		    this->ambient   = mat.ambient  ;
+			this->diffuse   = mat.diffuse  ;
+			this->specular  = mat.specular ;
+			this->emissive  = mat.emissive ;
+			//this->shininess = mat.shininess;
+	}
+	Material &operator = (const Material &mat)
+	{
+		this->ambient   = mat.ambient  ;
+		this->diffuse   = mat.diffuse  ;
+		this->specular  = mat.specular ;
+		this->emissive  = mat.emissive ;
+		//this->shininess = mat.shininess;
+
+		return *this;
+	}
+
+	XMFLOAT4 ambient;
+	XMFLOAT4 diffuse;
+	XMFLOAT4 specular;
+	XMFLOAT4 emissive;
+	//float shininess;
+};
+
 struct Texture {
+	Texture()
+	{
+		pTexture      = NULL;
+	}
+
 	ID3D11ShaderResourceView *pTexture;
 	std::string type;
 	aiString path;
-	bool transparent;
 };
 
 class D3DMesh {
@@ -43,16 +89,17 @@ public:
 	std::vector<Vertex> VertexData;
 	std::vector<unsigned long> IndexData;
 	std::vector<Texture> textures;
+	Material mat;
 
 	D3DMesh() {}
 	// Constructor
-	D3DMesh(std::vector<Vertex> vertices, std::vector<unsigned long> indices, std::vector<Texture> textures,
+	D3DMesh(std::vector<Vertex> vertices, std::vector<unsigned long> indices, std::vector<Texture> textures, Material mat,
 	        ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
 	{
 		this->VertexData = vertices;
 		this->IndexData = indices;
 		this->textures = textures;
-
+		this->mat = mat;
 		// Now that we have all the required data, set the vertex buffers and its attribute pointers.
 		this->init_Mesh(pD3D11Device, pD3D11DeviceContext, hWnd);
 	}
@@ -72,6 +119,15 @@ public:
 	};
 	MatrixBuffer cbMatrix;
 
+	struct MaterialBuffer
+	{
+		XMFLOAT4 ambient;
+		XMFLOAT4 diffuse;
+		XMFLOAT4 specular;
+		XMFLOAT4 emissive;
+		float   shininess;
+	};
+
 	ID3D11Buffer *m_pIndexBuffer;
 	ID3D11Buffer *m_pVertexBuffer;
 	ID3D11Buffer *m_pMVPBuffer;
@@ -84,7 +140,7 @@ public:
 	ID3D11Texture2D          *m_pDepthStencilBuffer;
 	ID3D11RasterizerState    *m_pRasterState;
 	ID3D11SamplerState       *m_pTexSamplerState;
-
+   
 };
 
 
