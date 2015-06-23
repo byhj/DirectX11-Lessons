@@ -32,6 +32,8 @@ struct Vertex {
 	XMFLOAT3 Normal;
 	// TexCoords
 	XMFLOAT2 TexCoords;
+
+	XMFLOAT3 tangent;
 };
 
 

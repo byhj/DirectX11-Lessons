@@ -136,7 +136,7 @@ void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 	HRESULT hr;
-	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[3];
+	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[4];
 
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
 	pInputLayoutDesc[0].SemanticIndex        = 0;
@@ -161,6 +161,14 @@ void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	pInputLayoutDesc[2].AlignedByteOffset    = 24;
 	pInputLayoutDesc[2].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	pInputLayoutDesc[2].InstanceDataStepRate = 0;
+
+	pInputLayoutDesc[3].SemanticName         = "TANGENT";
+	pInputLayoutDesc[3].SemanticIndex        = 0;
+	pInputLayoutDesc[3].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	pInputLayoutDesc[3].InputSlot            = 0;
+	pInputLayoutDesc[3].AlignedByteOffset    = 32;
+	pInputLayoutDesc[3].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	pInputLayoutDesc[3].InstanceDataStepRate = 0;
 
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
@@ -244,23 +252,28 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Texture> textures;
 	std::vector<Material> MaterialData;
 
+	XMFLOAT3 v[3];
+	XMFLOAT2 uv[3];
+
 	// Walk through each of the mesh's vertices
-	for (int i = 0; i < mesh->mNumVertices; i++)
+	for (int i = 0, int j = 0; i < mesh->mNumVertices; i++, j++)
 	{
 		Vertex vertex;
-		XMFLOAT3 temp; // We declare a placeholder std::vector since assimp uses its own std::vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder XMFloat3 first.
+		XMFLOAT3 pos; // We declare a placeholder std::vector since assimp uses its own std::vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder XMFloat3 first.
+		XMFLOAT3 normal;
 
 		// Positions
-		temp.x = mesh->mVertices[i].x;
-		temp.y = mesh->mVertices[i].y;
-		temp.z = mesh->mVertices[i].z;
-		vertex.Position = temp;
+		pos.x = mesh->mVertices[i].x;
+		pos.y = mesh->mVertices[i].y;
+		pos.z = mesh->mVertices[i].z;
+		vertex.Position = pos;
+
 
 		// Normals
-		temp.x = mesh->mNormals[i].x;
-		temp.y = mesh->mNormals[i].y;
-		temp.z = mesh->mNormals[i].z;
-		vertex.Normal = temp;
+		normal.x = mesh->mNormals[i].x;
+		normal.y = mesh->mNormals[i].y;
+		normal.z = mesh->mNormals[i].z;
+		vertex.Normal = normal;
 
 		// Texture Coordinates
 		if (mesh->mTextureCoords[0]) // Does the mesh contain texture coordinates?
@@ -274,6 +287,21 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		}
 		else
 			vertex.TexCoords = XMFLOAT2(0.0f, 0.0f);
+
+		uv[j] = vertex.TexCoords;
+		v[j]  = pos;
+		if ( (j+1) % 3 == 0)
+		{
+			XMFLOAT3 deltaPos1 = v[1] - v[0];
+			XMFLOAT3 deltaPos2 = v[2] - v[1];
+
+			XMFLOAT2 deltaUV1 = uv[1] - uv[0];
+			XMFLOAT2 deltaUV2 = uv[2] - uv[1];
+			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+			XMFLOAT3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
+			XMFLOAT3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
+            j = 0;
+		}
 
 		//Process one Vertex
 		vertices.push_back(vertex);
@@ -334,6 +362,11 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		// 2. Specular maps
 		std::vector<Texture> specularMaps = this->loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+
+		// 3.normal maps
+		std::vector<Texture> normalMaps = this->loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 	}
 
 	// Return a mesh object created from the extracted mesh data

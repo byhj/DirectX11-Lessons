@@ -99,7 +99,7 @@ void D3DRenderSystem::init_object()
 	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
 	skymap.init_shader(m_pD3D11Device, GetHwnd());
 
-	camera.InitDirectInput(GetAppInst(), GetHwnd());
+	//camera.InitDirectInput(GetAppInst(), GetHwnd());
 
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
@@ -127,7 +127,7 @@ void D3DRenderSystem::v_Render()
 
 	skymap.Render(m_pD3D11DeviceContext, MVP);
 
-	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
+	//camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
 	//////////////////////////////////////Scene///////////////////////////////////
 	XMMATRIX meshWorld = XMMatrixIdentity();
 	//Define cube1's world space matrix
