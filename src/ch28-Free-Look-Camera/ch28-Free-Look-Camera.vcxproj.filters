@@ -15,15 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="triangle.psh">
-      <Filter>Source Files</Filter>
+    <None Include="cubemap.vsh">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="triangle.vsh">
-      <Filter>Source Files</Filter>
+    <None Include="model.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemap.psh">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch18-First-Camera.cpp">
+    <ClCompile Include="ch22-Normal-Mapping.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>

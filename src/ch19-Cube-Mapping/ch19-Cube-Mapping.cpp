@@ -171,8 +171,8 @@ private:
 	XMMATRIX Translation;
 	float rot;
 
-	Timer timer;
-	Font font;
+	D3DTimer timer;
+	D3DFont font;
 	float fps;
 };
 

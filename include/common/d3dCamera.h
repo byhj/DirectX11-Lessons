@@ -7,7 +7,7 @@
 
 class D3DCamera
 {
-private:
+public:
 	D3DCamera()
 	{
 		DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
@@ -18,13 +18,31 @@ private:
 		moveBackForward = 0.0f;
 		camYaw = 0.0f;
 		camPitch = 0.0f;
+		camUp  = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+		camPosition    = XMVectorSet( 0.0f, 5.0f, -8.0f, 0.0f );
+		camTarget      = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
+		camView        = XMMatrixLookAtLH(camPosition, camTarget, camUp );
+
 		rot = 0.01f;
 	}
-	bool InitDirectInput(HINSTANCE hInstance);
-	void DetectInput(double time);
+	bool InitDirectInput(HINSTANCE hInstance , HWND hWnd);
+	void DetectInput(double time , HWND hWnd);
 	void UpdateCamera();
 
-public:
+	XMMATRIX GetViewMatrix()
+	{
+		return camView;
+	}
+	XMVECTOR GetCamPos()
+	{
+		return camPosition;
+	}
+	XMVECTOR GetCamTarget()
+	{
+		return camTarget;
+	}
+
+private:
 	IDirectInputDevice8* m_pDIKeyboard;
 	IDirectInputDevice8* m_pDIMouse;
 	DIMOUSESTATE mouseLastState;
@@ -50,7 +68,7 @@ public:
 	float camPitch ;
 };
 
-bool D3DCamera::InitDirectInput(HINSTANCE hInstance)
+bool D3DCamera::InitDirectInput(HINSTANCE hInstance, HWND hWnd)
 {
 	HRESULT hr;
 	hr = DirectInput8Create(hInstance,
@@ -63,15 +81,15 @@ bool D3DCamera::InitDirectInput(HINSTANCE hInstance)
 	hr = DirectInput->CreateDevice(GUID_SysMouse, &m_pDIMouse, NULL);
 
 	hr = m_pDIKeyboard->SetDataFormat(&c_dfDIKeyboard);
-	hr = m_pDIKeyboard->SetCooperativeLevel(GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	hr = m_pDIKeyboard->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 
 	hr = m_pDIMouse->SetDataFormat(&c_dfDIMouse);
-	hr = m_pDIMouse->SetCooperativeLevel(GetHwnd(), DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
+	hr = m_pDIMouse->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
 
 	return true;
 }
 
-void D3DCamera::DetectInput(double time)
+void D3DCamera::DetectInput(double time, HWND hWnd)
 {
 	DIMOUSESTATE mouseCurrState;
 
@@ -84,7 +102,7 @@ void D3DCamera::DetectInput(double time)
 	m_pDIKeyboard->GetDeviceState(sizeof(keyboardState),(LPVOID)&keyboardState);
 
 	if(keyboardState[DIK_ESCAPE] & 0x80)
-		PostMessage(GetHwnd(), WM_DESTROY, 0, 0);
+		PostMessage(hWnd, WM_DESTROY, 0, 0);
 
 	float speed = 15.0f * time;
 
@@ -124,16 +142,22 @@ void D3DCamera::UpdateCamera()
 {	
 	//Rotating the Camera by euler angle
 	camRotationMatrix = XMMatrixRotationRollPitchYaw(camPitch, camYaw, 0);
-	camTarget = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
-	camTarget = XMVector3Normalize(camTarget);
+	camTarget         = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
+	camTarget         = XMVector3Normalize(camTarget);
 
 	XMMATRIX RotateYTempMatrix;
 	RotateYTempMatrix = XMMatrixRotationY(camYaw);
 
+	//We only move the xz plane by axis y
 	//Update the camera vector
-	camRight = XMVector3TransformCoord(DefaultRight, RotateYTempMatrix);
-	camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
+	camRight   = XMVector3TransformCoord(DefaultRight, RotateYTempMatrix);
+	camUp      = XMVector3TransformCoord(camUp, RotateYTempMatrix);
 	camForward = XMVector3TransformCoord(DefaultForward, RotateYTempMatrix);
+
+	// Free-Look Camera
+	camRight = XMVector3TransformCoord(DefaultRight, camRotationMatrix);
+	camForward = XMVector3TransformCoord(DefaultForward, camRotationMatrix);
+	camUp = XMVector3Cross(camForward, camRight);
 
 	//Moving the Camera
 	camPosition += moveLeftRight*camRight;

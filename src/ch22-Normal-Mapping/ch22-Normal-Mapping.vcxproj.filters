@@ -15,22 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="model.psh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="model.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="triangle.psh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="triangle.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="cubemap.psh">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="cubemap.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.vsh">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -41,6 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\common\d3dCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

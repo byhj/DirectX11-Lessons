@@ -67,14 +67,13 @@
     <None Include="cubemap.vsh" />
     <None Include="model.psh" />
     <None Include="model.vsh" />
-    <None Include="triangle.psh" />
-    <None Include="triangle.vsh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ch22-Normal-Mapping.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\common\d3dCamera.h" />
+    <ClInclude Include="scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

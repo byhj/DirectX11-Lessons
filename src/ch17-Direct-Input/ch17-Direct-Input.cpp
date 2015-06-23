@@ -158,8 +158,8 @@ private:
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
 
-	Timer timer;
-	Font font;
+	D3DTimer timer;
+	D3DFont font;
 	float fps;
 };
 

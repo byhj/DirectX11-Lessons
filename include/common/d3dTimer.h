@@ -3,10 +3,10 @@
 
 #include <windows.h>
 
-class Timer
+class D3DTimer
 {
 public:
-	Timer();
+	D3DTimer();
 
 	float GetTotalTime() const;    //In seconds
 	float GetDeltaTime() const; //In seconds
@@ -30,7 +30,7 @@ private:
 
 };
 
-Timer::Timer(): m_SecondsPerCount(0.0),
+D3DTimer::D3DTimer(): m_SecondsPerCount(0.0),
 	            m_DeltaTime(-1.0), 
 	            m_BaseTime(0), 
 	            m_PausedTime(0),
@@ -45,7 +45,7 @@ Timer::Timer(): m_SecondsPerCount(0.0),
 
 // Returns the total time elapsed since Reset() was called, NOT counting any
 // time when the clock is stopped.
-float Timer::GetTotalTime() const
+float D3DTimer::GetTotalTime() const
 {
 	// If we are stopped, do not count the time that has passed since we stopped.
 	// Moreover, if we previously already had a pause, the distance 
@@ -77,12 +77,12 @@ float Timer::GetTotalTime() const
 	}
 }
 
-float Timer::GetDeltaTime() const
+float D3DTimer::GetDeltaTime() const
 {
 	return (float)m_DeltaTime;
 }
 
-void Timer::Reset()
+void D3DTimer::Reset()
 {
 	__int64 currTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
@@ -93,7 +93,7 @@ void Timer::Reset()
 	m_Stopped  = false;
 }
 
-void Timer::Start()
+void D3DTimer::Start()
 {
 	__int64 startTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
@@ -115,7 +115,7 @@ void Timer::Start()
 	}
 }
 
-void Timer::Stop()
+void D3DTimer::Stop()
 {
 	if( !m_Stopped )
 	{
@@ -127,7 +127,7 @@ void Timer::Stop()
 	}
 }
 
-void Timer::Count()
+void D3DTimer::Count()
 {
 	if( m_Stopped )
 	{

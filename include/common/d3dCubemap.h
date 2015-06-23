@@ -310,8 +310,10 @@ void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
 	SkymapShader.use(pD3D11DeviceContext);
 
 	pD3D11DeviceContext->OMSetDepthStencilState(m_pDSLessEqual, 0);
+
 	pD3D11DeviceContext->RSSetState(m_pRSCullNone);
 	pD3D11DeviceContext->DrawIndexed(NumSphereFaces * 3, 0, 0 );
+	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	pD3D11DeviceContext->OMSetDepthStencilState(NULL, 0);
 }

@@ -5,10 +5,10 @@
 #include <FW1FontWrapper.h>
 #pragma  comment(lib, "FW1FontWrapper.lib")
 
-class Font
+class D3DFont
 {
 public:
-	Font() {};
+	D3DFont() {};
 
     void init(ID3D11Device *pD3D11Device)
 	{
@@ -27,7 +27,7 @@ private:
 	IFW1FontWrapper *pFontWrapper;
 };
 
-void Font::drawFps(ID3D11DeviceContext *pD3D11DeviceContext, UINT fps)
+void D3DFont::drawFps(ID3D11DeviceContext *pD3D11DeviceContext, UINT fps)
 {
 	static WCHAR frameStr[255];
 	wsprintfW(frameStr, L"FPS: %u", fps);
@@ -35,7 +35,7 @@ void Font::drawFps(ID3D11DeviceContext *pD3D11DeviceContext, UINT fps)
 	pFontWrapper->DrawString(
 		pD3D11DeviceContext,
 		frameStr,// String
-		30.0f,// Font size
+		22.0f,// D3DFont size
 		10.0f,// X position
 		10.0f,// Y position
 		0xff0099ff,// Text color, 0xAaBbGgRr
@@ -43,16 +43,16 @@ void Font::drawFps(ID3D11DeviceContext *pD3D11DeviceContext, UINT fps)
 		);
 }
 
-void Font::drawText(ID3D11DeviceContext *pD3D11DeivceContext, WCHAR *text, 
+void D3DFont::drawText(ID3D11DeviceContext *pD3D11DeivceContext, WCHAR *text, 
 					float fontSize, float posX, float posY, float fontCoor)
 {
 
 	pFontWrapper->DrawString(
 		pD3D11DeivceContext,
 		text,// String
-		30.0f,// Font size
-		10.0f,// X position
-		10.0f,// Y position
+		fontSize,// D3DFont size
+		posX,// X position
+		posY,// Y position
 		0xff0099ff,// Text color, 0xAaBbGgRr
 		FW1_RESTORESTATE// Flags (for example FW1_RESTORESTATE to keep context states unchanged)
 		);
