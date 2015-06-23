@@ -37,8 +37,5 @@
     <ClInclude Include="..\..\include\common\d3dCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -298,6 +298,7 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 			XMFLOAT2 deltaUV1 = uv[1] - uv[0];
 			XMFLOAT2 deltaUV2 = uv[2] - uv[1];
 			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
 			XMFLOAT3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
 			XMFLOAT3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
             j = 0;
