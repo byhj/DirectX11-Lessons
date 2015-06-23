@@ -14,7 +14,6 @@
 #include "common/d3dModel.h"
 #include "common/d3dCamera.h"
 
-#include <dinput.h>
 
 class TextureApp: public D3DApp
 {
@@ -38,15 +37,6 @@ public:
 		m_pTexture            = NULL;
 		m_pTexSamplerState    = NULL;
 
-		DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-		DefaultRight   = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-		camForward     = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-		camRight       = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-		moveLeftRight   = 0.0f;
-		moveBackForward = 0.0f;
-		camYaw = 0.0f;
-		camPitch = 0.0f;
-		rot = 0.01f;
 	}
 
 	bool v_InitD3D();
@@ -114,12 +104,7 @@ private:
 	};
 	LightBuffer cbLight;
 
-	IDirectInputDevice8* m_pDIKeyboard;
-	IDirectInputDevice8* m_pDIMouse;
-	DIMOUSESTATE mouseLastState;
-	LPDIRECTINPUT8 DirectInput;
-	bool InitDirectInput(HINSTANCE hInstance);
-	void DetectInput(double time);
+
 
 	ID3D11InputLayout       *m_pInputLayout;
 	ID3D11VertexShader      *m_pVS;
@@ -143,25 +128,6 @@ private:
 
 	Shader TestShader;
 
-	XMVECTOR DefaultForward ;
-	XMVECTOR DefaultRight   ;
-	XMVECTOR camForward     ;
-	XMVECTOR camRight       ;
-
-	XMMATRIX camRotationMatrix;
-	XMMATRIX groundWorld;
-	XMMATRIX camView;
-	XMMATRIX camProjection;
-	XMMATRIX sphereWorld;
-	XMVECTOR camPosition;
-	XMVECTOR camTarget;
-	XMVECTOR camUp;
-
-	float moveLeftRight  ;
-	float moveBackForward;
-
-	float camYaw   ;
-	float camPitch ;
 	///////////////**************new**************////////////////////
 	D3DSkymap skymap;
 
@@ -174,6 +140,8 @@ private:
 	Font font;
 	float fps;
 	D3DModel ObjModel;
+	XMMATRIX groundWorld;
+	XMMATRIX sphereWorld;
 };
 
 CALL_MAIN(TextureApp);
@@ -203,104 +171,6 @@ bool TextureApp::v_InitD3D()
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/spaceCompound.obj");
 	return true;
-}
-bool TextureApp::InitDirectInput(HINSTANCE hInstance)
-{
-	HRESULT hr;
-	hr = DirectInput8Create(hInstance,
-		DIRECTINPUT_VERSION,
-		IID_IDirectInput8,
-		(void**)&DirectInput,
-		NULL); 
-
-	hr = DirectInput->CreateDevice(GUID_SysKeyboard, &m_pDIKeyboard, NULL);
-	hr = DirectInput->CreateDevice(GUID_SysMouse, &m_pDIMouse, NULL);
-
-	hr = m_pDIKeyboard->SetDataFormat(&c_dfDIKeyboard);
-	hr = m_pDIKeyboard->SetCooperativeLevel(GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-
-	hr = m_pDIMouse->SetDataFormat(&c_dfDIMouse);
-	hr = m_pDIMouse->SetCooperativeLevel(GetHwnd(), DISCL_BACKGROUND | DISCL_NOWINKEY | DISCL_FOREGROUND);
-
-	return true;
-}
-
-void TextureApp::DetectInput(double time)
-{
-	DIMOUSESTATE mouseCurrState;
-
-	BYTE keyboardState[256];
-
-	//Acquire current mouse and key state
-	m_pDIKeyboard->Acquire();
-	m_pDIMouse->Acquire();
-	m_pDIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState);
-	m_pDIKeyboard->GetDeviceState(sizeof(keyboardState),(LPVOID)&keyboardState);
-
-	if(keyboardState[DIK_ESCAPE] & 0x80)
-		PostMessage(GetHwnd(), WM_DESTROY, 0, 0);
-
-	float speed = 15.0f * time;
-
-	//Enter ADSW to move camera left right back forword
-
-	if(keyboardState[DIK_A] & 0x80)
-	{
-		moveLeftRight -= speed;
-	}
-	if(keyboardState[DIK_D] & 0x80)
-	{
-		moveLeftRight += speed;
-	}
-	if(keyboardState[DIK_W] & 0x80)
-	{
-		moveBackForward += speed;
-	}
-	if(keyboardState[DIK_S] & 0x80)
-	{
-		moveBackForward -= speed;
-	}
-	//Use mouse to change the rotation matrix
-	if((mouseCurrState.lX != mouseLastState.lX) || (mouseCurrState.lY != mouseLastState.lY))
-	{
-		camYaw += mouseCurrState.lX * 0.001f;
-		camPitch += mouseCurrState.lY * 0.001f;
-
-		mouseLastState = mouseCurrState;
-	}
-
-	UpdateCamera();
-
-	return;
-}
-
-void TextureApp::UpdateCamera()
-{	
-	//Rotating the Camera by euler angle
-	camRotationMatrix = XMMatrixRotationRollPitchYaw(camPitch, camYaw, 0);
-	camTarget = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
-	camTarget = XMVector3Normalize(camTarget);
-
-	XMMATRIX RotateYTempMatrix;
-	RotateYTempMatrix = XMMatrixRotationY(camYaw);
-
-	//Update the camera vector
-	camRight = XMVector3TransformCoord(DefaultRight, RotateYTempMatrix);
-	camUp = XMVector3TransformCoord(camUp, RotateYTempMatrix);
-	camForward = XMVector3TransformCoord(DefaultForward, RotateYTempMatrix);
-
-	//Moving the Camera
-	camPosition += moveLeftRight*camRight;
-	camPosition += moveBackForward*camForward;
-
-	moveLeftRight = 0.0f;
-	moveBackForward = 0.0f;
-
-	camTarget = camPosition + camTarget;	
-
-	//Set the camera matrix
-	camView = XMMatrixLookAtLH( camPosition, camTarget, camUp );
-
 }
 
 void TextureApp::UpdateScene()

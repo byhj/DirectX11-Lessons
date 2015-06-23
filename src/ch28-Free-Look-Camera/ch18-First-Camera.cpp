@@ -10,12 +10,8 @@
 #include "common/d3dShader.h"
 #include "common/d3dFont.h"
 #include "common/d3dTimer.h"
-#include "common/d3dCubemap.h"
-#include "common/d3dModel.h"
-#include "common/d3dCamera.h"
 
 #include <dinput.h>
-
 class TextureApp: public D3DApp
 {
 public:
@@ -54,20 +50,20 @@ public:
 
 	void v_Shutdown()
 	{
-		    ReleaseCOM(m_pInputLayout       )
-			ReleaseCOM(m_pVS                )
-			ReleaseCOM(m_pPS                )
-			ReleaseCOM(m_pSwapChain         )
-			ReleaseCOM(m_pD3D11Device       )
-			ReleaseCOM(m_pD3D11DeviceContext)
-			ReleaseCOM(m_pRenderTargetView  )
-			ReleaseCOM(m_pDepthStencilView  )
-			ReleaseCOM(m_pMVPBuffer         )
-			ReleaseCOM(m_pDepthStencilBuffer)
-			ReleaseCOM(m_pVertexBuffer      )
-			ReleaseCOM(m_pIndexBuffer       )
-			ReleaseCOM(m_pTexture           )   
-			ReleaseCOM(m_pTexSamplerState   ) 
+		ReleaseCOM(m_pInputLayout       )
+		ReleaseCOM(m_pVS                )
+		ReleaseCOM(m_pPS                )
+		ReleaseCOM(m_pSwapChain         )
+		ReleaseCOM(m_pD3D11Device       )
+		ReleaseCOM(m_pD3D11DeviceContext)
+		ReleaseCOM(m_pRenderTargetView  )
+		ReleaseCOM(m_pDepthStencilView  )
+		ReleaseCOM(m_pMVPBuffer         )
+		ReleaseCOM(m_pDepthStencilBuffer)
+		ReleaseCOM(m_pVertexBuffer      )
+		ReleaseCOM(m_pIndexBuffer       )
+		ReleaseCOM(m_pTexture           )   
+		ReleaseCOM(m_pTexSamplerState   ) 
 	}
 private:
 	bool init_buffer();
@@ -105,10 +101,13 @@ private:
 	{
 		XMFLOAT4 ambient;
 		XMFLOAT4 diffuse;
+
 		XMFLOAT3 lightDir;
-		float    cone;
+		float    padding1;
+
 		XMFLOAT3 lightPos;
 		float    range;
+
 		XMFLOAT3 att;
 		float    padding2;
 	};
@@ -130,8 +129,7 @@ private:
 	ID3D11RenderTargetView  *m_pRenderTargetView;
 	ID3D11DepthStencilView  *m_pDepthStencilView;
 	ID3D11Texture2D         *m_pDepthStencilBuffer;
-	ID3D11RasterizerState   *m_pCCWcullMode;
-	ID3D11RasterizerState   *m_pCWcullMode;
+	ID3D11RasterizerState   *m_pRasterState;
 	ID3D11Buffer            *m_pVertexBuffer;
 	ID3D11Buffer            *m_pMVPBuffer;
 	ID3D11Buffer            *m_pLightBuffer;
@@ -152,7 +150,7 @@ private:
 	XMMATRIX groundWorld;
 	XMMATRIX camView;
 	XMMATRIX camProjection;
-	XMMATRIX sphereWorld;
+
 	XMVECTOR camPosition;
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
@@ -163,7 +161,6 @@ private:
 	float camYaw   ;
 	float camPitch ;
 	///////////////**************new**************////////////////////
-	D3DSkymap skymap;
 
 	XMMATRIX Rotation;
 	XMMATRIX Scale;
@@ -173,7 +170,6 @@ private:
 	Timer timer;
 	Font font;
 	float fps;
-	D3DModel ObjModel;
 };
 
 CALL_MAIN(TextureApp);
@@ -189,19 +185,12 @@ bool TextureApp::v_InitD3D()
 	fps = 0.0f;
 	timer.Reset();
 	camYaw = 0.0f;
-
-	skymap.createSphere(m_pD3D11Device, 10, 10);
-	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
-	skymap.init_shader(m_pD3D11Device, GetHwnd());
-
 	if( !InitDirectInput(GetAppInst()) )
 	{
 		MessageBox(0, L"Direct Input Initialization - Failed",
 			L"Error", MB_OK);
 		return 0;
 	}
-	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
-	ObjModel.loadModel("../../media/objects/spaceCompound.obj");
 	return true;
 }
 bool TextureApp::InitDirectInput(HINSTANCE hInstance)
@@ -220,7 +209,7 @@ bool TextureApp::InitDirectInput(HINSTANCE hInstance)
 	hr = m_pDIKeyboard->SetCooperativeLevel(GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 
 	hr = m_pDIMouse->SetDataFormat(&c_dfDIMouse);
-	hr = m_pDIMouse->SetCooperativeLevel(GetHwnd(), DISCL_BACKGROUND | DISCL_NOWINKEY | DISCL_FOREGROUND);
+	hr = m_pDIMouse->SetCooperativeLevel(GetHwnd(), DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
 
 	return true;
 }
@@ -309,30 +298,21 @@ void TextureApp::UpdateScene()
 	Scale       = XMMatrixScaling( 500.0f, 10.0f, 500.0f );
 	Translation = XMMatrixTranslation( 0.0f, 10.0f, 0.0f );
 	groundWorld = Scale * Translation;
-
-	//skybox matrix
-	sphereWorld = XMMatrixIdentity();
-	Scale = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	Translation = XMMatrixTranslation(XMVectorGetX(camPosition), XMVectorGetY(camPosition), 
-		XMVectorGetZ(camPosition) );
-	sphereWorld = Scale * Translation;
-
-	cbLight.lightPos.x = XMVectorGetX(camPosition);
-	cbLight.lightPos.y = XMVectorGetY(camPosition);
-	cbLight.lightPos.z = XMVectorGetZ(camPosition);
-
-	cbLight.lightDir.x = XMVectorGetX(camTarget) - cbLight.lightPos.x;
-	cbLight.lightDir.y = XMVectorGetY(camTarget) - cbLight.lightPos.y;
-	cbLight.lightDir.z = XMVectorGetZ(camTarget) - cbLight.lightPos.z;
 }
 
 void TextureApp::v_Render()
 {
+	static bool flag = true;
+	if (flag)
+	{
+		timer.Start();
+		flag = false;
+	}
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-	/*
-	///////////////////////////////////////////Scene//////////////////////////////////////
+	m_pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
+	TestShader.use(m_pD3D11DeviceContext);
 	// Set vertex buffer stride and offset.=
 	unsigned int stride;
 	unsigned int offset;
@@ -340,57 +320,21 @@ void TextureApp::v_Render()
 	offset = 0;
 	m_pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
 	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	m_pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 	m_pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
-	m_pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
-	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
-	TestShader.use(m_pD3D11DeviceContext);
+
 
 	//Set the WVP matrix and send it to the constant buffer in effect file
 	cbMatrix.proj  = XMMatrixTranspose(camProjection);
 	cbMatrix.view  = XMMatrixTranspose(camView);	
 	cbMatrix.model = XMMatrixTranspose(groundWorld);	
+
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-
-	m_pD3D11DeviceContext->UpdateSubresource(m_pLightBuffer, 0, NULL, &cbLight, 0, 0 );
-	m_pD3D11DeviceContext->PSSetConstantBuffers( 0, 1, &m_pLightBuffer);
-
-	m_pD3D11DeviceContext->RSSetState(m_pCWcullMode);
 	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
-
-	*/
-
-	static float rot = 0.0f;
-	rot += .001f;
-	if(rot > 6.26f)
-		rot = 0.0f;
-
-	//Define cube1's world space matrix
-	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX Model  = XMMatrixTranslation( 0.0f, 0.0f, 30.0f );
-
-	XMMATRIX MVP = XMMatrixTranspose(Model * camView * camProjection);
-
-	ObjModel.Render(m_pD3D11DeviceContext, MVP);
-
-	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
-
-	//////////////////////////////////////SkyBox/////////////////////////////////////////
-
-	MVP   = XMMatrixTranspose( sphereWorld * camView * camProjection); 
-	skymap.Render(m_pD3D11DeviceContext, MVP);
-
-	/////////////////////////Time and Font////////////////////////////////////
-	static bool flag = true;
-	if (flag)
-	{
-		timer.Start();
-		flag = false;
-	}
-
+	
 	timer.Count();
 	static int frameCnt = 0;
 	static float timeElapsed = 0.0f;
@@ -401,12 +345,10 @@ void TextureApp::v_Render()
 		frameCnt = 0;
 		timeElapsed += 1.0f;
 	}	
-	font.drawFps(m_pD3D11DeviceContext, (UINT)fps);
+    font.drawFps(m_pD3D11DeviceContext, (UINT)fps);
 
 	DetectInput(timer.GetDeltaTime());
 	UpdateScene();
-
-	////////////////////////////////////////////////////////////////////
 
 	m_pSwapChain->Present(0, 0);
 }
@@ -470,20 +412,15 @@ bool TextureApp::init_device()
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
 	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
 	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
-
+	
 	//////////////////////Raterizer State/////////////////////////////
-
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
-	rasterDesc.FrontCounterClockwise =  true;
-	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCCWcullMode);
-	DebugHR(hr);
-
 	rasterDesc.FrontCounterClockwise = false;
-	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCWcullMode);
-	DebugHR(hr);
+	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
+	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
 
 	return true;
 }
@@ -520,7 +457,7 @@ bool TextureApp::init_buffer()
 
 	// Now create the vertex buffer.
 	hr = m_pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-	DebugHR(hr);
+    DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 	unsigned int IndexData[] = {
@@ -546,7 +483,7 @@ bool TextureApp::init_buffer()
 	IBO.SysMemSlicePitch = 0;
 
 	hr = m_pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
-	DebugHR(hr);
+    DebugHR(hr);
 
 	////////////////////////////////Const Buffer//////////////////////////////////////
 
@@ -562,22 +499,30 @@ bool TextureApp::init_buffer()
 
 	D3D11_BUFFER_DESC cbLightDesc;
 	ZeroMemory(&cbLightDesc, sizeof(D3D11_BUFFER_DESC));
-	cbLightDesc.Usage          = D3D11_USAGE_DEFAULT;
+	cbLightDesc.Usage          = D3D11_USAGE_DYNAMIC;
 	cbLightDesc.ByteWidth      = sizeof(LightBuffer);
 	cbLightDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
-	cbLightDesc.CPUAccessFlags = 0;
+	cbLightDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbLightDesc.MiscFlags      = 0;
 	hr = m_pD3D11Device->CreateBuffer(&cbLightDesc, NULL, &m_pLightBuffer);
 	DebugHR(hr);
 
-	cbLight.ambient   = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	cbLight.diffuse   = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cbLight.lightDir  = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	cbLight.cone      = 20.0f;
-	cbLight.lightPos  = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	cbLight.range     = 1000.0f;
-	cbLight.att       = XMFLOAT3(0.4f, 0.02f, 0.0f);
-	cbLight.padding2  = 0.0f;
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	hr = m_pD3D11DeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	DebugHR(hr);
+	LightBuffer *plightData = (LightBuffer *)mappedResource.pData;
+
+	plightData->ambient   = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	plightData->diffuse   = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	plightData->lightDir  = XMFLOAT3(0.25f, 0.5f, -1.0f);
+	plightData->padding1  = 0.0f;
+	plightData->lightPos  = XMFLOAT3(1.0f, 1.0f, 5.0f);
+	plightData->range     = 100.0f;
+	plightData->att       = XMFLOAT3(0.0f, 0.2f, 0.0f);
+    plightData->padding2  = 0.0f;
+
+	m_pD3D11DeviceContext->Unmap(m_pLightBuffer, 0);
+
 
 	return true;
 }
@@ -669,5 +614,3 @@ void TextureApp::init_texture(LPCWSTR texFile)
 	hr = m_pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
 	DebugHR(hr);
 }
-
-

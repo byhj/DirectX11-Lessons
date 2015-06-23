@@ -30,7 +30,7 @@ public:
 
 		for (int i = 0; i < this->meshes.size(); i++)
 		{
-			   float blendFactor[] = {0.4f, 0.4f, 0.4f, 0.3f};
+		   float blendFactor[] = {0.4f, 0.4f, 0.4f, 0.3f};
 		   if (this->meshes[i].mat.ambient.w < 1.0f)
 			 pD3D11DeviceContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
 		   //"fine-tune" the blending equation
