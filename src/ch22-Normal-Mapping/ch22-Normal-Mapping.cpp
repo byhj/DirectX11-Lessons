@@ -134,7 +134,7 @@ private:
 	XMMATRIX Rotation;
 	XMMATRIX Scale;
 	XMMATRIX Translation;
-	float rot;
+
 
 	Timer timer;
 	Font font;
@@ -156,7 +156,7 @@ bool TextureApp::v_InitD3D()
 	font.init(m_pD3D11Device);
 	fps = 0.0f;
 	timer.Reset();
-	camYaw = 0.0f;
+
 
 	skymap.createSphere(m_pD3D11Device, 10, 10);
 	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
@@ -201,37 +201,6 @@ void TextureApp::v_Render()
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-	/*
-	///////////////////////////////////////////Scene//////////////////////////////////////
-	// Set vertex buffer stride and offset.=
-	unsigned int stride;
-	unsigned int offset;
-	stride = sizeof(Vertex); 
-	offset = 0;
-	m_pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
-	m_pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
-	m_pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
-	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
-	TestShader.use(m_pD3D11DeviceContext);
-
-	//Set the WVP matrix and send it to the constant buffer in effect file
-	cbMatrix.proj  = XMMatrixTranspose(camProjection);
-	cbMatrix.view  = XMMatrixTranspose(camView);	
-	cbMatrix.model = XMMatrixTranspose(groundWorld);	
-	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
-	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-
-	m_pD3D11DeviceContext->UpdateSubresource(m_pLightBuffer, 0, NULL, &cbLight, 0, 0 );
-	m_pD3D11DeviceContext->PSSetConstantBuffers( 0, 1, &m_pLightBuffer);
-
-	m_pD3D11DeviceContext->RSSetState(m_pCWcullMode);
-	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
-
-	*/
 
 	static float rot = 0.0f;
 	rot += .001f;
