@@ -17,7 +17,7 @@
     <None Include="model.vsh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch22-Normal-Mapping.cpp" />
+    <ClCompile Include="ch22-Free-Look-Camera.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5E70EC54-CA6D-4C92-B2EB-9DBC9FFEABD1}</ProjectGuid>

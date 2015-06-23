@@ -29,8 +29,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch22-Normal-Mapping.cpp">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="ch22-Free-Look-Camera.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
