@@ -331,37 +331,6 @@ void TextureApp::v_Render()
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
-	/*
-	///////////////////////////////////////////Scene//////////////////////////////////////
-	// Set vertex buffer stride and offset.=
-	unsigned int stride;
-	unsigned int offset;
-	stride = sizeof(Vertex); 
-	offset = 0;
-	m_pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
-	m_pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
-	m_pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
-	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
-	TestShader.use(m_pD3D11DeviceContext);
-
-	//Set the WVP matrix and send it to the constant buffer in effect file
-	cbMatrix.proj  = XMMatrixTranspose(camProjection);
-	cbMatrix.view  = XMMatrixTranspose(camView);	
-	cbMatrix.model = XMMatrixTranspose(groundWorld);	
-	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
-	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-
-	m_pD3D11DeviceContext->UpdateSubresource(m_pLightBuffer, 0, NULL, &cbLight, 0, 0 );
-	m_pD3D11DeviceContext->PSSetConstantBuffers( 0, 1, &m_pLightBuffer);
-
-	m_pD3D11DeviceContext->RSSetState(m_pCWcullMode);
-	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
-
-	*/
 
 	static float rot = 0.0f;
 	rot += .001f;
@@ -372,14 +341,12 @@ void TextureApp::v_Render()
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX Model  = XMMatrixTranslation( 0.0f, 0.0f, 30.0f );
 
-	XMMATRIX MVP = XMMatrixTranspose(Model * camView * camProjection);
-
-	ObjModel.Render(m_pD3D11DeviceContext, MVP);
+	ObjModel.Render(m_pD3D11DeviceContext, Model,  camView ,  camProjection);
 
 	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
 	//////////////////////////////////////SkyBox/////////////////////////////////////////
-
+	XMMATRIX MVP ;
 	MVP   = XMMatrixTranspose( sphereWorld * camView * camProjection); 
 	skymap.Render(m_pD3D11DeviceContext, MVP);
 

@@ -14,4 +14,23 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cubemap.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemap.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ch23-Picking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

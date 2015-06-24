@@ -1,7 +1,9 @@
  
 cbuffer MatrixBuffer
 {
-	float4x4 MVP;
+	float4x4 model;
+	float4x4 view;
+	float4x4 proj;
 };
 
 struct VS_IN
@@ -24,8 +26,11 @@ VS_OUT VS( VS_IN vs_in )
  
    VS_OUT vs_out;
 
-   vs_out.Pos = mul(vs_in.Pos, MVP);
-   vs_out.Normal = mul(vs_in.Normal, MVP);
+   vs_out.Pos = mul(vs_in.Pos, model);
+   vs_out.Pos = mul(vs_out.Pos, view);
+   vs_out.Pos = mul(vs_out.Pos, proj);
+   vs_out.Normal = mul(vs_in.Normal, (float3x3)model);
+
    vs_out.worldPos = vs_out.Pos;
    vs_out.Tex = vs_in.Tex;
  

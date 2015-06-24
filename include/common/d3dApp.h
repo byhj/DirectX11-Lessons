@@ -50,12 +50,13 @@ public:
 	virtual void v_MouseUp()   {}
 
 protected:
-	int m_ScreenWidth;
-	int m_ScreenHeight;
-	float m_ScreenFar;
-	float m_ScreenNear;
-	int m_PosX;
-	int m_PosY;
+
+	int     m_ScreenWidth;
+	int     m_ScreenHeight;
+	float   m_ScreenFar;
+	float   m_ScreenNear;
+	int     m_PosX;
+	int     m_PosY;
 	LPCTSTR m_AppName;
 	LPCTSTR m_WndClassName;
 
