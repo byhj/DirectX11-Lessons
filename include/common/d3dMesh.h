@@ -33,7 +33,9 @@ struct Vertex {
 	// TexCoords
 	XMFLOAT2 TexCoords;
 
-	XMFLOAT3 tangent;
+	XMFLOAT3 Tangent;
+
+	XMFLOAT3 BiTangent;
 };
 
 
@@ -74,6 +76,8 @@ struct Material
 	//float shininess;
 };
 
+
+
 struct Texture {
 	Texture()
 	{
@@ -113,11 +117,13 @@ public:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj);
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  MVP;
+		XMMATRIX Model;
+		XMMATRIX View;
+		XMMATRIX Porj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -226,7 +232,7 @@ void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
 	DebugHR(hr);
 
 }
-void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
+void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj)
 {	
 
 	// Bind appropriate textures
@@ -256,7 +262,11 @@ void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
 	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &MVP, 0, 0 );
+	cbMatrix.Model = XMMatrixTranspose(model);
+	cbMatrix.View  = XMMatrixTranspose(view);
+	cbMatrix.Porj  = XMMatrixTranspose(proj);
+
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 
 	pD3D11DeviceContext->RSSetState(m_pRasterState);

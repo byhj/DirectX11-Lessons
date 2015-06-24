@@ -22,7 +22,7 @@ class D3DModel
 public:
 	D3DModel(){}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP)
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj)
 	{
 		ModelShader.use(pD3D11DeviceContext);
 
@@ -37,7 +37,7 @@ public:
 	
 			pD3D11DeviceContext->UpdateSubresource(m_pMatBuffer, 0, NULL, &this->meshes[i].mat, 0, 0 );
 			pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pMatBuffer);
-			this->meshes[i].Render(pD3D11DeviceContext, MVP);
+			this->meshes[i].Render(pD3D11DeviceContext, model, view, proj);
 
 		   pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 		}
@@ -136,7 +136,7 @@ void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 	HRESULT hr;
-	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[4];
+	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[5];
 
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
 	pInputLayoutDesc[0].SemanticIndex        = 0;
@@ -169,6 +169,14 @@ void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	pInputLayoutDesc[3].AlignedByteOffset    = 32;
 	pInputLayoutDesc[3].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	pInputLayoutDesc[3].InstanceDataStepRate = 0;
+
+	pInputLayoutDesc[4].SemanticName         = "BITANGENT";
+	pInputLayoutDesc[4].SemanticIndex        = 0;
+	pInputLayoutDesc[4].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	pInputLayoutDesc[4].InputSlot            = 0;
+	pInputLayoutDesc[4].AlignedByteOffset    = 44;
+	pInputLayoutDesc[4].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	pInputLayoutDesc[4].InstanceDataStepRate = 0;
 
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
@@ -252,11 +260,11 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Texture> textures;
 	std::vector<Material> MaterialData;
 
-	XMFLOAT3 v[3];
-	XMFLOAT2 uv[3];
+	XMVECTOR v[3];
+	XMVECTOR uv[3];
 
 	// Walk through each of the mesh's vertices
-	for (int i = 0, int j = 0; i < mesh->mNumVertices; i++, j++)
+	for (int i = 0, j = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
 		XMFLOAT3 pos; // We declare a placeholder std::vector since assimp uses its own std::vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder XMFloat3 first.
@@ -288,24 +296,34 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		else
 			vertex.TexCoords = XMFLOAT2(0.0f, 0.0f);
 
-		uv[j] = vertex.TexCoords;
-		v[j]  = pos;
-		if ( (j+1) % 3 == 0)
-		{
-			XMFLOAT3 deltaPos1 = v[1] - v[0];
-			XMFLOAT3 deltaPos2 = v[2] - v[1];
-
-			XMFLOAT2 deltaUV1 = uv[1] - uv[0];
-			XMFLOAT2 deltaUV2 = uv[2] - uv[1];
-			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-
-			XMFLOAT3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
-			XMFLOAT3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
-            j = 0;
-		}
-
 		//Process one Vertex
 		vertices.push_back(vertex);
+
+		v[j]  = XMLoadFloat3(&vertex.Position);
+		uv[j] = XMLoadFloat2(&vertex.TexCoords );
+		if ( (j+1) % 3 == 0)
+		{
+			// Edges of the triangle : postion delta
+			XMVECTOR deltaPos1 = v[1]  - v[0];
+			XMVECTOR deltaPos2 = v[2]  - v[0];
+			XMVECTOR deltaUV1  = uv[1] - uv[0];
+			XMVECTOR deltaUV2  = uv[2] - uv[0];
+
+			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+			XMVECTOR tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y) * r;
+			XMVECTOR bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x) * r;
+
+			XMStoreFloat3(&vertices[i].Tangent, tangent);
+			XMStoreFloat3(&vertices[i-1].Tangent, tangent);
+			XMStoreFloat3(&vertices[i-2].Tangent, tangent);
+
+			XMStoreFloat3(&  vertices[i].BiTangent, bitangent);
+			XMStoreFloat3(&vertices[i-1].BiTangent, bitangent);
+			XMStoreFloat3(&vertices[i-2].BiTangent, bitangent);
+			j = 0;
+		}
+		else
+			++j;
 	}
 
 	// Now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.

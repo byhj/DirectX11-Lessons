@@ -25,4 +25,3 @@ newmtl MetalPanels
 	Ke 0.0000 0.0000 0.0000
 	map_Ka metalpanel.jpg
 	map_Kd metalpanel.jpg
-	map_bump metalpanelnormals.jpg
