@@ -60,6 +60,14 @@ public:
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 	ID3D11ShaderResourceView * TextureFromFile(const char* path, std::string directory);
 
+	std::vector<XMFLOAT3>  GetPos()
+	{
+		return vPos;
+	}
+	std::vector<unsigned long> GetIndex()
+	{
+		return vIndex;
+	}
 private:
 
 	//One model may include many meshes
@@ -75,6 +83,9 @@ private:
 	ID3D11SamplerState   *m_pTexSamplerState;
 	ID3D11Buffer *m_pMatBuffer;
 	ID3D11BlendState* Transparency;
+
+	std::vector<XMFLOAT3> vPos;
+	std::vector<unsigned long> vIndex;	
 };
 
 void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
@@ -275,7 +286,7 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		pos.y = mesh->mVertices[i].y;
 		pos.z = mesh->mVertices[i].z;
 		vertex.Position = pos;
-
+		vPos.push_back(pos);
 
 		// Normals
 		normal.x = mesh->mNormals[i].x;
@@ -332,7 +343,11 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 		aiFace face = mesh->mFaces[i];
 		// Retrieve all indices of the face and store them in the indices std::vector
 		for (int j = 0; j < face.mNumIndices; j++)
+		{
 			indices.push_back(face.mIndices[j]);
+			//
+			vIndex.push_back(face.mIndices[j]);
+		}
 	}
 	Material mat;
 

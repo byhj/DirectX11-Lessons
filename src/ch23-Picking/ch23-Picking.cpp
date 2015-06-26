@@ -12,7 +12,8 @@
 #include "common/d3dTimer.h"
 #include "common/d3dCubemap.h"
 #include "common/d3dModel.h"
-#include "common/d3dCamera.h"
+
+#include "PickCam.h"
 
 class D3DRenderSystem: public D3DApp
 {
@@ -68,11 +69,13 @@ private:
 	D3DFont font;
 	D3DCamera camera;
 	D3DModel ObjModel;
-
+	D3DModel BottomModel;
 	void DrawFps();
 	void DrawMessage();
 
 	XMMATRIX View, Model, Proj;
+	XMMATRIX bottleModel[20];
+
 	int m_videoCardMemory;
 	WCHAR m_videoCardInfo[255];
 	float fps;
@@ -99,7 +102,12 @@ void D3DRenderSystem::init_object()
 	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
 	skymap.init_shader(m_pD3D11Device, GetHwnd());
 
+	BottomModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
+	BottomModel.loadModel("../../media/objects/bottle.obj");
+
 	camera.InitDirectInput(GetAppInst(), GetHwnd());
+	camera.InitPickModel(m_ScreenWidth, m_ScreenHeight, 20,
+		                 BottomModel.GetPos(), BottomModel.GetIndex(), bottleModel);
 
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
@@ -135,10 +143,21 @@ void D3DRenderSystem::v_Render()
 	Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
 	Translation = XMMatrixTranslation( 0.0f, 0.0f, 0.0f );
 
+	XMMATRIX tView  = camera.GetViewMatrix();
+	XMMATRIX tProj = Proj;
 	meshWorld = Rotation * Scale * Translation;
-	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
+	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, tView, tProj);
+
+	////////////////////////////////////////////////////////////////
+	for (int i = 0; i != 20; ++i)
+	{
+		BottomModel.Render(m_pD3D11DeviceContext, bottleModel[i], tView, tProj);
+	}
 
 	DrawMessage();
+	WCHAR scoreInfo[255];
+	swprintf(scoreInfo, L"Score: %d ", camera.GetScore());
+	font.drawText(m_pD3D11DeviceContext, scoreInfo, 22.0f, 10.0f, 100.0f, 0xff0099ff);
 
 	UpdateScene();
    
@@ -253,6 +272,31 @@ bool D3DRenderSystem::init_camera()
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
 
 	Proj  = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
+
+	float bottleXPos = -30.0f;
+	float bottleZPos = 30.0f;
+	float bxadd = 0.0f;
+	float bzadd = 0.0f;
+
+	for(int i = 0; i < 20; i++)
+	{
+		//set the loaded bottles world space
+		bottleModel[i] = XMMatrixIdentity();
+
+		bxadd++;
+
+		if(bxadd == 10)
+		{
+			bzadd -= 1.0f;
+			bxadd = 0;
+		}
+
+		XMMATRIX Rotation = XMMatrixRotationY(3.14f);
+		XMMATRIX Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
+		XMMATRIX Translation = XMMatrixTranslation( bottleXPos + bxadd*10.0f, 4.0f, bottleZPos + bzadd*10.0f );
+
+		bottleModel[i] = Rotation * Scale * Translation;
+	}
 
 	return true;
 }

@@ -11,3 +11,4 @@ SamplerState texState;
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
    return tex.Sample(texState, ps_in.Tex);
+}

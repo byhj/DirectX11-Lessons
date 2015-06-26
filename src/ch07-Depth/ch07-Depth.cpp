@@ -33,16 +33,16 @@ public:
 	void v_Shutdown()
 	{
 		ReleaseCOM(m_pInputLayout       )
-			ReleaseCOM(m_pVS                )
-			ReleaseCOM(m_pPS                )
-			ReleaseCOM(m_pSwapChain         )
-			ReleaseCOM(m_pD3D11Device       )
-			ReleaseCOM(m_pD3D11DeviceContext)
-			ReleaseCOM(m_pRenderTargetView  )
-			ReleaseCOM(m_pDepthStencilView  )
-			ReleaseCOM(m_pDepthStencilBuffer)
-			ReleaseCOM(m_pVertexBuffer      )
-			ReleaseCOM(m_pIndexBuffer       )
+		ReleaseCOM(m_pVS                )
+		ReleaseCOM(m_pPS                )
+		ReleaseCOM(m_pSwapChain         )
+		ReleaseCOM(m_pD3D11Device       )
+		ReleaseCOM(m_pD3D11DeviceContext)
+		ReleaseCOM(m_pRenderTargetView  )
+		ReleaseCOM(m_pDepthStencilView  )
+		ReleaseCOM(m_pDepthStencilBuffer)
+		ReleaseCOM(m_pVertexBuffer      )
+		ReleaseCOM(m_pIndexBuffer       )
 	}
 private:
 	bool init_buffer();
