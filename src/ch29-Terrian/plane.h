@@ -96,11 +96,7 @@ private:
 
 void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj)
 {
-	//Render scene 
 
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
-	pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 	// Set vertex buffer stride and offset.=
 	unsigned int stride;
 	unsigned int offset;
@@ -186,6 +182,37 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 		texVIndex++;
 	}
 
+	/*   Use Face Normals
+	//////////////////////Compute Normals///////////////////////////
+	XMFLOAT3 normalized = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	float vecX, vecY, vecZ;
+	XMVECTOR edge1 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR edge2 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
+	//Compute face normals
+	for(int i = 0; i < NumFaces; ++i)
+	{
+		//Get the vector describing one edge of our triangle (edge 0,2)
+		vecX = v[indices[(i*3)]].pos.x - v[indices[(i*3)+2]].pos.x;
+		vecY = v[indices[(i*3)]].pos.y - v[indices[(i*3)+2]].pos.y;
+		vecZ = v[indices[(i*3)]].pos.z - v[indices[(i*3)+2]].pos.z;		
+		edge1 = XMVectorSet(vecX, vecY, vecZ, 0.0f);	//Create our first edge
+
+		//Get the vector describing another edge of our triangle (edge 2,1)
+		vecX = v[indices[(i*3)+2]].pos.x - v[indices[(i*3)+1]].pos.x;
+		vecY = v[indices[(i*3)+2]].pos.y - v[indices[(i*3)+1]].pos.y;
+		vecZ = v[indices[(i*3)+2]].pos.z - v[indices[(i*3)+1]].pos.z;		
+		edge2 = XMVectorSet(vecX, vecY, vecZ, 0.0f);	//Create our second edge
+
+		//Cross multiply the two edge vectors to get the un-normalized face normal
+		XMStoreFloat3(&normalized, XMVector3Normalize( XMVector3Cross(edge1, edge2) ) );
+
+		v[ indices[(i*3)] ].normal = normalized;
+		v[ indices[(i*3 + 1)] ].normal = normalized;
+		v[ indices[(i*3) + 2] ].normal = normalized;
+	}
+
+	*/
 
 	//////////////////////Compute Normals///////////////////////////
 	//Now we will compute the normals for each vertex using normal averaging
@@ -221,7 +248,6 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 		tempNormal.push_back(unnormalized);			//Save unormalized normal (for normal averaging)
 	}
 
-	/*
 	//Compute vertex normals (normal Averaging)
 	XMVECTOR normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	int facesUsing = 0;
@@ -263,7 +289,6 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		facesUsing = 0;
 	}
-	*/
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC VertexBufferDesc;
 	VertexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
@@ -312,7 +337,7 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 	D3D11_BUFFER_DESC mvpDesc;	
 	ZeroMemory(&mvpDesc, sizeof(D3D11_BUFFER_DESC));
 	mvpDesc.Usage          = D3D11_USAGE_DEFAULT;
-	mvpDesc.ByteWidth      = sizeof(XMMATRIX);
+	mvpDesc.ByteWidth      = sizeof(MatrixBuffer);
 	mvpDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags      = 0;
@@ -343,13 +368,13 @@ bool Plane::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	pInputLayoutDesc[1].InstanceDataStepRate = 0;
 
-	pInputLayoutDesc[1].SemanticName         = "Normal";
-	pInputLayoutDesc[1].SemanticIndex        = 0;
-	pInputLayoutDesc[1].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-	pInputLayoutDesc[1].InputSlot            = 0;
-	pInputLayoutDesc[1].AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
-	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[1].InstanceDataStepRate = 0;
+	pInputLayoutDesc[2].SemanticName         = "Normal";
+	pInputLayoutDesc[2].SemanticIndex        = 0;
+	pInputLayoutDesc[2].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	pInputLayoutDesc[2].InputSlot            = 0;
+	pInputLayoutDesc[2].AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+	pInputLayoutDesc[2].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	pInputLayoutDesc[2].InstanceDataStepRate = 0;
 
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
@@ -375,7 +400,7 @@ void Plane::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0.0f;
 	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.BorderColor[0] = 0;
 	samplerDesc.BorderColor[1] = 0;
 	samplerDesc.BorderColor[2] = 0;

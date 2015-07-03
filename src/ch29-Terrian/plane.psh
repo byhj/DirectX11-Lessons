@@ -5,22 +5,9 @@ struct VS_OUT
 	float2 TexCoord : TEXCOORD;
 	float3 Normal   : NORMAL;
 };
-									  
-struct Light
-{
-	float3 dir;
-	float4 ambient;
-	float4 diffuse;
-};
 
-cbuffer cbPerFrame
-{
-	Light light;
-};
-
-
-Texture2D tex;
-SamplerState texState;
+Texture2D tex     :register(t0) ;
+SamplerState texState :register(s0);
 
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
@@ -28,10 +15,10 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
 
     float4 texColor = tex.Sample(texState, ps_in.TexCoord );
 
-	float4 diffuse = saturate(dot(light.dir, ps_in.Normal) * light.diffuse);
-	float4 ambient = light.ambient;
+	float4 diffuse = saturate(dot(float3(0.0f, 1.0f, -1.0f), ps_in.Normal) * float4(0.7f, 0.7f, 0.7f, 1.0f) );
+	float4 ambient = float4(0.2f, 0.2f, 0.2f, 1.0f);
 
-	return float4(ambient + diffuse) * texColor;
+	return  saturate(ambient + diffuse) * texColor;
 }
 
 

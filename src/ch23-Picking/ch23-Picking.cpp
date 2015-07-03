@@ -103,7 +103,7 @@ void D3DRenderSystem::init_object()
 	skymap.init_shader(m_pD3D11Device, GetHwnd());
 
 	BottomModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
-	BottomModel.loadModel("../../media/objects/bottle.obj");
+	BottomModel.loadModel("../../media/objects/spaceCompound.obj");
 
 	camera.InitDirectInput(GetAppInst(), GetHwnd());
 	camera.InitPickModel(m_ScreenWidth, m_ScreenHeight, 20,

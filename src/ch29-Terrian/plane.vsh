@@ -1,17 +1,5 @@
 								  
-struct Light
-{
-	float3 dir;
-	float4 ambient;
-	float4 diffuse;
-};
-
-cbuffer cbPerFrame
-{
-	Light light;
-};
-
-cbuffer cbPerObject
+cbuffer MatrixBuffer :register (b0)
 {
 	float4x4 model;
 	float4x4 view;

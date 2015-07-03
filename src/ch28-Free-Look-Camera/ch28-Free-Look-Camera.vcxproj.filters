@@ -29,7 +29,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ch22-Free-Look-Camera.cpp">
+    <ClCompile Include="ch28-Free-Look-Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

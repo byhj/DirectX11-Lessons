@@ -10,7 +10,6 @@
 #include "common/d3dShader.h"
 #include "common/d3dFont.h"
 #include "common/d3dTimer.h"
-#include "common/d3dCubemap.h"
 #include "common/d3dCamera.h"
 
 #include "plane.h"
@@ -63,8 +62,6 @@ private:
 	ID3D11RasterizerState    *m_pCCWcullMode;
 	ID3D11RasterizerState    *m_pCWcullMode;
 
-	///////////////**************new**************////////////////////
-	D3DSkymap skymap;
 	D3DTimer timer;
 	D3DFont font;
 	D3DCamera camera;
@@ -96,10 +93,6 @@ void D3DRenderSystem::init_object()
 	fps = 0.0f;
 	timer.Reset();
 
-	skymap.createSphere(m_pD3D11Device, 10, 10);
-	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
-	skymap.init_shader(m_pD3D11Device, GetHwnd());
-
 	plane.init_buffer(m_pD3D11Device);
 	plane.init_shader(m_pD3D11Device, GetHwnd());
 	plane.init_texture(m_pD3D11Device, L"../../media/textures/grass.jpg");
@@ -117,24 +110,11 @@ void D3DRenderSystem::v_Render()
 {
     BeginScene();
 
-	//////////////////////////////////////SkyBox/////////////////////////////////////////
-	View                 = camera.GetViewMatrix();
-	XMMATRIX sphereWorld = XMMatrixIdentity();
-	XMMATRIX Scale       = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	XMVECTOR camPosition = camera.GetCamPos();
-	XMMATRIX Translation = XMMatrixTranslation(XMVectorGetX(camPosition), XMVectorGetY(camPosition), 
-	                                        	XMVectorGetZ(camPosition) );
-	sphereWorld = Scale * Translation;
-
-	XMMATRIX MVP   = XMMatrixTranspose(sphereWorld * View * Proj); 
-
-	skymap.Render(m_pD3D11DeviceContext, MVP);
-
-	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
-	//////////////////////////////////////Scene///////////////////////////////////
-
-	Scale = XMMatrixScaling( 10.0f, 10.0f, 10.0f );
-	Translation = XMMatrixTranslation( -100.0f, -100.0f, -100.0f );
+	m_pD3D11DeviceContext->RSSetState(m_pCCWcullMode);
+	View = camera.GetViewMatrix();
+	camera.DetectInput(timer.GetDeltaTime() * 10.0f, GetHwnd());
+	XMMATRIX Scale  = XMMatrixScaling( 10.0f, 10.0f, 10.0f );
+	XMMATRIX Translation = XMMatrixTranslation( -520.0f, -100.0f, -1020.0f );
 	XMMATRIX planeWorld = Scale * Translation;
 	plane.Render(m_pD3D11DeviceContext, planeWorld, View, Proj);
 
@@ -209,7 +189,7 @@ bool D3DRenderSystem::init_device()
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.CullMode = D3D11_CULL_BACK;
 	rasterDesc.FrontCounterClockwise =  true;
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCCWcullMode);
 	DebugHR(hr);
@@ -252,6 +232,10 @@ bool D3DRenderSystem::init_camera()
 	vp.Height   = m_ScreenHeight;
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
 
+	XMVECTOR camPos    = XMVectorSet( 0.0f, 3.0f, -8.0f, 0.0f );
+	XMVECTOR camTarget = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
+	XMVECTOR camUp     = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	View      = XMMatrixLookAtLH( camPos, camTarget, camUp );
 	Proj  = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
 
 	return true;
@@ -291,7 +275,7 @@ void D3DRenderSystem::DrawMessage()
 
 void  D3DRenderSystem::BeginScene()
 {
-	D3DXVECTOR4 bgColor = D3DXVECTOR4(0.2f, 0.3f, 0.4f, 1.0f);
+	D3DXVECTOR4 bgColor = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
