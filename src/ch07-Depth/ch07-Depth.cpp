@@ -12,11 +12,7 @@ class D3DInitApp: public D3DApp
 public:
 	D3DInitApp()
 	{
-		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
+		m_AppName = L"DirectX11: ch07-Detph";
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -32,9 +28,6 @@ public:
 
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -44,6 +37,7 @@ public:
 		ReleaseCOM(m_pVertexBuffer      )
 		ReleaseCOM(m_pIndexBuffer       )
 	}
+
 private:
 	bool init_buffer();
 	bool init_device();
@@ -63,9 +57,6 @@ private:
 		XMFLOAT4 color;
 	};
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
@@ -74,6 +65,7 @@ private:
 	ID3D11Texture2D         *m_pDepthStencilBuffer;
 	ID3D11Buffer            *m_pVertexBuffer;
 	ID3D11Buffer            *m_pIndexBuffer;
+
 	int m_VertexCount;
 	int m_IndexCount;
 
@@ -95,8 +87,9 @@ bool D3DInitApp::v_InitD3D()
 
 void D3DInitApp::v_Render()
 {
-	//Render scene 
+	//Use the shader, set the status
 	TestShader.use(m_pD3D11DeviceContext);
+	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -161,9 +154,9 @@ bool D3DInitApp::init_device()
 	depthStencilDesc.CPUAccessFlags     = 0; 
 	depthStencilDesc.MiscFlags          = 0;
 
+	//Same as color buffer, depthStencil use renderTarget view to make the buffer is a texture
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
 	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
-	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
 
 	return true;
 }

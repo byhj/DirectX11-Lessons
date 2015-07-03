@@ -13,10 +13,6 @@ public:
 	BlendApp()
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -32,12 +28,8 @@ public:
 
 	bool v_InitD3D();
 	void v_Render();
-
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -75,9 +67,6 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11InputLayout        *m_pInputLayout;
-	ID3D11VertexShader       *m_pVS;
-	ID3D11PixelShader        *m_pPS;
 	IDXGISwapChain           *m_pSwapChain;
 	ID3D11Device             *m_pD3D11Device;
 	ID3D11DeviceContext      *m_pD3D11DeviceContext;
@@ -124,8 +113,6 @@ bool BlendApp::v_InitD3D()
 
 void BlendApp::v_Render()
 {
-	//Render scene 
-
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -249,7 +236,7 @@ bool BlendApp::init_device()
 	m_pD3D11DeviceContext->RSSetState(m_pCWcullMode);
 
 
-	/////////////////Blend state////////////////////////////////////////
+	///////////////////////////Blend state/////////////////////////////
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory( &blendDesc, sizeof(blendDesc) );
 	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
@@ -398,9 +385,7 @@ bool BlendApp::init_buffer()
 	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-
-	////////////////////////////////Const Buffer//////////////////////////////////////
-
+	/////////////////////////Shader const Buffer//////////////////////////////////////
 	D3D11_BUFFER_DESC mvpDesc;	
 	ZeroMemory(&mvpDesc, sizeof(D3D11_BUFFER_DESC));
 	mvpDesc.Usage          = D3D11_USAGE_DEFAULT;

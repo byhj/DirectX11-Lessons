@@ -8,10 +8,11 @@
 #include "common/d3dShader.h"
 #include <FW1FontWrapper.h>
 #pragma  comment(lib, "FW1FontWrapper.lib")
-IFW1Factory *pFW1Factory;
-	IFW1FontWrapper *pFontWrapper;
-void drawText(ID3D11Device *pDevice, ID3D11DeviceContext *pContext) {
 
+IFW1Factory *pFW1Factory;
+IFW1FontWrapper *pFontWrapper;
+
+void drawText(ID3D11Device *pDevice, ID3D11DeviceContext *pContext) {
 
 	pFontWrapper->DrawString(
 		pContext,
@@ -30,10 +31,6 @@ public:
 	TextureApp()
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -49,12 +46,8 @@ public:
 
 	bool v_InitD3D();
 	void v_Render();
-
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -67,12 +60,14 @@ public:
 		ReleaseCOM(m_pTexture           )   
 		ReleaseCOM(m_pTexSamplerState   ) 
 	}
+
 private:
 	bool init_buffer();
 	bool init_device();
 	bool init_shader();
 	bool init_camera();
 	void init_texture(LPCWSTR texFile);
+
 private:
 
 	struct Vertex	//Overloaded Vertex Structure
@@ -92,9 +87,6 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
@@ -107,6 +99,7 @@ private:
 	ID3D11Buffer            *m_pIndexBuffer;
 	ID3D11ShaderResourceView *m_pTexture;
 	ID3D11SamplerState       *m_pTexSamplerState;
+
 	int m_VertexCount;
 	int m_IndexCount;
 

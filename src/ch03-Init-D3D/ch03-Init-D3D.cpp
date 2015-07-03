@@ -11,7 +11,9 @@ public:
 		m_pD3D11DeviceContext = 0;
 		m_pRenderTargetView   = 0;
 	}
+	~D3DInitApp() {}
 
+public:
 	bool v_InitD3D();
 	void v_Render();
 
@@ -28,7 +30,7 @@ bool D3DInitApp::v_InitD3D()
 {
 	HRESULT hr;
 
-	//Create buffer desc
+	/////////////////////////Create buffer desc///////////////////////
 	DXGI_MODE_DESC bufferDesc;
 	ZeroMemory(&bufferDesc, sizeof(DXGI_MODE_DESC));
 	bufferDesc.Width                   = m_ScreenWidth;
@@ -39,7 +41,7 @@ bool D3DInitApp::v_InitD3D()
 	bufferDesc.ScanlineOrdering        = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	bufferDesc.Scaling                 = DXGI_MODE_SCALING_UNSPECIFIED;
 
-	//Create swapChain Desc
+	//////////////////Create swapChain Desc////////////////////////////
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 	swapChainDesc.BufferDesc         = bufferDesc;
@@ -51,26 +53,26 @@ bool D3DInitApp::v_InitD3D()
 	swapChainDesc.Windowed           = TRUE;
 	swapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_DISCARD;
 
-	//Create the double buffer chain
 	hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE,
 		                               NULL, NULL, NULL, NULL, D3D11_SDK_VERSION, 
 		                               &swapChainDesc, &m_pSwapChain, &m_pD3D11Device,
 		                               NULL, &m_pD3D11DeviceContext);
 
-	//Create backbuffer, buffer also is a texture
+	//Create the rendertargetView, which buffer is a texture
 	ID3D11Texture2D *pBackBuffer;
 	hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
 	hr = m_pD3D11Device->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView);
+	DebugHR(hr);
 	pBackBuffer->Release();
 
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 	return true;
 }
 
 void D3DInitApp::v_Render()
 {
-	//Render 
+	//Set status and Render scene 
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.5f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 	m_pSwapChain->Present(0, 0);
 }

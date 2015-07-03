@@ -13,10 +13,6 @@ public:
 	D3DInitApp()
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -29,9 +25,6 @@ public:
 
     void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -53,9 +46,6 @@ private:
 		D3DXVECTOR4 Color;
 	};
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
@@ -186,8 +176,6 @@ bool D3DInitApp::init_buffer()
 		return false;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
 	delete [] VertexData;
 	VertexData = 0;
 
@@ -219,8 +207,7 @@ bool D3DInitApp::init_camera()
 
 bool D3DInitApp::init_shader()
 {
-	HRESULT result;
-
+   //Shader interface infomation
 	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[2];
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
 	pInputLayoutDesc[0].SemanticIndex        = 0;

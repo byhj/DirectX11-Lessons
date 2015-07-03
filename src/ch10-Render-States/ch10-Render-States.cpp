@@ -13,10 +13,6 @@ public:
 	D3DInitApp()
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -33,9 +29,6 @@ public:
 
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -70,9 +63,6 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
@@ -209,11 +199,12 @@ bool D3DInitApp::init_device()
 	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
 	m_pD3D11DeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
 	
+
 	//////////////////////Raterizer State/////////////////////////////
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
-	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
-	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.FillMode = D3D11_FILL_WIREFRAME;  //We use the wireframe mode now
+	rasterDesc.CullMode = D3D11_CULL_NONE;       //We not use cull face now
 	rasterDesc.FrontCounterClockwise = false;
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
@@ -312,9 +303,8 @@ bool D3DInitApp::init_buffer()
 		return false;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////Set vertex buffer stride and offset.///////////////////////
 
-	// Set vertex buffer stride and offset.=
 	unsigned int stride;
 	unsigned int offset;
 	stride = sizeof(Vertex); 
@@ -323,9 +313,7 @@ bool D3DInitApp::init_buffer()
 	m_pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	m_pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-
-	////////////////////////////////Const Buffer//////////////////////////////////////
-
+	///////////////////////////Shader const Buffer/////////////////////////////////////
 	D3D11_BUFFER_DESC mvpDesc;	
 	ZeroMemory(&mvpDesc, sizeof(D3D11_BUFFER_DESC));
 	mvpDesc.Usage          = D3D11_USAGE_DEFAULT;
@@ -333,7 +321,7 @@ bool D3DInitApp::init_buffer()
 	mvpDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags      = 0;
-	m_pD3D11Device->CreateBuffer(&mvpDesc, NULL, &m_pMVPBuffer);
+	m_pD3D11Device->CreateBuffer(&mvpDesc, NULL, &m_pMVPBuffer); //Set subresources to NULL, we set the data later
 
 	return true;
 }
@@ -365,7 +353,6 @@ bool D3DInitApp::init_camera()
 
 bool D3DInitApp::init_shader()
 {
-	HRESULT result;
 
 	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[2];
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
@@ -383,6 +370,7 @@ bool D3DInitApp::init_shader()
 	pInputLayoutDesc[1].AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
 	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	pInputLayoutDesc[1].InstanceDataStepRate = 0;
+
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
 	TestShader.init(m_pD3D11Device, GetHwnd());

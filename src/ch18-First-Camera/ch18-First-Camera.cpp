@@ -19,9 +19,6 @@ public:
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
 
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -50,9 +47,6 @@ public:
 
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -120,9 +114,6 @@ private:
 	bool InitDirectInput(HINSTANCE hInstance);
 	void DetectInput(double time);
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;

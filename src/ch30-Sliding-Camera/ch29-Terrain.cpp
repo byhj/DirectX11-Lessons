@@ -11,8 +11,9 @@
 #include "common/d3dFont.h"
 #include "common/d3dTimer.h"
 #include "common/d3dCubemap.h"
-#include "common/d3dModel.h"
 #include "common/d3dCamera.h"
+
+#include "plane.h"
 
 class D3DRenderSystem: public D3DApp
 {
@@ -67,7 +68,7 @@ private:
 	D3DTimer timer;
 	D3DFont font;
 	D3DCamera camera;
-	D3DModel ObjModel;
+	Plane plane;
 
 	void DrawFps();
 	void DrawMessage();
@@ -99,10 +100,12 @@ void D3DRenderSystem::init_object()
 	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
 	skymap.init_shader(m_pD3D11Device, GetHwnd());
 
+	plane.init_buffer(m_pD3D11Device);
+	plane.init_shader(m_pD3D11Device, GetHwnd());
+	plane.init_texture(m_pD3D11Device, L"../../media/textures/grass.jpg");
+
 	camera.InitDirectInput(GetAppInst(), GetHwnd());
 
-	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
-	ObjModel.loadModel("../../media/objects/ground.obj");
 }
 
 void D3DRenderSystem::UpdateScene()
@@ -129,14 +132,11 @@ void D3DRenderSystem::v_Render()
 
 	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
 	//////////////////////////////////////Scene///////////////////////////////////
-	XMMATRIX meshWorld = XMMatrixIdentity();
-	//Define cube1's world space matrix
-	XMMATRIX Rotation = XMMatrixRotationY(3.14f);
-	Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
-	Translation = XMMatrixTranslation( 0.0f, 0.0f, 0.0f );
 
-	meshWorld = Rotation * Scale * Translation;
-	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
+	Scale = XMMatrixScaling( 10.0f, 10.0f, 10.0f );
+	Translation = XMMatrixTranslation( -100.0f, -100.0f, -100.0f );
+	XMMATRIX planeWorld = Scale * Translation;
+	plane.Render(m_pD3D11DeviceContext, planeWorld, View, Proj);
 
 	DrawMessage();
 

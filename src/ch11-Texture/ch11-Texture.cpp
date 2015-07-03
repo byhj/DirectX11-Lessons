@@ -14,9 +14,6 @@ public:
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
 
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -35,9 +32,6 @@ public:
 
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -50,12 +44,14 @@ public:
 		ReleaseCOM(m_pTexture           )   
 		ReleaseCOM(m_pTexSamplerState   ) 
 	}
+
 private:
 	bool init_buffer();
 	bool init_device();
 	bool init_shader();
 	bool init_camera();
 	void init_texture(LPCWSTR texFile);
+
 private:
 
 	struct Vertex	//Overloaded Vertex Structure
@@ -75,9 +71,6 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
@@ -133,6 +126,7 @@ void TextureApp::v_Render()
 	if(rot > 6.26f)
 		rot = 0.0f;
 
+	//Set the texture for shader resoucres and the texture  samplers status
 	m_pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 	m_pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
@@ -432,6 +426,7 @@ bool TextureApp::init_shader()
 void TextureApp::init_texture(LPCWSTR texFile)
 {
 	HRESULT hr;
+	//Use shaderResourceView to make texture to the shader
 	hr = D3DX11CreateShaderResourceViewFromFile(m_pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
 	DebugHR(hr);
 

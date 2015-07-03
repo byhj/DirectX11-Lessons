@@ -1,12 +1,12 @@
  
-cbuffer MatrixBuffer
+cbuffer MatrixBuffer :register(b0)
 {
 	float4x4 MVP;
 };
 
 struct VS_IN
 {
-    float4 Pos : POSITION;
+    float4 Pos : POSITION; //POSITION is same as POSITION0
     float4 Color : COLOR0;
 };
 

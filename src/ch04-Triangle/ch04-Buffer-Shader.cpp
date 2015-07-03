@@ -13,10 +13,6 @@ public:
 	D3DInitApp()
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -24,14 +20,12 @@ public:
 		m_pVertexBuffer       = NULL;
 	}
 
+public:
+
 	bool v_InitD3D();
 	void v_Render();
-
     void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -52,24 +46,23 @@ private:
 		D3DXVECTOR3 Position;
 	};
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
+	//D3D data
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
 	ID3D11RenderTargetView  *m_pRenderTargetView;
 	ID3D11Buffer            *m_pVertexBuffer;
+
 	int m_VertexCount;
 	int m_IndexCount;
 
 	Shader TestShader;
 
+	//Mvp matrix data
 	XMMATRIX MVP;
 	XMMATRIX Model;
 	XMMATRIX View;
 	XMMATRIX Proj;
-
 	XMVECTOR camPos;
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
@@ -175,13 +168,11 @@ bool D3DInitApp::init_buffer()
 		return false;
 	}
 
-
-	////////////////////////////////////////////////////////////////////////////////////////
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 	delete [] VertexData;
 	VertexData = 0;
 
-	// Set vertex buffer stride and offset.=
+	// Set vertex buffer stride and offset
 	unsigned int stride;
 	unsigned int offset;
 	stride = sizeof(Vertex); 
@@ -208,8 +199,8 @@ bool D3DInitApp::init_camera()
 
 bool D3DInitApp::init_shader()
 {
-	HRESULT result;
 
+	//Shader interface infomation
 	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[1];
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
 	pInputLayoutDesc[0].SemanticIndex        = 0;

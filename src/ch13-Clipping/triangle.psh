@@ -11,6 +11,8 @@ SamplerState texState;
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
    float4 texColor = tex.Sample(texState, ps_in.Tex); 
+
+   //if texture alpha is less than 0.25, we clip current pixel not to write to the framebuffer 
    clip(texColor.a - .25);
     
 	return texColor;

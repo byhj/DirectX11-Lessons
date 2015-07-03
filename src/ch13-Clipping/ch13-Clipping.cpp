@@ -13,10 +13,6 @@ public:
 	BlendApp()
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
-
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -35,9 +31,6 @@ public:
 
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -75,9 +68,6 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11InputLayout        *m_pInputLayout;
-	ID3D11VertexShader       *m_pVS;
-	ID3D11PixelShader        *m_pPS;
 	IDXGISwapChain           *m_pSwapChain;
 	ID3D11Device             *m_pD3D11Device;
 	ID3D11DeviceContext      *m_pD3D11DeviceContext;
@@ -138,7 +128,6 @@ void BlendApp::v_Render()
 
 	m_pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 	m_pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
-	m_pD3D11DeviceContext->RSSetState(NULL);
 	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
 
 	//////////////////////Define cube1's world space matrix//////////////////////

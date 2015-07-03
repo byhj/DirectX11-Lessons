@@ -14,9 +14,6 @@ public:
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
 
-		m_pInputLayout        = NULL;
-		m_pVS                 = NULL;
-		m_pPS                 = NULL;
 		m_pSwapChain          = NULL;
 		m_pD3D11Device        = NULL;
 		m_pD3D11DeviceContext = NULL;
@@ -30,12 +27,8 @@ public:
 
 	bool v_InitD3D();
 	void v_Render();
-
 	void v_Shutdown()
 	{
-		ReleaseCOM(m_pInputLayout       )
-		ReleaseCOM(m_pVS                )
-		ReleaseCOM(m_pPS                )
 		ReleaseCOM(m_pSwapChain         )
 		ReleaseCOM(m_pD3D11Device       )
 		ReleaseCOM(m_pD3D11DeviceContext)
@@ -46,6 +39,7 @@ public:
 		ReleaseCOM(m_pVertexBuffer      )
 		ReleaseCOM(m_pIndexBuffer       )
 	}
+
 private:
 	bool init_buffer();
 	bool init_device();
@@ -70,9 +64,6 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11InputLayout       *m_pInputLayout;
-	ID3D11VertexShader      *m_pVS;
-	ID3D11PixelShader       *m_pPS;
 	IDXGISwapChain          *m_pSwapChain;
 	ID3D11Device            *m_pD3D11Device;
 	ID3D11DeviceContext     *m_pD3D11DeviceContext;
@@ -111,15 +102,15 @@ bool D3DInitApp::v_InitD3D()
 
 void D3DInitApp::v_Render()
 {
-	//Render scene 
-
+	//Set the mvp matrix to render scene
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	Model = XMMatrixIdentity();
 	MVP = (Model * View * Proj);
 	cbMatrix.MVP = XMMatrixTranspose(MVP);	
-	TestShader.use(m_pD3D11DeviceContext);
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
+
+	TestShader.use(m_pD3D11DeviceContext);
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -256,9 +247,8 @@ bool D3DInitApp::init_buffer()
 		return false;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////Set vertex buffer stride and offset////////////////////////////
 
-	// Set vertex buffer stride and offset.=
 	unsigned int stride;
 	unsigned int offset;
 	stride = sizeof(Vertex); 
@@ -309,11 +299,9 @@ bool D3DInitApp::init_camera()
 
 bool D3DInitApp::init_shader()
 {
-	HRESULT result;
-
 	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[2];
 	pInputLayoutDesc[0].SemanticName         = "POSITION";
-	pInputLayoutDesc[0].SemanticIndex        = 0;
+	pInputLayoutDesc[0].SemanticIndex        = 0;      //POSITION0
 	pInputLayoutDesc[0].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
 	pInputLayoutDesc[0].InputSlot            = 0;
 	pInputLayoutDesc[0].AlignedByteOffset    = 0;
@@ -333,5 +321,6 @@ bool D3DInitApp::init_shader()
 	TestShader.attachVS(L"triangle.vsh", pInputLayoutDesc, numElements);
 	TestShader.attachPS(L"triangle.psh");
 	TestShader.end();
+
 	return true;
 }
