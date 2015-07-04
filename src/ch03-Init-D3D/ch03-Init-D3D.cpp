@@ -1,4 +1,4 @@
-#include "common/d3dApp.h"
+#include "d3d/d3dApp.h"
 
 class D3DInitApp: public D3DApp
 {
@@ -71,7 +71,7 @@ bool D3DInitApp::v_InitD3D()
 void D3DInitApp::v_Render()
 {
 	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.5f, 1.0f );
+	D3DXCOLOR bgColor( 0.2f, 0.3f, 0.4f, 1.0f );
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
 	m_pSwapChain->Present(0, 0);

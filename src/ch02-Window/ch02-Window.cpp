@@ -1,4 +1,4 @@
-#include "common/d3dApp.h"
+#include "d3d/d3dApp.h"
 
 class FrameWorkApp: public D3DApp
 {

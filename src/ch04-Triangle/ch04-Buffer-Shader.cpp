@@ -1,11 +1,13 @@
+#ifdef _DEBUG
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
+#endif // DEBUG
 
 #ifdef _WIN32
 #define _XM_NO_INTRINSICS_
 #endif 
 
-#include "common/d3dApp.h"
-#include <common/d3dShader.h>
+#include "d3d/d3dApp.h"
+#include <d3d/d3dShader.h>
 
 class D3DInitApp: public D3DApp
 {

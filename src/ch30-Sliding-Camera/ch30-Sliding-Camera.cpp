@@ -6,11 +6,11 @@
 #define _XM_NO_INTRINSICS_
 #endif 
 
-#include "common/d3dApp.h"
-#include "common/d3dShader.h"
-#include "common/d3dFont.h"
-#include "common/d3dTimer.h"
-#include "common/d3dCamera.h"
+#include "d3d/d3dApp.h"
+#include "d3d/d3dShader.h"
+#include "d3d/d3dFont.h"
+#include "d3d/d3dTimer.h"
+#include "d3d/d3dCamera.h"
 
 #include "plane.h"
 

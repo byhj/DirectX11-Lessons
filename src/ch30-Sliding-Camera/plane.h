@@ -4,8 +4,8 @@
 #define _XM_NO_INTRINSICS_
 #endif 
 
-#include "common/d3dShader.h"
-#include "common/d3dDebug.h"
+#include "d3d/d3dShader.h"
+#include "d3d/d3dDebug.h"
 #include <d3d11.h>
 #include <xnamath.h>
 #include <vector>

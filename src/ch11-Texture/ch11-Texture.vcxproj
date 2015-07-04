@@ -11,11 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\include\d3d\d3dApp.cpp" />
+    <ClCompile Include="..\..\include\d3d\d3dShader.cpp" />
     <ClCompile Include="ch11-Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="triangle.psh" />
     <None Include="triangle.vsh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\d3d\d3dApp.h" />
+    <ClInclude Include="..\..\include\d3d\d3dShader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A929C17E-E890-4E73-9702-6AB7954BD231}</ProjectGuid>

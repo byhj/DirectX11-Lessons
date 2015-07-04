@@ -1,34 +1,4 @@
-#ifndef D3DSHADER_H
-#define D3DSHADER_H
-
-#include <d3d11.h>
-#include <D3DX10math.h>
-#include <D3DX11async.h>
-#include <fstream>
-#include <iostream>
-#include <string>
-
-class Shader
-{
-public:
-	Shader() {}
-	~Shader() {}
-
-	void init(ID3D11Device *pD3D11Device, HWND hWnd);
-	bool attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC *pInputLayoutDesc, unsigned numElements);
-	bool attachPS(WCHAR* Filename);
-	void use(ID3D11DeviceContext *pD3D111DeviceContext);
-	void Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName);
-	void end();
-
-private:
-	ID3D11VertexShader *pVS_Shader;
-	ID3D11PixelShader  *pPS_Shader;
-	ID3D11InputLayout  *pInputLayout;
-
-	ID3D11Device *pD3D11Device;
-	HWND hWnd;
-};
+#include "d3dShader.h"
 
 void Shader::init(ID3D11Device *pD3D11Device, HWND hWnd)
 {
@@ -54,7 +24,7 @@ void Shader::Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName)
 
 	//return;
 	// Pop a message up on the screen to notify the user to check the text file for compile errors.
-	
+
 }
 
 bool Shader::attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[], unsigned numElements)
@@ -64,14 +34,14 @@ bool Shader::attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC pInputLayoutDes
 	ID3D10Blob* VertexShaderBuffer = 0;
 
 	result = D3DX11CompileFromFile(Filename, NULL, NULL, "VS", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		                           &VertexShaderBuffer, &errorMessage, NULL);
-	    if(FAILED(result))
-	   {
-		  if(errorMessage)
-			  Debug(errorMessage, hWnd, Filename);
-		  else
-			  MessageBox(hWnd, Filename, L"Can not open Vertex Shader File", MB_OK);
-		}
+		&VertexShaderBuffer, &errorMessage, NULL);
+	if(FAILED(result))
+	{
+		if(errorMessage)
+			Debug(errorMessage, hWnd, Filename);
+		else
+			MessageBox(hWnd, Filename, L"Can not open Vertex Shader File", MB_OK);
+	}
 
 
 	// Create the vertex shader from the buffer.
@@ -82,7 +52,7 @@ bool Shader::attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC pInputLayoutDes
 	}
 
 	result = pD3D11Device->CreateInputLayout(pInputLayoutDesc, numElements, VertexShaderBuffer->GetBufferPointer(), 
-		                                     VertexShaderBuffer->GetBufferSize(), &pInputLayout);
+		VertexShaderBuffer->GetBufferSize(), &pInputLayout);
 	if(FAILED(result))
 	{
 		return false;
@@ -91,7 +61,7 @@ bool Shader::attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC pInputLayoutDes
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	VertexShaderBuffer->Release();
 	VertexShaderBuffer = 0;
-	
+
 	return true;
 }
 
@@ -137,5 +107,3 @@ void Shader::end()
 	pD3D11Device = 0;
 	hWnd = 0;
 }
-
-#endif

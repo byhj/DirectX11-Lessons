@@ -1,161 +1,11 @@
-#ifndef D3DMESH_H
-#define D3DMESH_H
+#include "d3dMesh.h"
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
-
-#include <d3d11.h>
-#include <D3DX11.h>
-#include <xnamath.h>
-#include <D3DX10math.h>
-
-#include "common/d3dShader.h"
-#include "common/d3dDebug.h"
-
-// Std. Includes
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <vector>
-
-//Assimp
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-struct Vertex {
-	// Position
-	XMFLOAT3 Position;
-	// Normal
-	XMFLOAT3 Normal;
-	// TexCoords
-	XMFLOAT2 TexCoords;
-
-	XMFLOAT3 Tangent;
-
-	XMFLOAT3 BiTangent;
-};
-
-
-
-struct Material
-{
-	Material()
-	{
-	   ambient   = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	   diffuse   = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	   specular  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	   emissive  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	  // shininess = 32.0f;
-	}
-	Material (const Material &mat)
-	{
-		    this->ambient   = mat.ambient  ;
-			this->diffuse   = mat.diffuse  ;
-			this->specular  = mat.specular ;
-			this->emissive  = mat.emissive ;
-			//this->shininess = mat.shininess;
-	}
-	Material &operator = (const Material &mat)
-	{
-		this->ambient   = mat.ambient  ;
-		this->diffuse   = mat.diffuse  ;
-		this->specular  = mat.specular ;
-		this->emissive  = mat.emissive ;
-		//this->shininess = mat.shininess;
-
-		return *this;
-	}
-
-	XMFLOAT4 ambient;
-	XMFLOAT4 diffuse;
-	XMFLOAT4 specular;
-	XMFLOAT4 emissive;
-	//float shininess;
-};
-
-
-
-struct Texture {
-	Texture()
-	{
-		pTexture      = NULL;
-	}
-
-	ID3D11ShaderResourceView *pTexture;
-	std::string type;
-	aiString path;
-};
-
-class D3DMesh {
-public:
-	/*  Mesh Data  */
-	std::vector<Vertex> VertexData;
-	std::vector<unsigned long> IndexData;
-	std::vector<Texture> textures;
-	Material mat;
-
-	D3DMesh() {}
-	// Constructor
-	D3DMesh(std::vector<Vertex> vertices, std::vector<unsigned long> indices, std::vector<Texture> textures, Material mat,
-	        ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
-	{
-		this->VertexData = vertices;
-		this->IndexData = indices;
-		this->textures = textures;
-		this->mat = mat;
-		// Now that we have all the required data, set the vertex buffers and its attribute pointers.
-		this->init_Mesh(pD3D11Device, pD3D11DeviceContext, hWnd);
-	}
-
-public:
-	// Initializes all the buffer objects/arrays
-	void init_Mesh(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd);
-	void init_state(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext);
-	void init_buffer(ID3D11Device *pD3D11Device);
-	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
-	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj);
-
-	struct MatrixBuffer
-	{
-		XMMATRIX Model;
-		XMMATRIX View;
-		XMMATRIX Porj;
-	};
-	MatrixBuffer cbMatrix;
-
-	struct MaterialBuffer
-	{
-		XMFLOAT4 ambient;
-		XMFLOAT4 diffuse;
-		XMFLOAT4 specular;
-		XMFLOAT4 emissive;
-		float   shininess;
-	};
-
-	ID3D11Buffer *m_pIndexBuffer;
-	ID3D11Buffer *m_pVertexBuffer;
-	ID3D11Buffer *m_pMVPBuffer;
-
-	int m_VertexCount;
-	int m_IndexCount;
-
-	ID3D11ShaderResourceView *m_pShaderResourceView;
-	ID3D11DepthStencilView   *m_pDepthStencilView;
-	ID3D11Texture2D          *m_pDepthStencilBuffer;
-	ID3D11RasterizerState    *m_pRasterState;
-	ID3D11SamplerState       *m_pTexSamplerState;
-   
-};
 
 
 void D3DMesh::init_Mesh(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
 {
-   init_state(pD3D11Device, pD3D11DeviceContext);
-   init_buffer(pD3D11Device);
+	init_state(pD3D11Device, pD3D11DeviceContext);
+	init_buffer(pD3D11Device);
 }
 
 void D3DMesh::init_state(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
@@ -218,8 +68,8 @@ void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
 	IBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
-    DebugHR(hr);
-	
+	DebugHR(hr);
+
 	///////////////////////////////////////////////////////////////////
 	D3D11_BUFFER_DESC mvpDesc;	
 	ZeroMemory(&mvpDesc, sizeof(D3D11_BUFFER_DESC));
@@ -249,7 +99,7 @@ void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, X
 		else if (name == "texture_specular")
 			ss << specularNr++; // Transfer GLuint to stream
 		number = ss.str();	
-	
+
 		pD3D11DeviceContext->PSSetShaderResources( i, 1, &textures[i].pTexture);
 		// Now set the sampler to the correct texture unit
 	}
@@ -274,5 +124,3 @@ void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, X
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
-
-#endif
