@@ -23,7 +23,6 @@ public:
 		camPosition    = XMVectorSet( 0.0f, 5.0f, -8.0f, 0.0f );
 		camTarget      = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 		camView        = XMMatrixLookAtLH(camPosition, camTarget, camUp );
-
 		rot = 0.01f;
 	}
 	bool InitDirectInput(HINSTANCE hInstance , HWND hWnd);
@@ -34,11 +33,11 @@ public:
 	void UpdateCamera();
 
 	bool PointInTriangle(XMVECTOR& triV1, XMVECTOR& triV2, XMVECTOR& triV3, XMVECTOR& point );
-	float pick(XMVECTOR pickRayInWorldSpacePos,
-		XMVECTOR pickRayInWorldSpaceDir, 
-		std::vector<XMFLOAT3>& vertPosArray,
-		std::vector<DWORD>& indexPosArray, 
-		XMMATRIX& worldSpace);
+
+	float pick(XMVECTOR pickRayInWorldSpacePos, XMVECTOR pickRayInWorldSpaceDir, 
+		       std::vector<XMFLOAT3>& vertPosArray, std::vector<DWORD>& indexPosArray, 
+		       XMMATRIX& worldSpace);
+
 	void pickRayVector(float mouseX, float mouseY, XMVECTOR& pickRayInWorldSpacePos, XMVECTOR& pickRayInWorldSpaceDir);
 
 	XMMATRIX GetViewMatrix()
@@ -61,6 +60,7 @@ public:
 	{
 		return bottleHit[index];
 	}
+	
 private:
 	IDirectInputDevice8* m_pDIKeyboard;
 	IDirectInputDevice8* m_pDIMouse;
@@ -79,6 +79,7 @@ private:
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
 
+/////////////////////////////////////////////////////////
 	float rot;
 	float moveLeftRight  ;
 	float moveBackForward;
@@ -111,7 +112,7 @@ void D3DCamera::InitPickModel(int sw, int sh, int num, const std::vector<XMFLOAT
 	numBottles = num;
 	ClientWidth = sw; 
 	ClientHeight = sh;
-
+	camProjection = XMMatrixPerspectiveFovLH( 0.4f*3.14f, (float)sw/sh, 1.0f, 1000.0f);
 	bottleWorld = modelWorld;
 	vertPosArray = vPos;
 	indexPosArray = vIndex;
@@ -192,7 +193,7 @@ void D3DCamera::DetectInput(double time, HWND hWnd)
 			XMVECTOR prwsPos, prwsDir;
 			pickRayVector(mousex, mousey, prwsPos, prwsDir);
 
-            //Check if picking the object and mark it
+			//Check if picking the object and mark it
 			for(int i = 0; i < numBottles; i++)
 			{
 				if(bottleHit[i] == 0) //No need to check bottles already hit
@@ -300,10 +301,10 @@ void D3DCamera::pickRayVector(float mouseX, float mouseY, XMVECTOR& pickRayInWor
 }
 
 float D3DCamera::pick(XMVECTOR pickRayInWorldSpacePos,
-		   XMVECTOR pickRayInWorldSpaceDir, 
-		   std::vector<XMFLOAT3>& vertPosArray,
-		   std::vector<DWORD>& indexPosArray, 
-		   XMMATRIX& worldSpace)
+					  XMVECTOR pickRayInWorldSpaceDir, 
+					  std::vector<XMFLOAT3>& vertPosArray,
+					  std::vector<DWORD>& indexPosArray, 
+					  XMMATRIX& worldSpace)
 { 		
 	//Loop through each triangle in the object
 	for(int i = 0; i < indexPosArray.size()/3; i++)

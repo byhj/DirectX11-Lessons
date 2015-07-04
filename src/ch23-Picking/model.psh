@@ -1,17 +1,11 @@
 
-struct Material
-{  
-   float4 ambient;
-   float4 diffuse;
-   float4 specular;
-   float4 emissive;
-   float  shininess;
-   int    hasTex[4];
-};
-
-cbuffer MaterialBuffer
+cbuffer Material
 {
-   Material cbMat;
+  float4 ambient;
+  float4 diffuse;
+  float4 specular;
+  float4 emissive;
+  float  shininess;
 };
 
 struct VS_OUT
@@ -21,72 +15,35 @@ struct VS_OUT
 	float2 Tex       : TEXCOORD0;
 	float3 Tangent   : TANGENT;
 	float3 BiTangent : BITANGENT;
-	float3 WorldPos  : POSITION;
+	float3 worldPos  : POSITION;
 };
 
-Texture2D ambientTex	: register(t0);
-Texture2D diffuseTex	: register(t1);
-Texture2D specularTex	: register(t2);
-Texture2D normalTex	    : register(t3);
-
+Texture2D tex	      : register(t0);
 SamplerState texState : register(s0);
+
+Texture2D texNormal	  : register(t1);
 
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
-
+    float4 texColor = tex.Sample(texState, ps_in.Tex);
     ps_in.Normal    = normalize(ps_in.Normal);
 	ps_in.Tangent   = normalize(ps_in.Tangent);
 	ps_in.BiTangent = normalize(ps_in.BiTangent);
 
-    float4 ambient  = cbMat.ambient;
-	float4 diffuse  = cbMat.diffuse;
-	float4 specular = cbMat.specular;
+	//Set the normal map data
+	float4 normalMap = texNormal.Sample(texState, ps_in.Tex );
+	//Change normal map range from [0, 1] to [-1, 1]
+	normalMap = (2.0f * normalMap) - 1.0f;
+	float3x3 texSpace = float3x3(ps_in.Tangent, ps_in.BiTangent , ps_in.Normal);
+	ps_in.Normal = normalize(mul(normalMap, texSpace));
+
+	//calc the diffuse light with normal map
 	float3 lightDir = float3(0.5f, 0.75f, -0.5f);
-
-	//Ambient texture
-	if ( cbMat.hasTex[0] )
-	{
-	   float4 ambientTexColor = ambientTex.Sample(texState, ps_in.Tex);
-	   ambient *= ambientTexColor;
-	}
-
-	//Diffuse texture
-	if (cbMat.hasTex[1])
-	{
-		diffuse *= max(0.0, dot(ps_in.Normal, lightDir) ); 
-		float4 diffuseTexColor = diffuseTex.Sample(texState, ps_in.Tex);
-		diffuse *= diffuseTexColor;
-	}
-
-	//Specular texture
-	if (cbMat.hasTex[2])
-	{
-	   float3 half_vector = normalize(lightDir + normalize(ps_in.WorldPos) );
-	   float intensity = pow( max(0.0f, dot(ps_in.Normal, half_vector) ), cbMat.shininess);
-	   float4 specularTexColor = specularTex.Sample(texState, ps_in.Tex);
-	   specular *= intensity;
-	   specular *= specularTexColor;
-	}
-
-	//Normal texture
-	if (cbMat.hasTex[3])
-	{
-	   //Reset the diffuse 
-	    //difuse = cbMat.diffuse;
-
-	    float4 normalMap = normalTex.Sample(texState, ps_in.Tex );
-
-	    //Change normal map range from [0, 1] to [-1, 1]
-	    normalMap = (2.0f * normalMap) - 1.0f;
-	    float3x3 texSpace = float3x3(ps_in.Tangent, ps_in.BiTangent, ps_in.Normal);
-	    ps_in.Normal = normalize(mul(normalMap, texSpace));
-        float intensity = dot(lightDir, ps_in.Normal);
-
-		diffuse *= intensity;
-    }
+    float intensity = dot(lightDir, ps_in.Normal);
+    float4 diff = saturate( max(intensity, 0.0f) * diffuse );
 	
 	//Add the bumping to texture
-	float4 pixelColor = saturate(ambient + diffuse + specular);
+	float4 pixelColor = saturate(diffuse * ambient + diff) * texColor;
 
 	return pixelColor;
 }

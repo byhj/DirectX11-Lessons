@@ -103,7 +103,7 @@ void D3DRenderSystem::init_object()
 	skymap.init_shader(m_pD3D11Device, GetHwnd());
 
 	BottomModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
-	BottomModel.loadModel("../../media/objects/spaceCompound.obj");
+	BottomModel.loadModel("../../media/objects/bottle.obj");
 
 	camera.InitDirectInput(GetAppInst(), GetHwnd());
 	camera.InitPickModel(m_ScreenWidth, m_ScreenHeight, 20,
@@ -136,6 +136,8 @@ void D3DRenderSystem::v_Render()
 	skymap.Render(m_pD3D11DeviceContext, MVP);
 
 	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
+
+
 	//////////////////////////////////////Scene///////////////////////////////////
 	XMMATRIX meshWorld = XMMatrixIdentity();
 	//Define cube1's world space matrix
@@ -151,6 +153,7 @@ void D3DRenderSystem::v_Render()
 	////////////////////////////////////////////////////////////////
 	for (int i = 0; i != 20; ++i)
 	{
+		if ( !camera.IfHit(i))
 		BottomModel.Render(m_pD3D11DeviceContext, bottleModel[i], tView, tProj);
 	}
 
@@ -293,7 +296,7 @@ bool D3DRenderSystem::init_camera()
 
 		XMMATRIX Rotation = XMMatrixRotationY(3.14f);
 		XMMATRIX Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
-		XMMATRIX Translation = XMMatrixTranslation( bottleXPos + bxadd*10.0f, 4.0f, bottleZPos + bzadd*10.0f );
+		XMMATRIX Translation = XMMatrixTranslation( bottleXPos + bxadd*10.0f, 3.0f, bottleZPos + bzadd*10.0f );
 
 		bottleModel[i] = Rotation * Scale * Translation;
 	}
