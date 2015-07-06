@@ -2,7 +2,7 @@
 
 
 D3DTimer::D3DTimer(): m_SecondsPerCount(0.0),
-	m_DeltaTime(-1.0), 
+	m_DeltaTime(0.0), 
 	m_BaseTime(0), 
 	m_PausedTime(0),
 	m_PrevTime(0),
