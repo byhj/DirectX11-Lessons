@@ -18,23 +18,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="cubemap.psh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="cubemap.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="model.psh">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="model.vsh">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ch31-3rd-Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\include\d3d\d3dApp.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -58,6 +41,12 @@
     </ClCompile>
     <ClCompile Include="..\..\include\d3d\d3dTimer.cpp">
       <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="md5Model.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ch31-3rd-Camera.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,5 +74,28 @@
     <ClInclude Include="..\..\include\d3d\d3dTimer.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="md5Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="md5.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="md5.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemap.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemap.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.psh">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model.vsh">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -14,6 +14,8 @@
 #include "d3d/d3dModel.h"
 #include "d3d/d3dCamera.h"
 
+#include "md5Model.h"
+
 class D3DRenderSystem: public D3DApp
 {
 public:
@@ -69,6 +71,8 @@ private:
 	D3DCamera camera;
 	D3DModel ObjModel;
 
+	MD5Model md5Model;
+
 	void DrawFps();
 	void DrawMessage();
 
@@ -103,6 +107,9 @@ void D3DRenderSystem::init_object()
 
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
+
+	md5Model.init_buffer(m_pD3D11Device, m_pD3D11DeviceContext);
+	md5Model.init_shader(m_pD3D11Device, GetHwnd());
 }
 
 void D3DRenderSystem::UpdateScene()
@@ -138,6 +145,9 @@ void D3DRenderSystem::v_Render()
 	meshWorld = Rotation * Scale * Translation;
 	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
 
+	md5Model.UpdateMD5Model(m_pD3D11DeviceContext, md5Model.GetModel(), timer.GetDeltaTime(), 0);
+	Scale = XMMatrixScaling( 0.2f, 0.2f, 0.2f );	
+	md5Model.Render(m_pD3D11DeviceContext, Scale, View, Proj);
 	DrawMessage();
 
 	UpdateScene();
