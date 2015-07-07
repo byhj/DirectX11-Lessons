@@ -5,6 +5,7 @@
   <PropertyGroup>
     <IntDir>$(SolutionDir)\temp</IntDir>
     <OutDir>$(SolutionDir)\bin</OutDir>
+    <IncludePath>C:\Program Files\Microsoft SDKs\Windows\v7.0\Include;$(VCInstallDir)atlmfc\include;$(VCInstallDir)include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>

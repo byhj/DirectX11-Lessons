@@ -117,6 +117,8 @@
   <ItemGroup>
     <None Include="cubemap.psh" />
     <None Include="cubemap.vsh" />
+    <None Include="instacne.vsh" />
+    <None Include="instance.psh" />
     <None Include="model.psh" />
     <None Include="model.vsh" />
   </ItemGroup>
@@ -130,16 +132,22 @@
     <ClCompile Include="..\..\include\d3d\d3dShader.cpp" />
     <ClCompile Include="..\..\include\d3d\d3dTimer.cpp" />
     <ClCompile Include="ch33-Instancing.cpp" />
+    <ClCompile Include="Instance.cpp" />
+    <ClCompile Include="model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\d3d\d3dApp.h" />
     <ClInclude Include="..\..\include\d3d\d3dCamera.h" />
     <ClInclude Include="..\..\include\d3d\d3dCubemap.h" />
+    <ClInclude Include="..\..\include\d3d\d3dDebug.h" />
     <ClInclude Include="..\..\include\d3d\d3dFont.h" />
     <ClInclude Include="..\..\include\d3d\d3dMesh.h" />
     <ClInclude Include="..\..\include\d3d\d3dModel.h" />
     <ClInclude Include="..\..\include\d3d\d3dShader.h" />
     <ClInclude Include="..\..\include\d3d\d3dTimer.h" />
+    <ClInclude Include="Instance.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="model.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

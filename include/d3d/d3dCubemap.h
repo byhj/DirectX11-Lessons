@@ -1,10 +1,6 @@
 #ifndef D3DCUBEMAP_H
 #define D3DCUBEMAP_H
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
-
 #include "d3dShader.h"
 #include "d3dDebug.h"
 
@@ -26,7 +22,7 @@ public:
 	void createSphere(ID3D11Device *pD3D11Device, int LatLines, int LongLines);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX MVP);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &MVP);
 
 private:
 

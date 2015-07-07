@@ -1,10 +1,8 @@
 #ifndef D3DCAMERA_H
 #define D3DCAMERA_H
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
-
+#include <windows.h>
+#include <d3dx11.h>
 #include <dinput.h>
 #include <d3d11.h>
 #include <xnamath.h>

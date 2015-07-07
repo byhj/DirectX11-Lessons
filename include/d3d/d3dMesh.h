@@ -1,12 +1,11 @@
 #ifndef D3DMESH_H
 #define D3DMESH_H
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
 
 #include <d3d11.h>
 #include <D3DX11.h>
+#include <windows.h>
+#include <d3dx11.h>
 #include <xnamath.h>
 #include <D3DX10math.h>
 
@@ -117,7 +116,7 @@ public:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &model, const XMMATRIX &view, const XMMATRIX &proj);
 
 	struct MatrixBuffer
 	{

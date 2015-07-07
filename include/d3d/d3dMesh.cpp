@@ -82,7 +82,7 @@ void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
 	DebugHR(hr);
 
 }
-void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj)
+void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &model, const XMMATRIX &view, const XMMATRIX &proj)
 {	
 
 	// Bind appropriate textures

@@ -233,9 +233,14 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 			XMVECTOR deltaUV1  = uv[1] - uv[0];
 			XMVECTOR deltaUV2  = uv[2] - uv[0];
 
-			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-			XMVECTOR tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y) * r;
-			XMVECTOR bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x) * r;
+			float uv1x = XMVectorGetX(deltaUV1);
+			float uv1y = XMVectorGetY(deltaUV1);
+			float uv2x = XMVectorGetX(deltaUV2);
+			float uv2y = XMVectorGetY(deltaUV2);
+
+			float r = 1.0f / (uv1x * uv2y - uv1y * uv2x);
+			XMVECTOR tangent = (deltaPos1 * uv2y   - deltaPos2 * uv1y) * r;
+			XMVECTOR bitangent = (deltaPos2 * uv1x   - deltaPos1 * uv2x) * r;
 
 			XMStoreFloat3(&vertices[i].Tangent, tangent);
 			XMStoreFloat3(&vertices[i-1].Tangent, tangent);
