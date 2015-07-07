@@ -12,7 +12,7 @@
 #include "d3d/d3dTimer.h"
 #include "d3d/d3dCubemap.h"
 #include "d3d/d3dModel.h"
-#include "d3d/d3dCamera.h"
+#include "d3dCamera.h"
 
 #include "md5Model.h"
 
@@ -134,8 +134,9 @@ void D3DRenderSystem::v_Render()
 
 	skymap.Render(m_pD3D11DeviceContext, MVP);
 
-	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
+	camera.DetectInput(timer.GetDeltaTime(), GetHwnd(), md5Model, m_pD3D11DeviceContext);
 	//////////////////////////////////////Scene///////////////////////////////////
+
 	XMMATRIX meshWorld = XMMatrixIdentity();
 	//Define cube1's world space matrix
 	XMMATRIX Rotation = XMMatrixRotationY(3.14f);
@@ -145,9 +146,11 @@ void D3DRenderSystem::v_Render()
 	meshWorld = Rotation * Scale * Translation;
 	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
 
-	md5Model.UpdateMD5Model(m_pD3D11DeviceContext, md5Model.GetModel(), timer.GetDeltaTime(), 0);
+	//md5Model.UpdateMD5Model(m_pD3D11DeviceContext, md5Model.GetModel(), timer.GetDeltaTime(), 0);
+	meshWorld = camera.GetCharMatrix();
 	Scale = XMMatrixScaling( 0.2f, 0.2f, 0.2f );	
-	md5Model.Render(m_pD3D11DeviceContext, Scale, View, Proj);
+
+	md5Model.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
 	DrawMessage();
 
 	UpdateScene();

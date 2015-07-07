@@ -2,6 +2,9 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
+#include "d3dCamera.h"
+#include "plane.h"
+
 #ifdef _WIN32
 #define _XM_NO_INTRINSICS_
 #endif 
@@ -10,9 +13,8 @@
 #include "d3d/d3dShader.h"
 #include "d3d/d3dFont.h"
 #include "d3d/d3dTimer.h"
-#include "d3d/d3dCamera.h"
 
-#include "plane.h"
+
 
 class D3DRenderSystem: public D3DApp
 {
