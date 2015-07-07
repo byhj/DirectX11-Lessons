@@ -68,6 +68,8 @@ private:
 	D3DCamera camera;
 	D3DModel ObjModel;
 
+	Instance instanceModel;
+
 	void DrawFps();
 	void DrawMessage();
 
@@ -102,6 +104,9 @@ void D3DRenderSystem::init_object()
 
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
+
+	instanceModel.init_buffer(m_pD3D11Device, m_pD3D11DeviceContext);
+	
 }
 
 void D3DRenderSystem::UpdateScene()

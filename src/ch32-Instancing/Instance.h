@@ -42,12 +42,12 @@ public:
 		pD3D11DeviceContext->VSSetConstantBuffers(2, 1, &m_pLeaveMatrixBuffer);
 		pD3D11DeviceContext->VSSetConstantBuffers(3, 1, &m_pTreeMatrixBuffer);
 		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	    pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+	   // pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
 		///////////////////////////////////////////////////////////////////////////////////
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pLeaveVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
-		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
+		//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 
 		cbInstance.isLeaf = true;
 		cbInstance.isTree = false;
@@ -58,7 +58,7 @@ public:
 		///////////////////////////////////////////////////////////////////////////////////
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pTreeVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
-		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
+		//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 
 		cbInstance.isLeaf = false;
 		cbInstance.isTree = true;
@@ -74,7 +74,6 @@ public:
 		ReleaseCOM(m_pLightBuffer       )
 	}
 
-	bool load_model(char *modelFile);
 	bool init_buffer (ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext);
 	bool init_shader (ID3D11Device *pD3D11Device, HWND hWnd);
 	void init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile);
