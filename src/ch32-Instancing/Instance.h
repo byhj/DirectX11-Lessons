@@ -20,7 +20,6 @@ public:
 		m_pInputLayout        = NULL;
 		m_pMVPBuffer          = NULL;
 		m_pLightBuffer        = NULL;
-		m_pTexture            = NULL;
 		m_pTreeIB  = NULL;
 		m_pTreeVB  = NULL;
 		m_pLeaveIB = NULL;
@@ -46,7 +45,7 @@ public:
 		pD3D11DeviceContext->VSSetConstantBuffers(2, 1, &m_pLeaveMatrixBuffer);
 		pD3D11DeviceContext->VSSetConstantBuffers(3, 1, &m_pTreeMatrixBuffer);
 		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	   // pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+	    pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
 		InstanceShader.use(pD3D11DeviceContext);
 
@@ -55,19 +54,19 @@ public:
 		offset = 0;
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pLeaveVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
-		//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
+		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pLeaveTexSRV);
 
 		cbInstance.isTree = 0.0f;
 		cbInstance.isLeaf = 2.0f;
 		pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
-		pD3D11DeviceContext->DrawIndexedInstanced(4, NumTrees * NumLeaves, 0, 0, 0);
+		pD3D11DeviceContext->DrawIndexedInstanced(6, NumTrees * NumLeaves, 0, 0, 0);
 		///////////////////////////////////////////////////////////////////////////////////
 		stride = sizeof(MeshStruct::Vertex); 
 		offset = 0;
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pTreeVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pTreeIB, DXGI_FORMAT_R32_UINT, 0);
-		//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
+		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTreeTexSRV);
 		
 		cbInstance.isTree = 2.0f;
 		cbInstance.isLeaf = 0.0f;
@@ -85,7 +84,7 @@ public:
 
 	bool init_buffer (ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext);
 	bool init_shader (ID3D11Device *pD3D11Device, HWND hWnd);
-	void init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile);
+	void init_texture(ID3D11Device *pD3D11Device);
 
 private:
 
@@ -150,7 +149,9 @@ private:
 	ID3D11Buffer             *m_pLeaveVB;
 	ID3D11Buffer             *m_pLeaveIB;
 
-	ID3D11ShaderResourceView *m_pTexture;
+	ID3D11ShaderResourceView *m_pLeaveTexSRV;
+	ID3D11ShaderResourceView *m_pTreeTexSRV;
+
 	ID3D11SamplerState       *m_pTexSamplerState;
 	ID3D11InputLayout        *m_pInputLayout;
 

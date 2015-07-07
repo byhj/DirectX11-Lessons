@@ -7,19 +7,19 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 
 	/************************************New Stuff****************************************************/
 	// Create Leaf geometry (quad)
-	Vertex LeaveVertexData[] =
+	MeshStruct::Vertex LeaveVertexData[] =
 	{
 		// Front Face
-		Vertex(-1.0f, -1.0f, -1.0f,    0.0f, 1.0f,    0.0f, 0.0f, -1.0f),
-		Vertex(-1.0f,  1.0f, -1.0f,    0.0f, 0.0f,    0.0f, 0.0f, -1.0f),
-		Vertex( 1.0f,  1.0f, -1.0f,    1.0f, 0.0f,    0.0f, 0.0f, -1.0f),
-		Vertex( 1.0f, -1.0f, -1.0f,    1.0f, 1.0f,    0.0f, 0.0f, -1.0f),
+		XMFLOAT3(-1.0f, -1.0f, -1.0f),  XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+		XMFLOAT3(-1.0f,  1.0f, -1.0f),  XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+		XMFLOAT3( 1.0f,  1.0f, -1.0f),  XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+		XMFLOAT3( 1.0f, -1.0f, -1.0f),  XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
 	};
 
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC LeaveVBDesc;
 	LeaveVBDesc.Usage               = D3D11_USAGE_DEFAULT;
-	LeaveVBDesc.ByteWidth           = sizeof(Vertex) * 4;
+	LeaveVBDesc.ByteWidth           = sizeof(MeshStruct::Vertex) * 4;
 	LeaveVBDesc.BindFlags           = D3D11_BIND_VERTEX_BUFFER;
 	LeaveVBDesc.CPUAccessFlags      = 0;
 	LeaveVBDesc.MiscFlags           = 0;
@@ -212,6 +212,11 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	hr = pD3D11Device->CreateBuffer(&lightBufferDesc, NULL, &m_pLightBuffer);
 	DebugHR(hr);
 
+	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, L"../../media/objects/treeBark.jpg", NULL,NULL, &m_pTreeTexSRV, NULL);
+	DebugHR(hr);
+		hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, L"../../media/objects/leaf.png", NULL,NULL, &m_pLeaveTexSRV, NULL);
+    init_texture(pD3D11Device);
+
 	return true;
 }
 
@@ -272,11 +277,8 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	return true;
 }
 
-void Instance::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
+void Instance::init_texture(ID3D11Device *pD3D11Device)
 {
-	HRESULT hr;
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
-	DebugHR(hr);
 
 	// Create a texture sampler state description.
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -294,7 +296,7 @@ void Instance::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 	samplerDesc.MinLOD = 0;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	// Create the texture sampler state.
+	HRESULT hr;
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
 	DebugHR(hr);
 
