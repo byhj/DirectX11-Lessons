@@ -2,17 +2,12 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
-
 #include "d3d/d3dApp.h"
 #include "d3d/d3dShader.h"
 #include "d3d/d3dFont.h"
 #include "d3d/d3dTimer.h"
 #include "d3d/d3dCubemap.h"
 #include "d3d/d3dModel.h"
-#include "d3d/d3dCamera.h"
 
 #include <dinput.h>
 

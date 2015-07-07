@@ -28,8 +28,9 @@ void D3DSkymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLi
 		{
 			sphereYaw = j * (6.28/(LongLines));
 			Rotationy = XMMatrixRotationZ(sphereYaw);
-			currVertPos = XMVector3TransformNormal( XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), (Rotationx * Rotationy) );	
-			currVertPos = XMVector3Normalize( currVertPos );
+
+			currVertPos = XMVector3TransformNormal( XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), Rotationx * Rotationy );	
+			//currVertPos = XMVector3Normalize(currVertPos);
 			vertices[i*LongLines+j+1].pos.x = XMVectorGetX(currVertPos);
 			vertices[i*LongLines+j+1].pos.y = XMVectorGetY(currVertPos);
 			vertices[i*LongLines+j+1].pos.z = XMVectorGetZ(currVertPos);

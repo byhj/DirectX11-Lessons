@@ -57,7 +57,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	 LeaveIBO.SysMemPitch      = 0;
 	 LeaveIBO.SysMemSlicePitch = 0;
 
-	hr = pD3D11Device->CreateBuffer(& LeaveIBDesc, & LeaveIBO, &m_pLeaveIB);
+	hr = pD3D11Device->CreateBuffer(&LeaveIBDesc, &LeaveIBO, &m_pLeaveIB);
 	DebugHR(hr);
 
 
@@ -67,15 +67,16 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC TreeVBDesc;
 	TreeVBDesc.Usage               = D3D11_USAGE_DEFAULT;
-	TreeVBDesc.ByteWidth           = sizeof(Vertex) * treeModel.GetVertexCount();
+	TreeVBDesc.ByteWidth           = sizeof(MeshStruct::Vertex) * treeModel.GetVertexCount();
 	TreeVBDesc.BindFlags           = D3D11_BIND_VERTEX_BUFFER;
 	TreeVBDesc.CPUAccessFlags      = 0;
 	TreeVBDesc.MiscFlags           = 0;
 	TreeVBDesc.StructureByteStride = 0;
+	std::vector<MeshStruct::Vertex> TreeVertex = treeModel.GetVertexData();
 
 	// Give the subresource structure a pointer to the vertex data.
 	D3D11_SUBRESOURCE_DATA TreeVBO;
-	TreeVBO.pSysMem          = &( treeModel.GetVertexData() )[0];
+	TreeVBO.pSysMem          = &TreeVertex[0];
 	TreeVBO.SysMemPitch      = 0;
 	TreeVBO.SysMemSlicePitch = 0;
 
@@ -92,13 +93,14 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	TreeIBDesc.MiscFlags           = 0;
 	TreeIBDesc.StructureByteStride = 0;
 
+	std::vector<DWORD> TreeIndex = treeModel.GetIndexData();
 	// Give the subresource structure a pointer to the index data.
 	D3D11_SUBRESOURCE_DATA TreeIBO;
-	TreeIBO.pSysMem          = &( treeModel.GetIndexData() )[0];
+	TreeIBO.pSysMem          = &TreeIndex[0];
 	TreeIBO.SysMemPitch      = 0;
 	TreeIBO.SysMemSlicePitch = 0;
 
-	hr = pD3D11Device->CreateBuffer(& TreeIBDesc, & TreeIBO, &m_pTreeIB);
+	hr = pD3D11Device->CreateBuffer(& TreeIBDesc, &TreeIBO, &m_pTreeIB);
 	DebugHR(hr);
 
 
@@ -262,10 +264,10 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
-	CubeShader.init(pD3D11Device, hWnd);
-	CubeShader.attachVS(L"Instance.vsh", pInputLayoutDesc, numElements);
-	CubeShader.attachPS(L"Instance.psh");
-	CubeShader.end();
+	InstanceShader.init(pD3D11Device, hWnd);
+	InstanceShader.attachVS(L"instance.vsh", pInputLayoutDesc, numElements);
+	InstanceShader.attachPS(L"instance.psh");
+	InstanceShader.end();
 
 	return true;
 }

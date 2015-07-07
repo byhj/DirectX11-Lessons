@@ -20,7 +20,11 @@ int TextureFromFile(const char* path, std::string directory);
 class Model
 {
 public:
-	Model(){}
+	Model()
+	{
+		m_VertexCount = 0;
+		m_IndexCount  = 0;
+	}
 
 	void loadModel(std::string path);
 	void processNode(aiNode* node, const aiScene* scene);
@@ -54,9 +58,9 @@ private:
 	std::vector<Mesh> meshes;
 	std::string directory;
 	std::vector<MeshStruct::Texture> textures_loaded;
-
 	std::vector<MeshStruct::Vertex> m_VertexData;
 	std::vector<DWORD>  m_IndexData;
+
 	int m_VertexCount;
 	int m_IndexCount;
 };

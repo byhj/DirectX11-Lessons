@@ -10,10 +10,9 @@ cbuffer MatrixBuffer : register(b0)
 
 cbuffer InstanceBuffer : register(b1)
 {
-	bool isTree;
-	bool isLeaf;
+	float isTree;
+	float isLeaf;
 }
-
 
 cbuffer LeaveMatrixBuffer : register(b2)
 {
@@ -22,7 +21,7 @@ cbuffer LeaveMatrixBuffer : register(b2)
 
 cbuffer TreeMatrixBuffer  :register(b3)
 {
-	float4 TreeModel[Num_TREE];
+	float4 TreeModel[NUM_TREE];
 };
 
 
@@ -48,11 +47,12 @@ VS_OUT VS( VS_IN vs_in, uint instanceID : SV_InstanceID )
 {	
  
    VS_OUT vs_out;
-    if (isTree)
-    {
-   	  vs_in.Pos += TreeModel[instanceID];
-    }
-	if (isLeaf)
+
+   if (isTree > 1.0f)
+   {
+       vs_in.Pos += TreeModel[instanceID];
+   }
+	if (isLeaf > 1.0f)
     {
         //Use different model martix for every leaves one tree
         uint currTree = (instanceID / NUM_LEAVES_PER_TREE);

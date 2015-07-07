@@ -2,7 +2,7 @@
 #define D3DCAMERA_H
 
 #include <dinput.h>
-#include <d3d11.h>
+#include <d3dx11.h>
 #include <xnamath.h>
 #include <vector>
 

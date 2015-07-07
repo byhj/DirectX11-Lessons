@@ -17,6 +17,7 @@ class D3DRenderSystem: public D3DApp
 {
 public:
 	D3DRenderSystem()
+
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
 
@@ -106,7 +107,7 @@ void D3DRenderSystem::init_object()
 	ObjModel.loadModel("../../media/objects/ground.obj");
 
 	instanceModel.init_buffer(m_pD3D11Device, m_pD3D11DeviceContext);
-	
+	instanceModel.init_shader(m_pD3D11Device, GetHwnd());
 }
 
 void D3DRenderSystem::UpdateScene()
@@ -125,7 +126,7 @@ void D3DRenderSystem::v_Render()
 	XMVECTOR camPosition = camera.GetCamPos();
 	XMMATRIX Translation = XMMatrixTranslation(XMVectorGetX(camPosition), XMVectorGetY(camPosition), 
 	                                        	XMVectorGetZ(camPosition) );
-	sphereWorld = Scale * Translation;
+	sphereWorld = Scale * Translation ;
 
 	XMMATRIX MVP   = XMMatrixTranspose(sphereWorld * View * Proj); 
 
@@ -141,6 +142,7 @@ void D3DRenderSystem::v_Render()
 
 	meshWorld = Rotation * Scale * Translation;
 	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
+	instanceModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
 
 	DrawMessage();
 
@@ -257,6 +259,11 @@ bool D3DRenderSystem::init_camera()
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
 
 	Proj  = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
+
+	XMVECTOR camUp          = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	XMVECTOR camPosition    = XMVectorSet( 0.0f, 5.0f, -8.0f, 0.0f );
+	XMVECTOR camTarget      = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
+	View        = XMMatrixLookAtLH(camPosition, camTarget, camUp );
 
 	return true;
 }

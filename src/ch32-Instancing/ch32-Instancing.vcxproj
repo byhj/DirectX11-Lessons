@@ -58,7 +58,7 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\DirectX11-Lessons.props" />
+    <Import Project="..\..\DirectX11-Lessons(x64).props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -117,7 +117,7 @@
   <ItemGroup>
     <None Include="cubemap.psh" />
     <None Include="cubemap.vsh" />
-    <None Include="instacne.vsh" />
+    <None Include="instance.vsh" />
     <None Include="instance.psh" />
     <None Include="model.psh" />
     <None Include="model.vsh" />

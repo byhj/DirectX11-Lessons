@@ -21,6 +21,13 @@ public:
 		m_pMVPBuffer          = NULL;
 		m_pLightBuffer        = NULL;
 		m_pTexture            = NULL;
+		m_pTreeIB  = NULL;
+		m_pTreeVB  = NULL;
+		m_pLeaveIB = NULL;
+		m_pLeaveVB = NULL;
+		m_pInstanceBuffer = NULL;
+		m_pLeaveMatrixBuffer = NULL;
+		m_pTreeMatrixBuffer = NULL;
 	}
 
 	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &Model,  
@@ -29,9 +36,6 @@ public:
 
 		unsigned int stride;
 		unsigned int offset;
-		stride = sizeof(Vertex); 
-		offset = 0;
-		CubeShader.use(pD3D11DeviceContext);
 
 		cbMatrix.model  = XMMatrixTranspose(Model);
 		cbMatrix.view   = XMMatrixTranspose(View);
@@ -44,24 +48,29 @@ public:
 		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	   // pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
+		InstanceShader.use(pD3D11DeviceContext);
+
 		///////////////////////////////////////////////////////////////////////////////////
+		stride = sizeof(Vertex); 
+		offset = 0;
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pLeaveVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
 		//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 
-		cbInstance.isLeaf = true;
-		cbInstance.isTree = false;
+		cbInstance.isTree = 0.0f;
+		cbInstance.isLeaf = 2.0f;
 		pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
-		pD3D11DeviceContext->DrawIndexedInstanced(6, NumTrees * NumLeaves, 0, 0, 0);
-
+		pD3D11DeviceContext->DrawIndexedInstanced(4, NumTrees * NumLeaves, 0, 0, 0);
 		///////////////////////////////////////////////////////////////////////////////////
+		stride = sizeof(MeshStruct::Vertex); 
+		offset = 0;
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pTreeVB, &stride, &offset);
-		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
+		pD3D11DeviceContext->IASetIndexBuffer(m_pTreeIB, DXGI_FORMAT_R32_UINT, 0);
 		//pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
-
-		cbInstance.isLeaf = false;
-		cbInstance.isTree = true;
+		
+		cbInstance.isTree = 2.0f;
+		cbInstance.isLeaf = 0.0f;
 		pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
 		pD3D11DeviceContext->DrawIndexedInstanced(treeModel.GetIndexCount(), NumTrees, 0, 0, 0);
@@ -103,8 +112,9 @@ private:
 
 	struct InstanceBuffer
 	{
-		bool isTree;
-		bool isLeaf;
+		float isTree;
+		float isLeaf;
+		XMFLOAT2 padding;
 	};
     InstanceBuffer cbInstance;
 
@@ -145,7 +155,7 @@ private:
 	ID3D11InputLayout        *m_pInputLayout;
 
 	Model treeModel;
-	Shader CubeShader;
+	Shader InstanceShader;
 };
 
 

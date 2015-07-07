@@ -4,15 +4,14 @@
 #include "d3dShader.h"
 #include "d3dDebug.h"
 
-#include <windows.h>
+#include <vector>
 #include <d3dx11.h>
 #include <xnamath.h>
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>
-#include <D3DX10math.h>
 #include <D3DX11async.h>
-#include <vector>
+
 
 class D3DSkymap
 {
