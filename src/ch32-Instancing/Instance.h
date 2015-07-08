@@ -50,7 +50,7 @@ public:
 		InstanceShader.use(pD3D11DeviceContext);
 
 		///////////////////////////////////////////////////////////////////////////////////
-		stride = sizeof(Vertex); 
+		stride = sizeof(MeshStruct::Vertex); 
 		offset = 0;
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pLeaveVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);

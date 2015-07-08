@@ -40,7 +40,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	{
 		// Front Face
 		0,  1,  2,
-		0,  2,  3,
+		2,  3,  0,
 	};
 
 	D3D11_BUFFER_DESC LeaveIBDesc;

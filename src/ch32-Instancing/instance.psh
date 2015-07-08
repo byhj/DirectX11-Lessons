@@ -30,6 +30,7 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
 
 
 	float4 pixelColor = saturate(diffuse * ambient + diff) * texColor;
+	clip(pixelColor.a - 0.25);
 
 	return pixelColor;
 }

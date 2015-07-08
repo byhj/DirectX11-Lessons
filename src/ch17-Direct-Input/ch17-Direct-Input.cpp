@@ -163,12 +163,6 @@ bool TextureApp::v_InitD3D()
 	fps = 0.0f;
 	timer.Reset();
 
-	if( !InitDirectInput(GetAppInst()) )
-	{
-		MessageBox(0, L"Direct Input Initialization - Failed",
-			L"Error", MB_OK);
-		return 0;
-	}
 	return true;
 }
 bool TextureApp::InitDirectInput(HINSTANCE hInstance)
@@ -337,7 +331,7 @@ void TextureApp::v_Render()
 	}	
     font.drawFps(m_pD3D11DeviceContext, (UINT)fps);
 
-	DetectInput(timer.GetDeltaTime());
+
 
 	m_pSwapChain->Present(0, 0);
 }

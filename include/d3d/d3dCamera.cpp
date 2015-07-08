@@ -1,5 +1,6 @@
 #include "d3dCamera.h"
 
+#define SHADER_DEBUG
 
 bool D3DCamera::InitDirectInput(HINSTANCE hInstance, HWND hWnd)
 {
@@ -14,11 +15,15 @@ bool D3DCamera::InitDirectInput(HINSTANCE hInstance, HWND hWnd)
 	hr = DirectInput->CreateDevice(GUID_SysMouse, &m_pDIMouse, NULL);
 
 	hr = m_pDIKeyboard->SetDataFormat(&c_dfDIKeyboard);
-	hr = m_pDIKeyboard->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-
 	hr = m_pDIMouse->SetDataFormat(&c_dfDIMouse);
-	hr = m_pDIMouse->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
 
+#ifdef SHADER_DEBUG
+	hr = m_pDIKeyboard->SetCooperativeLevel(hWnd,DISCL_FOREGROUND);
+	hr = m_pDIMouse->SetCooperativeLevel(hWnd, DISCL_FOREGROUND);
+#else
+	hr = m_pDIKeyboard->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	hr = m_pDIMouse->SetCooperativeLevel(hWnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
+#endif
 	return true;
 }
 
