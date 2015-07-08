@@ -1,9 +1,5 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
-
 #include "d3d/d3dApp.h"
 #include <d3d/d3dShader.h>
 
@@ -60,7 +56,7 @@ private:
 	};
 	struct MatrixBuffer
 	{
-		XMMATRIX  MVP;
+		XMFLOAT4X4  MVP;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -106,7 +102,9 @@ void D3DInitApp::v_Render()
 	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	Model = XMMatrixIdentity();
 	MVP = (Model * View * Proj);
-	cbMatrix.MVP = XMMatrixTranspose(MVP);	
+	MVP = XMMatrixTranspose(MVP);
+	XMStoreFloat4x4(&cbMatrix.MVP, MVP);
+
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 

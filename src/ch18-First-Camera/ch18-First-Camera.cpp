@@ -2,6 +2,10 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
+#ifdef _WIN32
+#define _XM_NO_INTRINSICS_
+#endif 
+
 #include "d3d/d3dApp.h"
 #include "d3d/d3dShader.h"
 #include "d3d/d3dFont.h"
@@ -81,9 +85,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4  model;
+		XMFLOAT4X4  view;
+		XMFLOAT4X4  proj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -314,9 +318,13 @@ void TextureApp::v_Render()
 
 
 	//Set the WVP matrix and send it to the constant buffer in effect file
-	cbMatrix.proj  = XMMatrixTranspose(camProjection);
-	cbMatrix.view  = XMMatrixTranspose(camView);	
-	cbMatrix.model = XMMatrixTranspose(groundWorld);	
+
+	XMMATRIX TempModel = XMMatrixTranspose(groundWorld);
+	XMMATRIX TempView  = XMMatrixTranspose(camView);
+	XMMATRIX TempProj  = XMMatrixTranspose(camProjection);
+	XMStoreFloat4x4(&cbMatrix.model, TempModel );
+	XMStoreFloat4x4(&cbMatrix.view,  TempView);
+	XMStoreFloat4x4(&cbMatrix.proj,  TempProj);
 
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);

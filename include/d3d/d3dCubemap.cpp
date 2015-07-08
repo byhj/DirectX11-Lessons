@@ -231,7 +231,7 @@ void D3DSkymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 
 }
 
-void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &MVP)
+void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 &MVP)
 {
 	// Set vertex buffer stride and offset.=
 	unsigned int stride;

@@ -21,7 +21,7 @@ public:
 	void createSphere(ID3D11Device *pD3D11Device, int LatLines, int LongLines);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &MVP);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 &MVP);
 
 private:
 
@@ -36,7 +36,7 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  MVP;
+		XMFLOAT4X4  MVP;
 	};
 	MatrixBuffer cbMatrix;
 

@@ -70,7 +70,7 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  MVP;
+		XMFLOAT4X4  MVP;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -194,7 +194,8 @@ void TextureApp::v_Render()
 	Model *= XMMatrixRotationAxis( rotaxis, rot);
 
 	MVP = (Model * View * Proj);
-	cbMatrix.MVP = XMMatrixTranspose(MVP);	
+	MVP = XMMatrixTranspose(MVP);
+	XMStoreFloat4x4(&cbMatrix.MVP, MVP);	
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
     m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -205,7 +206,8 @@ void TextureApp::v_Render()
 	Model *= XMMatrixScaling( 1.3f, 1.3f, 1.3f );
 
 	MVP = (Model * View * Proj);
-	cbMatrix.MVP = XMMatrixTranspose(MVP);	
+	MVP = XMMatrixTranspose(MVP);
+	XMStoreFloat4x4(&cbMatrix.MVP, MVP);
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 	m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);

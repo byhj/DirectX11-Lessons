@@ -31,17 +31,20 @@ public:
 	void DetectInput(double time , HWND hWnd);
 	void UpdateCamera();
 
-	XMMATRIX GetViewMatrix()
+	XMFLOAT4X4 GetViewMatrix()
 	{
-		return camView;
+		XMStoreFloat4x4(&m_camView, camView);
+		return m_camView;
 	}
-	XMVECTOR GetCamPos()
+	XMFLOAT4 GetCamPos()
 	{
-		return camPosition;
+		XMStoreFloat4(&m_camPosition, camPosition);
+		return m_camPosition;
 	}
-	XMVECTOR GetCamTarget()
+	XMFLOAT4  GetCamTarget()
 	{
-		return camTarget;
+		XMStoreFloat4(&m_camTarget, camTarget);
+		return m_camTarget;
 	}
 
 private:
@@ -62,6 +65,9 @@ private:
 	XMVECTOR camTarget;
 	XMVECTOR camUp;
 
+	XMFLOAT4   m_camTarget;
+	XMFLOAT4   m_camPosition;
+	XMFLOAT4X4 m_camView;
 	float rot;
 	float moveLeftRight  ;
 	float moveBackForward;

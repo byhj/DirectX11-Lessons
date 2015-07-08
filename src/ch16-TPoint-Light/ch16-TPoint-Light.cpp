@@ -74,9 +74,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4  model;
+		XMFLOAT4X4  view;
+		XMFLOAT4X4  proj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -225,9 +225,12 @@ void TextureApp::v_Render()
 	Model  = XMMatrixTranslation( 0.0f, 0.0f, 4.0f );
 	Model *= XMMatrixRotationAxis( rotaxis, rot);
 
-	cbMatrix.model = XMMatrixTranspose(Model);
-	cbMatrix.view  = XMMatrixTranspose(View);
-	cbMatrix.proj  = XMMatrixTranspose(Proj);
+	XMMATRIX TempModel = XMMatrixTranspose(Model);
+	XMMATRIX TempView  = XMMatrixTranspose(View);
+	XMMATRIX TempProj  = XMMatrixTranspose(Proj);
+	XMStoreFloat4x4(&cbMatrix.model, TempModel );
+	XMStoreFloat4x4(&cbMatrix.view,  TempView);
+	XMStoreFloat4x4(&cbMatrix.proj,  TempProj);
 
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
@@ -238,9 +241,12 @@ void TextureApp::v_Render()
 	Model  = XMMatrixRotationAxis( rotaxis, -rot);
 	Model *= XMMatrixScaling( 1.3f, 1.3f, 1.3f );
 
-	cbMatrix.model = XMMatrixTranspose(Model);
-	cbMatrix.view  = XMMatrixTranspose(View);
-	cbMatrix.proj  = XMMatrixTranspose(Proj);
+	TempModel = XMMatrixTranspose(Model);
+	TempView  = XMMatrixTranspose(View);
+	TempProj  = XMMatrixTranspose(Proj);
+	XMStoreFloat4x4(&cbMatrix.model, TempModel );
+	XMStoreFloat4x4(&cbMatrix.view,  TempView);
+	XMStoreFloat4x4(&cbMatrix.proj,  TempProj);
 
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);

@@ -2,6 +2,9 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
+#ifdef _WIN32
+#define _XM_NO_INTRINSICS_
+#endif 
 
 #include "d3d/d3dApp.h"
 #include "d3d/d3dShader.h"
@@ -9,6 +12,7 @@
 #include "d3d/d3dTimer.h"
 
 #include <dinput.h>
+
 class TextureApp: public D3DApp
 {
 public:
@@ -76,9 +80,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4  model;
+		XMFLOAT4X4  view;
+		XMFLOAT4X4  proj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -291,10 +295,12 @@ void TextureApp::v_Render()
 	//Set cube1's world space using the transformations
 	cube1World = Translation * Rotation * Rotationx * Rotationz;
 
-	cbMatrix.model = XMMatrixTranspose(cube1World);
-	cbMatrix.view  = XMMatrixTranspose(View);
-	cbMatrix.proj  = XMMatrixTranspose(Proj);
-
+	XMMATRIX TempModel = XMMatrixTranspose(cube1World);
+	XMMATRIX TempView  = XMMatrixTranspose(View);
+	XMMATRIX TempProj  = XMMatrixTranspose(Proj);
+	XMStoreFloat4x4(&cbMatrix.model, TempModel );
+	XMStoreFloat4x4(&cbMatrix.view,  TempView);
+	XMStoreFloat4x4(&cbMatrix.proj,  TempProj);
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
     m_pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -311,9 +317,12 @@ void TextureApp::v_Render()
 	//Set cube2's world space matrix
 	cube2World = Rotation * Scale;
 
-	cbMatrix.model = XMMatrixTranspose(cube2World);
-	cbMatrix.view  = XMMatrixTranspose(View);
-	cbMatrix.proj  = XMMatrixTranspose(Proj);
+	TempModel = XMMatrixTranspose(cube2World);
+	TempView  = XMMatrixTranspose(View);
+	TempProj  = XMMatrixTranspose(Proj);
+	XMStoreFloat4x4(&cbMatrix.model, TempModel );
+	XMStoreFloat4x4(&cbMatrix.view,  TempView);
+	XMStoreFloat4x4(&cbMatrix.proj,  TempProj);
 
 	m_pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	m_pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
