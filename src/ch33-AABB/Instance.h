@@ -31,16 +31,16 @@ public:
 		m_CullLeftNum         = 0;
 	}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &Model,  
-		const XMMATRIX &View, const XMMATRIX &Proj)
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model,  XMFLOAT4X4  View, XMFLOAT4X4 Proj, const XMMATRIX &viewProj)
 	{	
 
 		unsigned int stride;
 		unsigned int offset;
 		m_CullLeftNum = 0;
 
+
 		m_D3DAABB.CreateAABB(treeModel.GetPos());	
-		m_D3DAABB.CreateFrustumPlanes(View * Proj);
+		m_D3DAABB.CreateFrustumPlanes(viewProj);
 
 		XMFLOAT4 TreecullModel[NumTrees];
 		int j = 0;
@@ -57,9 +57,9 @@ public:
 		pD3D11DeviceContext->UpdateSubresource(m_pTreeMatrixBuffer, 0, NULL, &TreecullModel, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers(3, 1, &m_pTreeMatrixBuffer);
 
-		cbMatrix.model  = XMMatrixTranspose(Model);
-		cbMatrix.view   = XMMatrixTranspose(View);
-		cbMatrix.proj   = XMMatrixTranspose(Proj);
+		cbMatrix.model  = Model;
+		cbMatrix.view   = View;
+		cbMatrix.proj   = Proj;
 		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 

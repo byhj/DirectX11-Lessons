@@ -1,8 +1,7 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#define _XM_NO_INTRINSICS_
-
+#include <windows.h>
 #include <xnamath.h>
 #include <vector>
 

@@ -2,19 +2,14 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
-#include "d3dCamera.h"
-#include "plane.h"
-
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
 
 #include "d3d/d3dApp.h"
 #include "d3d/d3dShader.h"
 #include "d3d/d3dFont.h"
 #include "d3d/d3dTimer.h"
+#include "d3d/d3dCamera.h"
 
-
+#include "plane.h"
 
 class D3DRenderSystem: public D3DApp
 {
@@ -72,7 +67,9 @@ private:
 	void DrawFps();
 	void DrawMessage();
 
+	XMFLOAT4X4 m_View, m_Model, m_Proj;
 	XMMATRIX View, Model, Proj;
+
 	int m_videoCardMemory;
 	WCHAR m_videoCardInfo[255];
 	float fps;
@@ -113,12 +110,24 @@ void D3DRenderSystem::v_Render()
     BeginScene();
 
 	m_pD3D11DeviceContext->RSSetState(m_pCCWcullMode);
-	View = camera.GetViewMatrix();
 	camera.DetectInput(timer.GetDeltaTime() * 10.0f, GetHwnd());
+
+	m_View  = camera.GetViewMatrix();
+	View = XMLoadFloat4x4(&m_View);
+	
 	XMMATRIX Scale  = XMMatrixScaling( 10.0f, 10.0f, 10.0f );
-	XMMATRIX Translation = XMMatrixTranslation( -520.0f, -100.0f, -1020.0f );
+	XMMATRIX Translation = XMMatrixTranslation( -100.0f, -100.0f, -100.0f );
 	XMMATRIX planeWorld = Scale * Translation;
-	plane.Render(m_pD3D11DeviceContext, planeWorld, View, Proj);
+
+	planeWorld = XMMatrixTranspose(planeWorld);
+	View       = XMMatrixTranspose(View);
+	XMMATRIX tempProj = XMMatrixTranspose(Proj);
+
+	XMStoreFloat4x4(&m_Model, planeWorld);
+	XMStoreFloat4x4(&m_View, View);
+	XMStoreFloat4x4(&m_Proj, tempProj);
+
+	plane.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj);
 
 	DrawMessage();
 
@@ -238,7 +247,7 @@ bool D3DRenderSystem::init_camera()
 	XMVECTOR camTarget = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR camUp     = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	View      = XMMatrixLookAtLH( camPos, camTarget, camUp );
-	Proj  = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
+	Proj  = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 10000.0f);
 
 	return true;
 }

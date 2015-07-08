@@ -1,13 +1,14 @@
-#include "collision.h"
+#pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 
+#ifdef _WIN32
+#define _XM_NO_INTRINSICS_
+#endif 
 
 #include "d3d/d3dShader.h"
 #include "d3d/d3dDebug.h"
 #include <d3d11.h>
 #include <xnamath.h>
 #include <vector>
-
-
 
 class Plane
 {
@@ -24,7 +25,7 @@ public:
 		m_pTexSamplerState    = NULL;
 	}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4  view, XMFLOAT4X4  proj);
 
 	void Shutdown()
 	{
@@ -70,9 +71,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4 model;
+		XMFLOAT4X4 view;
+		XMFLOAT4X4 proj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -93,7 +94,7 @@ private:
 
 
 
-void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj)
+void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4  view, XMFLOAT4X4  proj)
 {
 
 	// Set vertex buffer stride and offset.=
@@ -110,9 +111,9 @@ void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMM
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
-	cbMatrix.model = XMMatrixTranspose(model);
-	cbMatrix.view  = XMMatrixTranspose(view);
-	cbMatrix.proj  = XMMatrixTranspose(proj);
+	cbMatrix.model = model;
+	cbMatrix.view  = view;
+	cbMatrix.proj  = proj;
 	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 	pD3D11DeviceContext->DrawIndexed( NumFaces * 3, 0, 0 );
@@ -181,43 +182,6 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 		texVIndex++;
 	}
 
-	/************************************New Stuff****************************************************/
-	// Since our terrain will not be transformed throughout our scene, we will set the our groundWorlds
-	// world matrix here so that when we put the terrains positions in the "polygon soup", they will
-	// already be transformed to world space
-	XMMATRIX groundWorld = XMMatrixIdentity();
-	XMMATRIX Scale = XMMatrixScaling( 10.0f, 10.0f, 10.0f );
-	XMMATRIX Translation = XMMatrixTranslation( -520.0f, -10.0f, -1020.0f );
-	groundWorld = Scale * Translation;
-
-	// Store the terrains vertex positions and indices in the
-	// polygon soup that we will check for collisions with
-	// We can store ALL static (non-changing) geometry in here that we want to check for collisions with
-	int vertexOffset = collidableGeometryPositions.size();	// Vertex offset (each "mesh" will be added to the end of the positions array)
-
-	// Temp arrays because we need to store the geometry in world space
-	XMVECTOR tempVertexPosVec;
-	XMFLOAT3 tempVertF3;
-
-	// Push back vertex positions to the polygon soup
-	for(int i = 0; i < v.size(); i++)
-	{
-		tempVertexPosVec = XMLoadFloat3(&v[i].pos);
-		tempVertexPosVec = XMVector3TransformCoord(tempVertexPosVec, groundWorld);
-		XMStoreFloat3(&tempVertF3, tempVertexPosVec);
-		collidableGeometryPositions.push_back(tempVertF3);
-	}
-
-	// Push back indices for polygon soup. We need to make sure we are
-	// pushing back the indices "on top" of the previous pushed back
-	// objects vertex positions, hence "+ vertexOffset" (This is the
-	// first object we are putting in here, so it really doesn't
-	// matter right now, but I just wanted to show you how to do it
-	for(int i = 0; i < indices.size(); i++)
-	{
-		collidableGeometryIndices.push_back(indices[i] + vertexOffset);
-	}
-	/*************************************************************************************************/
 	/*   Use Face Normals
 	//////////////////////Compute Normals///////////////////////////
 	XMFLOAT3 normalized = XMFLOAT3(0.0f, 0.0f, 0.0f);

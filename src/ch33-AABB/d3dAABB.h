@@ -15,7 +15,7 @@ public:
 
 	// Culling Functions
 	void CreateAABB(std::vector<XMFLOAT3> &vertPosArray);
-	void CreateFrustumPlanes(XMMATRIX& viewProj);
+	void CreateFrustumPlanes(const XMMATRIX& viewProj);
 	bool CullAABB(XMFLOAT4 worldPos);
 
 private:

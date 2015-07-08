@@ -78,7 +78,7 @@ void D3DAABB::CreateAABB(std::vector<XMFLOAT3> &vertPosArray)
 	m_AABB[1] = maxVertex;
 }
 
-void D3DAABB::CreateFrustumPlanes(XMMATRIX& viewProj)
+void D3DAABB::CreateFrustumPlanes(const XMMATRIX& viewProj)
 {
 	// x, y, z, and w represent A, B, C and D in the plane equation
 	// where ABC are the xyz of the planes normal, and D is the plane constant
