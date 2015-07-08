@@ -25,7 +25,7 @@ public:
 		m_pTexSamplerState    = NULL;
 	}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4  view, XMFLOAT4X4  proj);
 
 	void Shutdown()
 	{
@@ -71,9 +71,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4 model;
+		XMFLOAT4X4 view;
+		XMFLOAT4X4 proj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -94,7 +94,7 @@ private:
 
 
 
-void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMMATRIX view, XMMATRIX proj)
+void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4  view, XMFLOAT4X4  proj)
 {
 
 	// Set vertex buffer stride and offset.=
@@ -111,9 +111,9 @@ void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMMATRIX model, XMM
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
-	cbMatrix.model = XMMatrixTranspose(model);
-	cbMatrix.view  = XMMatrixTranspose(view);
-	cbMatrix.proj  = XMMatrixTranspose(proj);
+	cbMatrix.model = model;
+	cbMatrix.view  = view;
+	cbMatrix.proj  = proj;
 	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 	pD3D11DeviceContext->DrawIndexed( NumFaces * 3, 0, 0 );

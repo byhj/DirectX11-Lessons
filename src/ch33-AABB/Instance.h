@@ -115,9 +115,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4  model;
+		XMFLOAT4X4  view;
+		XMFLOAT4X4  proj;
 
 	};
 	MatrixBuffer cbMatrix;

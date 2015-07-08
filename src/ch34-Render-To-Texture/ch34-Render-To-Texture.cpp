@@ -75,6 +75,7 @@ private:
 	void DrawFps();
 	void DrawMessage();
 
+	XMFLOAT4X4 m_View, m_Model, m_Proj;
 	XMMATRIX View, Model, Proj;
 	int m_videoCardMemory;
 	WCHAR m_videoCardInfo[255];
@@ -162,11 +163,10 @@ void D3DRenderSystem::v_Render()
 {
 
 
-		camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
+	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
 
 	//////////////////////////////////////Scene///////////////////////////////////
 	XMMATRIX meshWorld = XMMatrixIdentity();
-	//Define cube1's world space matrix
 	XMMATRIX Rotation = XMMatrixRotationY(3.14f);
 	XMMATRIX Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
 	XMMATRIX Translation = XMMatrixTranslation( 0.0f, 0.0f, 0.0f );
@@ -177,27 +177,39 @@ void D3DRenderSystem::v_Render()
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &pRttRenderTargetView, m_pDepthStencilView);
 	m_pD3D11DeviceContext->ClearRenderTargetView(pRttRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	
+	meshWorld = XMMatrixTranspose(meshWorld);
+	View      = XMMatrixTranspose(View);
+	XMMATRIX tempProj = XMMatrixTranspose(Proj);
+	XMStoreFloat4x4(&m_Model, meshWorld);
+	XMStoreFloat4x4(&m_View, View);
+	XMStoreFloat4x4(&m_Proj, tempProj);
 
-	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
+	ObjModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj);
 
 	BeginScene();
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 
+	ObjModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj);
 	//////////////////////////////////////SkyBox/////////////////////////////////////////
-	View    = camera.GetViewMatrix();
-	Scale   = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	XMMATRIX sphereWorld = XMMatrixIdentity();
-	XMVECTOR camPosition = camera.GetCamPos();
-	Translation = XMMatrixTranslation(XMVectorGetX(camPosition), XMVectorGetY(camPosition), 
-		                              XMVectorGetZ(camPosition) );
-	sphereWorld = Scale * Translation;
-	XMMATRIX MVP   = XMMatrixTranspose(sphereWorld * View * Proj); 
+	m_View  = camera.GetViewMatrix();
+	View = XMLoadFloat4x4(&m_View);
 
-	skymap.Render(m_pD3D11DeviceContext, MVP);
+	XMMATRIX sphereWorld = XMMatrixIdentity();
+	XMFLOAT4 camPosition = camera.GetCamPos();
+	Scale       = XMMatrixScaling(5.0f, 5.0f, 5.0f);
+	Translation = XMMatrixTranslation(camPosition.x, camPosition.y, camPosition.z);
+	sphereWorld = Scale * Translation;
+
+	XMMATRIX MVP   = XMMatrixTranspose(sphereWorld * View * Proj); 
+	XMFLOAT4X4 tempMVP;
+	XMStoreFloat4x4(&tempMVP, MVP);
+	skymap.Render(m_pD3D11DeviceContext, tempMVP);
+
+	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
 
 	///////////////////////////////////////////////////////////////////////////
 
-	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
 
 	// Create an orthographic projection matrix for 2D rendering. 
 	Model = XMMatrixIdentity();

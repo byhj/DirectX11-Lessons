@@ -22,7 +22,7 @@ class D3DModel
 public:
 	D3DModel(){}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &model, const XMMATRIX &view, const XMMATRIX &proj)
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj)
 	{
 		ModelShader.use(pD3D11DeviceContext);
 

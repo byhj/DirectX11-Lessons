@@ -83,9 +83,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4  model;
+		XMFLOAT4X4  view;
+		XMFLOAT4X4  proj;
 	};
 	MatrixBuffer cbMatrix;
 
@@ -326,15 +326,23 @@ void TextureApp::v_Render()
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX Model  = XMMatrixTranslation( 0.0f, 0.0f, 25.0f );
 
-	ObjModel.Render(m_pD3D11DeviceContext, Model,  camView ,  camProjection);
+	XMMATRIX TempModel = XMMatrixTranspose(Model);
+	XMMATRIX TempView  = XMMatrixTranspose(camView);
+	XMMATRIX TempProj  = XMMatrixTranspose(camProjection);
+	XMStoreFloat4x4(&cbMatrix.model, TempModel );
+	XMStoreFloat4x4(&cbMatrix.view,  TempView);
+	XMStoreFloat4x4(&cbMatrix.proj,  TempProj);
+
+	ObjModel.Render(m_pD3D11DeviceContext, cbMatrix.model, cbMatrix.view, cbMatrix.proj);
 
 	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
 	//////////////////////////////////////SkyBox/////////////////////////////////////////
-	XMMATRIX MVP ;
-	MVP   = XMMatrixTranspose( sphereWorld * camView * camProjection); 
-	skymap.Render(m_pD3D11DeviceContext, MVP);
 
+	XMMATRIX MVP   = XMMatrixTranspose( sphereWorld * camView * camProjection); 
+	XMFLOAT4X4 tempMVP;
+	XMStoreFloat4x4(&tempMVP, MVP);
+	skymap.Render(m_pD3D11DeviceContext, tempMVP);
 	/////////////////////////Time and Font////////////////////////////////////
 	static bool flag = true;
 	if (flag)

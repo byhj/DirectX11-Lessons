@@ -116,13 +116,13 @@ public:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &model, const XMMATRIX &view, const XMMATRIX &proj);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj);
 
 	struct MatrixBuffer
 	{
-		XMMATRIX Model;
-		XMMATRIX View;
-		XMMATRIX Porj;
+		XMFLOAT4X4 Model;
+		XMFLOAT4X4 View;
+		XMFLOAT4X4 Porj;
 	};
 	MatrixBuffer cbMatrix;
 

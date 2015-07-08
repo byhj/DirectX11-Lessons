@@ -29,16 +29,16 @@ public:
 		m_pTreeMatrixBuffer = NULL;
 	}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &Model,  
-		const XMMATRIX &View, const XMMATRIX &Proj)
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model,  XMFLOAT4X4  View, XMFLOAT4X4 Proj)
 	{	
 
 		unsigned int stride;
 		unsigned int offset;
 
-		cbMatrix.model  = XMMatrixTranspose(Model);
-		cbMatrix.view   = XMMatrixTranspose(View);
-		cbMatrix.proj   = XMMatrixTranspose(Proj);
+		cbMatrix.model  = Model;
+		cbMatrix.view   = View;
+		cbMatrix.proj   = Proj;
+
 		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 
@@ -90,9 +90,9 @@ private:
 
 	struct MatrixBuffer
 	{
-		XMMATRIX  model;
-		XMMATRIX  view;
-		XMMATRIX  proj;
+		XMFLOAT4X4  model;
+		XMFLOAT4X4  view;
+		XMFLOAT4X4  proj;
 
 	};
 	MatrixBuffer cbMatrix;

@@ -82,7 +82,7 @@ void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
 	DebugHR(hr);
 
 }
-void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &model, const XMMATRIX &view, const XMMATRIX &proj)
+void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj)
 {	
 
 	// Bind appropriate textures
@@ -112,9 +112,9 @@ void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, const XMMATRIX &m
 	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	cbMatrix.Model = XMMatrixTranspose(model);
-	cbMatrix.View  = XMMatrixTranspose(view);
-	cbMatrix.Porj  = XMMatrixTranspose(proj);
+	cbMatrix.Model = model;
+	cbMatrix.View  = view;
+	cbMatrix.Porj  = proj;
 
 	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);

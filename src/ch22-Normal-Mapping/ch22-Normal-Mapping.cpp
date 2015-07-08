@@ -68,6 +68,7 @@ private:
 	void DrawFps();
 	void DrawMessage();
 
+	XMFLOAT4X4 m_View, m_Model, m_Proj;
 	XMMATRIX View, Model, Proj;
 	int m_videoCardMemory;
 	WCHAR m_videoCardInfo[255];
@@ -111,28 +112,38 @@ void D3DRenderSystem::v_Render()
     BeginScene();
 
 	//////////////////////////////////////SkyBox/////////////////////////////////////////
-	View                 = camera.GetViewMatrix();
+	m_View  = camera.GetViewMatrix();
+	View = XMLoadFloat4x4(&m_View);
+
 	XMMATRIX sphereWorld = XMMatrixIdentity();
 	XMMATRIX Scale       = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	XMVECTOR camPosition = camera.GetCamPos();
-	XMMATRIX Translation = XMMatrixTranslation(XMVectorGetX(camPosition), XMVectorGetY(camPosition), 
-	                                        	XMVectorGetZ(camPosition) );
+	XMFLOAT4 camPosition = camera.GetCamPos();
+	XMMATRIX Translation = XMMatrixTranslation(camPosition.x, camPosition.y, camPosition.z);
 	sphereWorld = Scale * Translation;
 
 	XMMATRIX MVP   = XMMatrixTranspose(sphereWorld * View * Proj); 
-
-	skymap.Render(m_pD3D11DeviceContext, MVP);
+	XMFLOAT4X4 tempMVP;
+	XMStoreFloat4x4(&tempMVP, MVP);
+	skymap.Render(m_pD3D11DeviceContext, tempMVP);
 
 	camera.DetectInput(timer.GetDeltaTime(), GetHwnd());
+
 	//////////////////////////////////////Scene///////////////////////////////////
 	XMMATRIX meshWorld = XMMatrixIdentity();
-	//Define cube1's world space matrix
 	XMMATRIX Rotation = XMMatrixRotationY(3.14f);
 	Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
 	Translation = XMMatrixTranslation( 0.0f, 0.0f, 0.0f );
-
 	meshWorld = Rotation * Scale * Translation;
-	ObjModel.Render(m_pD3D11DeviceContext, meshWorld, View, Proj);
+
+	meshWorld = XMMatrixTranspose(meshWorld);
+	View      = XMMatrixTranspose(View);
+	XMMATRIX tempProj = XMMatrixTranspose(Proj);
+
+	XMStoreFloat4x4(&m_Model, meshWorld);
+	XMStoreFloat4x4(&m_View, View);
+	XMStoreFloat4x4(&m_Proj, tempProj);
+
+	ObjModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj);
 
 	DrawMessage();
 
