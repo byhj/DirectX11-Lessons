@@ -131,7 +131,7 @@
     <ClCompile Include="..\..\include\d3d\d3dModel.cpp" />
     <ClCompile Include="..\..\include\d3d\d3dShader.cpp" />
     <ClCompile Include="..\..\include\d3d\d3dTimer.cpp" />
-    <ClCompile Include="ch33-Instancing.cpp" />
+    <ClCompile Include="ch32-Instancing.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="model.cpp" />
   </ItemGroup>
