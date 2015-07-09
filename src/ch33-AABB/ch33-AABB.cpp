@@ -138,24 +138,20 @@ void D3DRenderSystem::v_Render()
 
 	//////////////////////////////////////Scene///////////////////////////////////
 	XMMATRIX meshWorld = XMMatrixIdentity();
-	XMMATRIX Rotation = XMMatrixRotationY(3.14f);
+	XMMATRIX Rotation = XMMatrixIdentity();
 	Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
 	Translation = XMMatrixTranslation( 0.0f, 0.0f, 0.0f );
 	meshWorld = Rotation * Scale * Translation;
 
 	meshWorld = XMMatrixTranspose(meshWorld);
-	View      = XMMatrixTranspose(View);
+	XMMATRIX tempView = XMMatrixTranspose(View);
 	XMMATRIX tempProj = XMMatrixTranspose(Proj);
 
 	XMStoreFloat4x4(&m_Model, meshWorld);
-	XMStoreFloat4x4(&m_View, View);
+	XMStoreFloat4x4(&m_View,  tempView);
 	XMStoreFloat4x4(&m_Proj, tempProj);
 
-	meshWorld = Rotation * Scale * Translation;
 	ObjModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj);
-
-	m_View  = camera.GetViewMatrix();
-	View = XMLoadFloat4x4(&m_View);
 
 	instanceModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj, View * Proj);
 
@@ -314,7 +310,7 @@ void D3DRenderSystem::DrawMessage()
 	font.drawText(m_pD3D11DeviceContext, WinInfo, 22.0f, 10.0f, 40.0f, 0xff0099ff);
 	font.drawText(m_pD3D11DeviceContext, m_videoCardInfo, 22.0f, 10.0f, 70.0f, 0xff0099ff);
 
-	swprintf(WinInfo, L"Instance Cull: %d", instanceModel.GetCullLeft() );
+	swprintf(WinInfo, L"Instance Cull: %d", instanceModel.GetCullLeft());
 	font.drawText(m_pD3D11DeviceContext, WinInfo, 22.0f, 10.0f, 100.0f, 0xff0099ff);
 }
 

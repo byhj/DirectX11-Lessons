@@ -1,3 +1,4 @@
+
 #ifndef INSTANCE_H
 #define INSTANCE_H
 
@@ -8,6 +9,7 @@
 
 #include "d3d/d3dShader.h"
 #include "d3d/d3dDebug.h"
+
 #include "d3dAABB.h"
 
 const int NumLeaves = 1000;
@@ -36,9 +38,8 @@ public:
 
 		unsigned int stride;
 		unsigned int offset;
+
 		m_CullLeftNum = 0;
-
-
 		m_D3DAABB.CreateAABB(treeModel.GetPos());	
 		m_D3DAABB.CreateFrustumPlanes(viewProj);
 
@@ -46,14 +47,14 @@ public:
 		int j = 0;
 		for (int i = 0; i != NumTrees; ++i)
 		{
-			bool isCull = m_D3DAABB.CullAABB(cbTreeMatrix.TreeModel[i]);
+			bool isCull = m_D3DAABB.CullAABB( cbTreeMatrix.TreeModel[i]);
 			if (!isCull)
 			{
 				TreecullModel[j++] = cbTreeMatrix.TreeModel[i];
 				++m_CullLeftNum;
 			}
 		}
-		m_CullLeftNum = 10;
+
 		pD3D11DeviceContext->UpdateSubresource(m_pTreeMatrixBuffer, 0, NULL, &TreecullModel, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers(3, 1, &m_pTreeMatrixBuffer);
 
@@ -62,10 +63,10 @@ public:
 		cbMatrix.proj   = Proj;
 		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-
 		pD3D11DeviceContext->VSSetConstantBuffers(2, 1, &m_pLeaveMatrixBuffer);
+
 		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	    pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
 
 		InstanceShader.use(pD3D11DeviceContext);
 
@@ -87,7 +88,7 @@ public:
 		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pTreeVB, &stride, &offset);
 		pD3D11DeviceContext->IASetIndexBuffer(m_pTreeIB, DXGI_FORMAT_R32_UINT, 0);
 		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTreeTexSRV);
-		
+
 		cbInstance.isTree = 2.0f;
 		cbInstance.isLeaf = 0.0f;
 		pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0 );
@@ -98,17 +99,17 @@ public:
 	void shutdown()
 	{
 		ReleaseCOM(m_pRenderTargetView  )
-		ReleaseCOM(m_pMVPBuffer         )
-		ReleaseCOM(m_pLightBuffer       )
+			ReleaseCOM(m_pMVPBuffer         )
+			ReleaseCOM(m_pLightBuffer       )
 	}
 
 	bool init_buffer (ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext);
 	bool init_shader (ID3D11Device *pD3D11Device, HWND hWnd);
 	void init_texture(ID3D11Device *pD3D11Device);
 
-	int GetCullLeft()
+	int GetCullLeft() const
 	{
-		return m_CullLeftNum;
+       return m_CullLeftNum;
 	}
 
 private:
@@ -140,7 +141,7 @@ private:
 		float isLeaf;
 		XMFLOAT2 padding;
 	};
-    InstanceBuffer cbInstance;
+	InstanceBuffer cbInstance;
 
 	struct LightBuffer
 	{
@@ -154,8 +155,8 @@ private:
 	struct  Vertex
 	{
 		Vertex(float px, float py, float pz, float tu, float tv,
-			  float nx, float ny, float nz)
-			  :Position(px, py, pz), TexCoord(tu, tv), Normal(nx, ny, nz)
+			float nx, float ny, float nz)
+			:Position(px, py, pz), TexCoord(tu, tv), Normal(nx, ny, nz)
 		{}
 
 		XMFLOAT3 Position;
@@ -182,7 +183,6 @@ private:
 
 	Model treeModel;
 	Shader InstanceShader;
-
 	int m_CullLeftNum;
 	D3DAABB m_D3DAABB;
 };

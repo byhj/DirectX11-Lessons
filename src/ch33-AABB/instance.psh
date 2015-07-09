@@ -24,7 +24,7 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
     float4 texColor = tex.Sample(texState, ps_in.Tex);
     ps_in.Normal    = normalize(ps_in.Normal);
 
-	float3 lightDir = float3(0.5f, 0.75f, -3.5f);
+	float3 lightDir = float3(1.5f, 10.75f, 1.0f);
     float intensity = dot(-lightDir, ps_in.Normal);
     float4 diff = saturate( max(intensity, 0.0f) * diffuse );
 
