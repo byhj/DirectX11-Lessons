@@ -56,11 +56,14 @@
     <ClCompile Include="..\..\include\d3d\d3dModel.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="d3dPicking.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\d3d\d3dCamera.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PickCam.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\d3d\d3dApp.h">
       <Filter>Framework</Filter>
     </ClInclude>
@@ -81,6 +84,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\d3d\d3dModel.h">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dPicking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\d3dCamera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

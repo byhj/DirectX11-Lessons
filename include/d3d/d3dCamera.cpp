@@ -70,7 +70,21 @@ void D3DCamera::DetectInput(double time, HWND hWnd)
 
 		mouseLastState = mouseCurrState;
 	}
+	if(mouseCurrState.rgbButtons[0])
+	{
+		//Get mouse pos
+		POINT mousePos;
+		GetCursorPos(&mousePos);			
+		ScreenToClient(hWnd, &mousePos);
+		m_mouseX = mousePos.x;
+		m_mouseY = mousePos.y;
+		rightMouseClicked = true;
+	}
 
+	if(!mouseCurrState.rgbButtons[0])
+	{
+		rightMouseClicked = false;
+	}
 	UpdateCamera();
 
 	return;

@@ -10,12 +10,13 @@
 #include "d3d/d3dModel.h"
 #include "d3d/d3dCamera.h"
 
-#include "d3dPicking.h"
+#include "Instance.h"
 
 class D3DRenderSystem: public D3DApp
 {
 public:
 	D3DRenderSystem()
+
 	{
 		m_AppName = L"DirectX11: ch04-Buffer-Shader";
 
@@ -25,8 +26,7 @@ public:
 		m_pRenderTargetView   = NULL;
 		m_pDepthStencilView   = NULL;
 		m_pDepthStencilBuffer = NULL;
-		score = 0;
-		memset(bottleHit, 0, sizeof(bottleHit));
+
 	}
 
 	bool v_InitD3D();
@@ -49,7 +49,6 @@ private:
 	bool init_device();
 	bool init_camera();
 	void UpdateScene();
-	void CheckPick();
 
 private:
 
@@ -68,26 +67,18 @@ private:
 	D3DFont font;
 	D3DCamera camera;
 	D3DModel ObjModel;
-	D3DModel BottomModel;
-	D3DPicking d3dPicking;
+
+	Instance instanceModel;
 
 	void DrawFps();
 	void DrawMessage();
 
-
 	XMFLOAT4X4 m_View, m_Model, m_Proj;
 	XMMATRIX View, Model, Proj;
-
-	XMMATRIX bottleModel[20];
-
 	int m_videoCardMemory;
 	WCHAR m_videoCardInfo[255];
 	float fps;
-
-	int bottleHit[20];
-	int score;
 };
-
 
 CALL_MAIN(D3DRenderSystem);
 
@@ -110,58 +101,23 @@ void D3DRenderSystem::init_object()
 	skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
 	skymap.init_shader(m_pD3D11Device, GetHwnd());
 
-	BottomModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
-	BottomModel.loadModel("../../media/objects/bottle.obj");
-
 	camera.InitDirectInput(GetAppInst(), GetHwnd());
 
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
 
-	d3dPicking.InitPicking(m_ScreenWidth, m_ScreenHeight, BottomModel.GetPos(), BottomModel.GetIndex() );
+	instanceModel.init_buffer(m_pD3D11Device, m_pD3D11DeviceContext);
+	instanceModel.init_shader(m_pD3D11Device, GetHwnd());
 }
 
 void D3DRenderSystem::UpdateScene()
 {
-
-}
-
-void D3DRenderSystem::CheckPick()
-{
-	float tempDist;
-	float closestDist = FLT_MAX;
-	int hitIndex;
-	float pickedDist = 0;
-
-	d3dPicking.PickRayVector(camera.GetMouseX(), camera.GetMouseY(), XMLoadFloat4x4( &camera.GetViewMatrix() ), Proj);
-
-	//Check if picking the object and mark it
-	for(int i = 0; i < 20; i++)
-	{
-		if(bottleHit[i] == 0) //No need to check bottles already hit
-		{
-			tempDist = d3dPicking.Pick( bottleModel[i]);
-			if(tempDist < closestDist)
-			{
-				closestDist = tempDist;
-				hitIndex = i;
-			}
-		}
-	}
-
-	//We pick a object, and set the closest one be the target object
-	if(closestDist < FLT_MAX)
-	{
-		bottleHit[hitIndex] = 1;
-		pickedDist = closestDist;
-		++score;
-	}
-
+	
 }
 
 void D3DRenderSystem::v_Render()
 {
-	BeginScene();
+    BeginScene();
 
 	//////////////////////////////////////SkyBox/////////////////////////////////////////
 	m_View  = camera.GetViewMatrix();
@@ -182,42 +138,27 @@ void D3DRenderSystem::v_Render()
 
 	//////////////////////////////////////Scene///////////////////////////////////
 	XMMATRIX meshWorld = XMMatrixIdentity();
-	XMMATRIX Rotation = XMMatrixRotationY(3.14f);
+	XMMATRIX Rotation = XMMatrixIdentity();
 	Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
 	Translation = XMMatrixTranslation( 0.0f, 0.0f, 0.0f );
 	meshWorld = Rotation * Scale * Translation;
 
 	meshWorld = XMMatrixTranspose(meshWorld);
-	View      = XMMatrixTranspose(View);
+	XMMATRIX tempView = XMMatrixTranspose(View);
 	XMMATRIX tempProj = XMMatrixTranspose(Proj);
 
 	XMStoreFloat4x4(&m_Model, meshWorld);
-	XMStoreFloat4x4(&m_View, View);
+	XMStoreFloat4x4(&m_View,  tempView);
 	XMStoreFloat4x4(&m_Proj, tempProj);
 
 	ObjModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj);
 
-	if (camera.GetRightMouseClicked())
-       CheckPick();
-
-	for (int i = 0; i != 20; ++i)
-	{
-		if (!bottleHit[i])
-		{
-			XMFLOAT4X4 tempModel;
-			XMMATRIX  model = XMMatrixTranspose( bottleModel[i] );
-			XMStoreFloat4x4(&tempModel, model);
-			BottomModel.Render(m_pD3D11DeviceContext, tempModel, m_View, m_Proj);
-		}
-	}
+	instanceModel.Render(m_pD3D11DeviceContext, m_Model, m_View, m_Proj, View * Proj);
 
 	DrawMessage();
-	WCHAR scoreInfo[255];
-	swprintf(scoreInfo, L"Score: %d ", score);
-	font.drawText(m_pD3D11DeviceContext, scoreInfo, 22.0f, 10.0f, 100.0f, 0xff0099ff);
 
 	UpdateScene();
-
+   
 	EndScene();
 }
 
@@ -330,30 +271,10 @@ bool D3DRenderSystem::init_camera()
 
 	Proj  = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
 
-	float bottleXPos = -30.0f;
-	float bottleZPos = 30.0f;
-	float bxadd = 0.0f;
-	float bzadd = 0.0f;
-
-	for(int i = 0; i < 20; i++)
-	{
-		//set the loaded bottles world space
-		bottleModel[i] = XMMatrixIdentity();
-
-		bxadd++;
-
-		if(bxadd == 10)
-		{
-			bzadd -= 1.0f;
-			bxadd = 0;
-		}
-
-		XMMATRIX Rotation = XMMatrixRotationY(3.14f);
-		XMMATRIX Scale = XMMatrixScaling( 1.0f, 1.0f, 1.0f );
-		XMMATRIX Translation = XMMatrixTranslation( bottleXPos + bxadd*10.0f, 3.0f, bottleZPos + bzadd*10.0f );
-
-		bottleModel[i] = Rotation * Scale * Translation;
-	}
+	XMVECTOR camUp          = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	XMVECTOR camPosition    = XMVectorSet( 0.0f, 5.0f, -8.0f, 0.0f );
+	XMVECTOR camTarget      = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
+	View        = XMMatrixLookAtLH(camPosition, camTarget, camUp );
 
 	return true;
 }
@@ -388,6 +309,9 @@ void D3DRenderSystem::DrawMessage()
 	DrawFps();
 	font.drawText(m_pD3D11DeviceContext, WinInfo, 22.0f, 10.0f, 40.0f, 0xff0099ff);
 	font.drawText(m_pD3D11DeviceContext, m_videoCardInfo, 22.0f, 10.0f, 70.0f, 0xff0099ff);
+
+	swprintf(WinInfo, L"Instance Cull: %d", instanceModel.GetCullLeft());
+	font.drawText(m_pD3D11DeviceContext, WinInfo, 22.0f, 10.0f, 100.0f, 0xff0099ff);
 }
 
 void  D3DRenderSystem::BeginScene()

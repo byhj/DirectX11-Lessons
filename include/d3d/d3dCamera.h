@@ -26,6 +26,7 @@ public:
 		camView        = XMMatrixLookAtLH(camPosition, camTarget, camUp );
 
 		rot = 0.01f;
+		rightMouseClicked = false;
 	}
 	bool InitDirectInput(HINSTANCE hInstance , HWND hWnd);
 	void DetectInput(double time , HWND hWnd);
@@ -46,7 +47,18 @@ public:
 		XMStoreFloat4(&m_camTarget, camTarget);
 		return m_camTarget;
 	}
-
+	float GetMouseX()
+	{
+		return m_mouseX;
+	}
+	float GetMouseY()
+	{
+		return m_mouseY;
+	}
+	bool GetRightMouseClicked()
+	{
+		return rightMouseClicked;
+	}
 private:
 	IDirectInputDevice8* m_pDIKeyboard;
 	IDirectInputDevice8* m_pDIMouse;
@@ -74,7 +86,12 @@ private:
 
 	float camYaw   ;
 	float camPitch ;
+
+	float m_mouseX;
+	float m_mouseY;
+	bool rightMouseClicked;
 };
+
 
 
 #endif
