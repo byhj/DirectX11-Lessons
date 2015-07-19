@@ -1,13 +1,11 @@
-#include "d3d/d3dApp.h"
+#include "RenderSystem.h"
 
-class FrameWorkApp: public D3DApp
-{
-public:
-	FrameWorkApp()
-	{
-		 m_AppName = L"DirectX11.0: ch02-FrameWork";
-	}
-	~FrameWorkApp(){}
-};
+                            
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow) 
+{                                                   
+	RenderSystem *app = new RenderSystem;                                 
+	app->Run();                                     
+	delete app;  
 
-CALL_MAIN(FrameWorkApp);
+	return 0;                                       
+}
