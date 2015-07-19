@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Shader
 {
@@ -15,7 +16,7 @@ public:
 	~Shader() {}
 
 	void init(ID3D11Device *pD3D11Device, HWND hWnd);
-	bool attachVS(WCHAR* Filename,  D3D11_INPUT_ELEMENT_DESC *pInputLayoutDesc, unsigned numElements);
+	bool attachVS(WCHAR* Filename,  std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc);
 	bool attachPS(WCHAR* Filename);
 	void use(ID3D11DeviceContext *pD3D111DeviceContext);
 	void Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName);

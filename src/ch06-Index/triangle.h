@@ -16,6 +16,7 @@ public:
 	Triangle() 
 	{
 		m_pVertexBuffer = nullptr;
+		m_pIndexBuffer  = nullptr;
 	}
 	~Triangle() {}
 
@@ -25,9 +26,15 @@ public:
 	void Shutdown();
 
 private:
-	struct Vertex
+	struct Vertex	
 	{
-      XMFLOAT3 Pos;
+		Vertex(){}
+		Vertex(float x, float y, float z,
+			float cr, float cg, float cb, float ca)
+			: pos(x,y,z), color(cr, cg, cb, ca){}
+
+		XMFLOAT3 pos;
+		XMFLOAT4 color;
 	};
 
 	void init_buffer(ID3D11Device *pD3D11Device);
@@ -38,6 +45,7 @@ private:
 
 	Shader TestShader;
 	ID3D11Buffer  *m_pVertexBuffer;
+	ID3D11Buffer  *m_pIndexBuffer;
 };
 
 

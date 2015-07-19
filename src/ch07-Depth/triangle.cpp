@@ -20,28 +20,31 @@ void Triangle::Render(ID3D11DeviceContext *pD3D11DeviceContext)
 	stride = sizeof(Vertex); 
 	offset = 0;
 	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	TestShader.use(pD3D11DeviceContext);
 
-	pD3D11DeviceContext->Draw(3, 0);
+	pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
 
 }
 
 void Triangle::Shutdown()
 {
 	ReleaseCOM(m_pVertexBuffer);
+	ReleaseCOM(m_pIndexBuffer);
 }
 
 void Triangle::init_buffer(ID3D11Device *pD3D11Device)
 {
-	HRESULT result;
-
 	///////////////////////////Index Buffer ////////////////////////////////
-	m_VertexCount = 3;
-	std::array<Vertex, 3> VertexData;
-	VertexData[0].Pos = XMFLOAT3(-0.5f, -0.5f, 0.0f);  // Bottom left.
-	VertexData[1].Pos = XMFLOAT3( 0.0f,  0.5f, 0.0f);  // Top middle.
-	VertexData[2].Pos = XMFLOAT3( 0.5f, -0.5f, 0.0f);  // Bottom right.
+	m_VertexCount = 4;
+	std::array<Vertex, 4> VertexData = 
+	{
+	    Vertex( -0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f ),
+		Vertex( -0.5f,  0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f ),
+		Vertex(  0.5f,  0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f ),
+		Vertex(  0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f ),
+	};
 
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC VertexBufferDesc;
@@ -59,16 +62,38 @@ void Triangle::init_buffer(ID3D11Device *pD3D11Device)
 	VBO.SysMemSlicePitch = 0;
 
 	// Now create the vertex buffer.
-	result = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-   // DebugHR(result);
+	HRESULT hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
+    DebugHR(hr);
+
+	/////////////////////////////////Index Buffer ///////////////////////////////////////
+	m_IndexCount = 6;
+	std::array<DWORD, 6>  IndexData = {0, 1, 2, 0, 2, 3};
+
+	// Set up the description of the static index buffer.
+	D3D11_BUFFER_DESC IndexBufferDesc;
+	IndexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;
+	IndexBufferDesc.ByteWidth           = sizeof(unsigned long) * m_IndexCount;
+	IndexBufferDesc.BindFlags           = D3D11_BIND_INDEX_BUFFER;
+	IndexBufferDesc.CPUAccessFlags      = 0;
+	IndexBufferDesc.MiscFlags           = 0;
+	IndexBufferDesc.StructureByteStride = 0;
+
+	// Give the subresource structure a pointer to the index data.
+	D3D11_SUBRESOURCE_DATA IBO;
+	IBO.pSysMem          = &IndexData;
+	IBO.SysMemPitch      = 0;
+	IBO.SysMemSlicePitch = 0;
+
+	hr = pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
+
 }
 
 void Triangle::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
-
+	//Shader interface infomation
 	D3D11_INPUT_ELEMENT_DESC InputLayout;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
-
+	
 	InputLayout.SemanticName         = "POSITION";
 	InputLayout.SemanticIndex        = 0;
 	InputLayout.Format               = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -76,7 +101,16 @@ void Triangle::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.AlignedByteOffset    = 0;
 	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	InputLayout.InstanceDataStepRate = 0;
-	vInputLayoutDesc.push_back(InputLayout);   
+	vInputLayoutDesc.push_back(InputLayout);               
+
+	InputLayout.SemanticName         = "COLOR";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);     
 
 	TestShader.init(pD3D11Device, hWnd);
 	TestShader.attachVS(L"triangle.vsh", vInputLayoutDesc);

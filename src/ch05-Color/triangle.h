@@ -13,7 +13,7 @@ class Triangle
 {
 
 public:
-	Triangle() 
+	Triangle()  
 	{
 		m_pVertexBuffer = nullptr;
 	}
@@ -27,7 +27,8 @@ public:
 private:
 	struct Vertex
 	{
-      XMFLOAT3 Pos;
+      XMFLOAT3 Position;
+	  XMFLOAT4 Color;
 	};
 
 	void init_buffer(ID3D11Device *pD3D11Device);
