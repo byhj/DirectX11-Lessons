@@ -1,9 +1,5 @@
 #include "RenderSystem.h"
 
-#ifdef _WIN32
-#define _XM_NO_INTRINSICS_
-#endif 
-
 namespace byhj
 {
 
