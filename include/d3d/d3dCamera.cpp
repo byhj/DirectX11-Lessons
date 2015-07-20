@@ -2,6 +2,9 @@
 
 #define SHADER_DEBUG
 
+namespace byhj
+{
+
 bool D3DCamera::InitDirectInput(HINSTANCE hInstance, HWND hWnd)
 {
 	HRESULT hr;
@@ -122,5 +125,7 @@ void D3DCamera::UpdateCamera()
 
 	//Set the camera matrix
 	camView = XMMatrixLookAtLH( camPosition, camTarget, camUp );
+
+}
 
 }

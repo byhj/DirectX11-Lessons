@@ -7,6 +7,9 @@
 #include <d3d11.h>
 #include <xnamath.h>
 
+namespace byhj
+{
+
 class D3DCamera
 {
 public:
@@ -34,7 +37,7 @@ public:
 
 	XMFLOAT4X4 GetViewMatrix()
 	{
-		XMStoreFloat4x4(&m_camView, camView);
+		XMStoreFloat4x4(&m_camView, XMMatrixTranspose(camView) );
 		return m_camView;
 	}
 	XMFLOAT4 GetCamPos()
@@ -93,5 +96,6 @@ private:
 };
 
 
+}
 
 #endif
