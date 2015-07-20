@@ -18,10 +18,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="triangle.psh">
+    <None Include="cube.vsh">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="triangle.vsh">
+    <None Include="cube.psh">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -35,6 +35,12 @@
     <ClCompile Include="..\..\include\d3d\d3dShader.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="cube.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\d3d\d3dApp.h">
@@ -42,6 +48,15 @@
     </ClInclude>
     <ClInclude Include="..\..\include\d3d\d3dShader.h">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
