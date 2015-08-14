@@ -1,6 +1,5 @@
 #include "d3d/d3dApp.h"
 
-#include <>
 namespace byhj
 {
 

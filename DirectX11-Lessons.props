@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(Window7SDK)\include;$(SolutionDir)\include;$(DXSDK_DIR)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Windows7Sdk)\include;$(SolutionDir)\include;$(DXSDK_DIR)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(Window7SDK)\lib\x86;$(DXSDK_DIR)\lib\x86;$(SolutionDir)\lib\x86</AdditionalLibraryDirectories>
