@@ -106,9 +106,9 @@ void D3DCamera::UpdateCamera()
 	static XMVECTOR camRight       = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 	static XMVECTOR camUp  = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	static XMVECTOR camPosition    = XMVectorSet(0.0f, 5.0f, -8.0f, 0.0f);
+	static XMVECTOR camPosition    = XMVectorSet(0.0f, 2.0f, -5.0f, 0.0f);
 	static XMVECTOR camTarget      = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	static XMMATRIX camView        = XMMatrixLookAtLH(camPosition, camTarget, camUp);
+	static XMMATRIX camView;
 
 	//Rotating the Camera by euler angle
 	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(camPitch, camYaw, 0);
@@ -145,7 +145,6 @@ void D3DCamera::UpdateCamera()
 
 XMFLOAT4X4  D3DCamera::GetViewMatrix()
 {
-
 	return m_camView;
 }
 

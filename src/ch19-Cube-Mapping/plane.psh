@@ -1,5 +1,5 @@
 
-cbuffer LightBuffer
+cbuffer LightBuffer :register(b0)
 {
     float4 ambientColor;
 	float4 diffuseColor;
@@ -16,19 +16,19 @@ cbuffer LightBuffer
 
 struct VS_OUT
 {
-    float4 Pos      : SV_POSITION;
-    float2 Tex      : TEXCOORD0;
-	float3 Normal   : NORMAL;
-	float3 worldPos : POSITION;
+    float4 Pos : SV_POSITION;
+    float2 Tex : TEXCOORD0;
+	float3 Normal : NORMAL;
+    float3 worldPos : POSITION;
 };
 
-Texture2D tex;
-SamplerState texState;
+Texture2D tex           : register(t0); 
+SamplerState texSampler : register(s0);
 
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
    float4 ambient = saturate(ambientColor) ;
-   float4 texColor = tex.Sample(texState, ps_in.Tex);
+   float4 texColor = tex.Sample(texSampler, ps_in.Tex);
 
    float3 lightToPos = lightPos - ps_in.worldPos;
    float  len = length(lightToPos);
@@ -42,5 +42,5 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
    float4 diffuse = max(intensity, 0.0f) * diffuseColor ;
    diffuse /= (att[0] + (att[1] * len) + att[2] * len *len);
 
-   return texColor * saturate(ambient + diffuse);
+   return  texColor * saturate(ambient + diffuse);
 }

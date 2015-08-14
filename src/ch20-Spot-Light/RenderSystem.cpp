@@ -17,18 +17,34 @@ void RenderSystem::v_Render()
 	BeginScene();
 
 	m_Camera.DetectInput(m_Timer.GetDeltaTime(), GetHwnd());
+	m_Matrix.View  =   m_Camera.GetViewMatrix();
+	m_Matrix.Proj  =  m_Proj;
 
+	//////////////////////////////////////////////////////////////////
 	XMMATRIX Scale = XMMatrixScaling(500.0f, 1.0f, 500.0f);
 	XMMATRIX Translation = XMMatrixTranslation(0.0f, -3.0f, 0.0f);
 	XMMATRIX groundWorld = Scale * Translation;
 	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(groundWorld));
 
-	m_Matrix.View  =   m_Camera.GetViewMatrix();
-	m_Matrix.Proj  =  m_Proj;
 	m_Plane.Render(m_pD3D11DeviceContext, m_Matrix);
 
-	DrawFps();
+	////////////////////////////////////////////////////////
+
+	XMMATRIX sphereWorld = XMMatrixIdentity();
+	m_Matrix.View._14 = 0.0f;
+	m_Matrix.View._24 = 0.0f;
+	m_Matrix.View._34 = 0.0f;
+	m_Matrix.View._41 = 0.0f;
+	m_Matrix.View._42 = 0.0f;
+	m_Matrix.View._43 = 0.0f;
+	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(sphereWorld));
+
+	m_Skymap.Render(m_pD3D11DeviceContext, m_Matrix);
+
 	///////////////////////////////////////////////////////
+
+	DrawFps();
+
 	EndScene();
 }
 
@@ -108,7 +124,7 @@ void RenderSystem::init_device()
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
 
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
@@ -164,10 +180,16 @@ void RenderSystem::init_camera()
 void RenderSystem::init_object()
 {
 	m_Plane.Init(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
+
+
+	m_Skymap.createSphere(m_pD3D11Device, 10, 10);
+	m_Skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
+	m_Skymap.init_shader(m_pD3D11Device, GetHwnd());
+
+
 	m_Font.Init(m_pD3D11Device);
 	m_Timer.Init();
 	m_Camera.Init(GetAppInst(), GetHwnd());
-
 
 }
 

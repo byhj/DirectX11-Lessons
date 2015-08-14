@@ -42,5 +42,5 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
    float4 diffuse = max(intensity, 0.0f) * diffuseColor ;
    diffuse /= (att[0] + (att[1] * len) + att[2] * len *len);
 
-   return texColor * saturate(ambient + diffuse);
+   return  texColor * saturate(ambient + diffuse);
 }

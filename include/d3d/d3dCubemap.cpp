@@ -1,8 +1,14 @@
 #include "d3dCubemap.h"
 
 
+namespace byhj
+{
+
 void D3DSkymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLines)
 {
+	XMMATRIX sphereWorld;
+	XMMATRIX Rotationx;
+	XMMATRIX Rotationy;
 
 	HRESULT hr;
 
@@ -132,35 +138,38 @@ void D3DSkymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 	HRESULT result;
 
-	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[3];
-	pInputLayoutDesc[0].SemanticName         = "POSITION";
-	pInputLayoutDesc[0].SemanticIndex        = 0;
-	pInputLayoutDesc[0].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-	pInputLayoutDesc[0].InputSlot            = 0;
-	pInputLayoutDesc[0].AlignedByteOffset    = 0;
-	pInputLayoutDesc[0].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[0].InstanceDataStepRate = 0;
+	D3D11_INPUT_ELEMENT_DESC InputLayout;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
 
-	pInputLayoutDesc[1].SemanticName         = "TEXCOORD";
-	pInputLayoutDesc[1].SemanticIndex        = 0;
-	pInputLayoutDesc[1].Format               = DXGI_FORMAT_R32G32_FLOAT;
-	pInputLayoutDesc[1].InputSlot            = 0;
-	pInputLayoutDesc[1].AlignedByteOffset    = 12;
-	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[1].InstanceDataStepRate = 0;
+	InputLayout.SemanticName         = "POSITION";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 0;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
-	pInputLayoutDesc[2].SemanticName         = "NORMAL";
-	pInputLayoutDesc[2].SemanticIndex        = 0;
-	pInputLayoutDesc[2].Format               = DXGI_FORMAT_R32G32_FLOAT;
-	pInputLayoutDesc[2].InputSlot            = 0;
-	pInputLayoutDesc[2].AlignedByteOffset    = 20;
-	pInputLayoutDesc[2].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[2].InstanceDataStepRate = 0;
+	InputLayout.SemanticName         = "TEXCOORD";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
-	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
+	InputLayout.SemanticName         = "NORMAL";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 20;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
 	SkymapShader.init(pD3D11Device, hWnd);
-	SkymapShader.attachVS(L"cubemap.vsh", pInputLayoutDesc, numElements);
+	SkymapShader.attachVS(L"cubemap.vsh", vInputLayoutDesc);
 	SkymapShader.attachPS(L"cubemap.psh");
 	SkymapShader.end();
 
@@ -222,7 +231,7 @@ void D3DSkymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 	D3D11_BUFFER_DESC mvpDesc;	
 	ZeroMemory(&mvpDesc, sizeof(D3D11_BUFFER_DESC));
 	mvpDesc.Usage          = D3D11_USAGE_DEFAULT;
-	mvpDesc.ByteWidth      = sizeof(MatrixBuffer);
+	mvpDesc.ByteWidth      = sizeof(byhj::MatrixBuffer);
 	mvpDesc.BindFlags      = D3D11_BIND_CONSTANT_BUFFER;
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags      = 0;
@@ -231,7 +240,7 @@ void D3DSkymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 
 }
 
-void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 &MVP)
+void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, const MatrixBuffer &mvpMatrix)
 {
 	// Set vertex buffer stride and offset.=
 	unsigned int stride;
@@ -242,7 +251,11 @@ void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 &MVP
 	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset);
 
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &MVP, 0, 0 );
+	cbMatrix.Model = mvpMatrix.Model;
+	cbMatrix.View  = mvpMatrix.View;
+	cbMatrix.Proj  = mvpMatrix.Proj;
+
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pShaderResourceView);
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState);
@@ -256,4 +269,7 @@ void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 &MVP
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	pD3D11DeviceContext->OMSetDepthStencilState(NULL, 0);
+}
+
+
 }

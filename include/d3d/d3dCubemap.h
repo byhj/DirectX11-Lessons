@@ -11,7 +11,10 @@
 #include <d3dcommon.h>
 #include <d3d11.h>
 #include <D3DX11async.h>
+#include "Common.h"
 
+namespace byhj
+{
 
 class D3DSkymap
 {
@@ -21,7 +24,7 @@ public:
 	void createSphere(ID3D11Device *pD3D11Device, int LatLines, int LongLines);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 &MVP);
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, const MatrixBuffer &mvpMatrix);
 
 private:
 
@@ -34,11 +37,8 @@ private:
 		XMFLOAT3 pos;
 	};
 
-	struct MatrixBuffer
-	{
-		XMFLOAT4X4  MVP;
-	};
-	MatrixBuffer cbMatrix;
+
+	byhj::MatrixBuffer cbMatrix;
 
 	ID3D11Buffer *m_pIndexBuffer;
 	ID3D11Buffer *m_pVertexBuffer;
@@ -46,9 +46,6 @@ private:
 
 	int m_VertexCount;
 	int m_IndexCount;
-	XMMATRIX sphereWorld;
-	XMMATRIX Rotationx;
-	XMMATRIX Rotationy;
 
 	int NumSphereVertices;
 	int NumSphereFaces;
@@ -61,5 +58,6 @@ private:
 };
 
 
+}
 
 #endif

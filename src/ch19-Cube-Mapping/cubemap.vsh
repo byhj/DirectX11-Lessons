@@ -1,6 +1,14 @@
-cbuffer MatrixBuffer
+ 
+ struct MatrixType
+ {
+    float4x4 model;
+	float4x4 view;
+	float4x4 proj;
+ };
+
+cbuffer MatrixBuffer :register(b0)
 {
-  float4x4 MVP;
+	MatrixType g_Mat;
 };
 
 struct VS_IN
@@ -18,9 +26,12 @@ VS_OUT VS(VS_IN vs_in)
 {
     VS_OUT vs_out;
 
-	//w=1.0f, make sure our skymap is always the furthest object in our scene
-    vs_out.Pos = mul(float4(vs_in.Pos, 1.0f), MVP).xyww;
-	vs_out.Tex = vs_in.Pos;
+   float4x4 mvp;
+   mvp = mul(g_Mat.model, g_Mat.view);
+   mvp = mul(mvp, g_Mat.proj);
+
+   vs_out.Pos = mul(float4(vs_in.Pos, 1.0f), mvp).xyww;
+   vs_out.Tex = vs_in.Pos;
 
 	return vs_out;
 }

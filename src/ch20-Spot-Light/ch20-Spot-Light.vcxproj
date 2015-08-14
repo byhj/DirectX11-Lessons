@@ -115,8 +115,8 @@
   <ItemGroup>
     <None Include="cubemap.psh" />
     <None Include="cubemap.vsh" />
-    <None Include="triangle.psh" />
-    <None Include="triangle.vsh" />
+    <None Include="plane.psh" />
+    <None Include="plane.vsh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\d3d\d3dApp.cpp" />
@@ -126,6 +126,8 @@
     <ClCompile Include="..\..\include\d3d\d3dShader.cpp" />
     <ClCompile Include="..\..\include\d3d\d3dTimer.cpp" />
     <ClCompile Include="ch20-Spot-Light.cpp" />
+    <ClCompile Include="plane.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\d3d\d3dApp.h" />
@@ -134,6 +136,9 @@
     <ClInclude Include="..\..\include\d3d\d3dFont.h" />
     <ClInclude Include="..\..\include\d3d\d3dShader.h" />
     <ClInclude Include="..\..\include\d3d\d3dTimer.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="RenderSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
