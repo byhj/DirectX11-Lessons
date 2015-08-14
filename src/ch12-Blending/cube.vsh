@@ -31,7 +31,6 @@ VS_OUT VS( VS_IN vs_in )
    mvp = mul(g_Mat.model, g_Mat.view);
    mvp = mul(mvp, g_Mat.proj);
 
-   vs_in.Pos.w = 1.0f;
    vs_out.Pos = mul(vs_in.Pos, mvp);
    vs_out.Tex = vs_in.Tex;
  

@@ -11,6 +11,8 @@ SamplerState texSampler : register(s0);
 float4 PS(VS_OUT ps_in) : SV_TARGET
 {
    float4 pixelColor = tex.Sample(texSampler, ps_in.Tex);
+   
+   //if alpha < 0.25, we don't use it
    clip(pixelColor.a - .25);
 
    return pixelColor;

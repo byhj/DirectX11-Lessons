@@ -42,10 +42,10 @@ namespace byhj
 
 	void Plane::Shutdown()
 	{
-		ReleaseCOM(m_pVertexBuffer);
-		ReleaseCOM(m_pIndexBuffer);
-		ReleaseCOM(m_pTexture           )   
-			ReleaseCOM(m_pTexSamplerState   ) 
+		ReleaseCOM(m_pVertexBuffer)
+		ReleaseCOM(m_pIndexBuffer)
+		ReleaseCOM(m_pTexture)
+		ReleaseCOM(m_pTexSamplerState)
 	}
 
 	void Plane::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)

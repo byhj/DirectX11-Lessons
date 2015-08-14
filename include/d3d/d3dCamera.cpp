@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#define _XM_NO_INTRINSICS_
+#endif 
+
 #include "d3dCamera.h"
 
 #define SHADER_DEBUG
@@ -5,8 +9,9 @@
 namespace byhj
 {
 
-bool D3DCamera::InitDirectInput(HINSTANCE hInstance, HWND hWnd)
+bool D3DCamera::Init(HINSTANCE hInstance, HWND hWnd)
 {
+
 	HRESULT hr;
 	hr = DirectInput8Create(hInstance,
 		DIRECTINPUT_VERSION,
@@ -95,8 +100,18 @@ void D3DCamera::DetectInput(double time, HWND hWnd)
 
 void D3DCamera::UpdateCamera()
 {	
+	static XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	static XMVECTOR DefaultRight   = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	static XMVECTOR camForward     = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	static XMVECTOR camRight       = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+
+	static XMVECTOR camUp  = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	static XMVECTOR camPosition    = XMVectorSet(0.0f, 5.0f, -8.0f, 0.0f);
+	static XMVECTOR camTarget      = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	static XMMATRIX camView        = XMMatrixLookAtLH(camPosition, camTarget, camUp);
+
 	//Rotating the Camera by euler angle
-	camRotationMatrix = XMMatrixRotationRollPitchYaw(camPitch, camYaw, 0);
+	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(camPitch, camYaw, 0);
 	camTarget         = XMVector3TransformCoord(DefaultForward, camRotationMatrix );
 	camTarget         = XMVector3Normalize(camTarget);
 
@@ -125,7 +140,38 @@ void D3DCamera::UpdateCamera()
 
 	//Set the camera matrix
 	camView = XMMatrixLookAtLH( camPosition, camTarget, camUp );
-
+	XMStoreFloat4x4(&m_camView, XMMatrixTranspose(camView));
 }
+
+XMFLOAT4X4  D3DCamera::GetViewMatrix()
+{
+
+	return m_camView;
+}
+
+XMFLOAT4  D3DCamera::GetCamPos()
+{
+	//XMStoreFloat4(&m_camPosition, camPosition);
+	return m_camPosition;
+}
+
+XMFLOAT4   D3DCamera::GetCamTarget()
+{
+	//XMStoreFloat4(&m_camTarget, camTarget);
+	return m_camTarget;
+}
+float  D3DCamera::GetMouseX()
+{
+	return m_mouseX;
+}
+float  D3DCamera::GetMouseY()
+{
+	return m_mouseY;
+}
+bool  D3DCamera::GetRightMouseClicked()
+{
+	return rightMouseClicked;
+}
+
 
 }

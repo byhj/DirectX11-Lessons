@@ -41,6 +41,9 @@ private:
 
 	void init_camera();
 	void init_device();
+	void init_object();
+	void BeginScene();
+	void EndScene();
 	void DrawFps();
 
 	float fps;

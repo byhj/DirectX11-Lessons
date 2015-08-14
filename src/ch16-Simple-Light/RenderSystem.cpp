@@ -7,30 +7,20 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Cube.Init(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
-	m_Font.Init(m_pD3D11Device);
-	m_Timer.Reset();
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView );
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	BeginScene();
 
 	m_Matrix.View  = m_View;
 	m_Matrix.Proj  = m_Proj;
 
 	static float rot = 0.0f;
-	rot += .0001f;
-	if(rot > 6.26f)
-		rot = 0.0f;
+	rot += m_Timer.GetDeltaTime();
 
 	///////////////////////Cube 1/////////////////////////
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -52,7 +42,7 @@ void RenderSystem::v_Render()
 	DrawFps();
 
 	///////////////////////////////////////////////////////
-	m_pSwapChain->Present(0, 0);
+	EndScene();
 }
 
 
@@ -176,6 +166,30 @@ void RenderSystem::init_camera()
 	XMStoreFloat4x4(&m_Proj, XMMatrixTranspose(Proj) );
 }
 
+
+
+void RenderSystem::init_object()
+{
+	m_Cube.Init(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
+	m_Font.Init(m_pD3D11Device);
+	m_Timer.Init();
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.0f, 0.0f, 0.0f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
+}
+
 void RenderSystem::DrawFps()
 {
 	static bool flag = true;
@@ -189,12 +203,12 @@ void RenderSystem::DrawFps()
 	static int frameCnt = 0;
 	static float timeElapsed = 0.0f;
 	frameCnt++;
-	if(m_Timer.GetTotalTime() - timeElapsed >= 1.0f)
+	if (m_Timer.GetTotalTime() - timeElapsed >= 1.0f)
 	{
 		fps = frameCnt;
 		frameCnt = 0;
 		timeElapsed += 1.0f;
-	}	
+	}
 
 	m_Font.drawFps(m_pD3D11DeviceContext, (UINT)fps);
 }

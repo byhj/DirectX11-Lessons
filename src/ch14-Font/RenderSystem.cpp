@@ -7,21 +7,14 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Cube.Init(m_pD3D11Device, GetHwnd());
-	m_Font.Init(m_pD3D11Device);
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView );
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	BeginScene();
 
 	m_Matrix.View  = m_View;
 	m_Matrix.Proj  = m_Proj;
@@ -50,7 +43,8 @@ void RenderSystem::v_Render()
 
 	m_Font.drawText(m_pD3D11DeviceContext, L"Hello", 30, 20, 20, 0xff0099ff);
 	///////////////////////////////////////////////////////
-	m_pSwapChain->Present(0, 0);
+
+	EndScene();
 }
 
 
@@ -160,6 +154,8 @@ void RenderSystem::init_camera()
 	ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
 	vp.Width    = m_ScreenWidth;
 	vp.Height   = m_ScreenHeight;
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
@@ -172,6 +168,27 @@ void RenderSystem::init_camera()
 	XMMATRIX Proj      = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&m_View, XMMatrixTranspose(View) );
 	XMStoreFloat4x4(&m_Proj, XMMatrixTranspose(Proj) );
+}
+
+void RenderSystem::init_object()
+{
+	m_Cube.Init(m_pD3D11Device, GetHwnd());
+	m_Font.Init(m_pD3D11Device);
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.0f, 0.0f, 0.0f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 }

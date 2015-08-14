@@ -15,7 +15,7 @@ public:
 	float GetTotalTime() const;    //In seconds
 	float GetDeltaTime() const; //In seconds
 
-	void Reset();      //Call before message loop;
+	void Init();      //Call before message loop;
 	void Start();      //Call when unpaused;
 	void Stop();       //Call when paused;
 	void Count();      //Call every frame;

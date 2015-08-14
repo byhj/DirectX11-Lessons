@@ -7,48 +7,43 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Cube.Init(m_pD3D11Device, GetHwnd());
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView );
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	BeginScene();
 
 	m_Matrix.View  = m_View;
 	m_Matrix.Proj  = m_Proj;
 
 	static float rot = 0.0f;
 	rot += .0001f;
-	if(rot > 6.26f)
+	if (rot > 6.26f)
 		rot = 0.0f;
 
 	///////////////////////Cube 1/////////////////////////
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX Model  = XMMatrixTranslation( 0.0f, 0.0f, 3.0f );
+	XMMATRIX Model  = XMMatrixTranslation(0.0f, 0.0f, 3.0f);
 	Model *= XMMatrixRotationAxis(rotaxis, rot);
-	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );
+	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model));
 	m_Matrix.Model = m_Model;
 
 	m_Cube.Render(m_pD3D11DeviceContext, m_Matrix);
 
 	///////////////////////Cube 2/////////////////////////
-	Model  = XMMatrixRotationAxis( rotaxis, -rot);
-	Model *= XMMatrixScaling( 1.3f, 1.3f, 1.3f );
-	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );
+	Model  = XMMatrixRotationAxis(rotaxis, -rot);
+	Model *= XMMatrixScaling(1.3f, 1.3f, 1.3f);
+	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model));
 	m_Matrix.Model = m_Model;
 
 	m_Cube.Render(m_pD3D11DeviceContext, m_Matrix);
 
 	///////////////////////////////////////////////////////
-	m_pSwapChain->Present(0, 0);
+
+	EndScene();
 }
 
 
@@ -58,8 +53,6 @@ void RenderSystem::v_Shutdown()
 	ReleaseCOM(m_pD3D11Device        );
 	ReleaseCOM(m_pD3D11DeviceContext );
 	ReleaseCOM(m_pRenderTargetView   );
-	ReleaseCOM(m_pBlendState);
-	ReleaseCOM(m_pRasterState);
 
 	m_Cube.Shutdown();
 }
@@ -123,20 +116,29 @@ void RenderSystem::init_device()
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
 	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
 
+
+
+
 	//////////////////////Raterizer State/////////////////////////////
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.FrontCounterClockwise = false;
 
-	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	//Create the Counter Clockwise and Clockwise Culling States
+	rasterDesc.FrontCounterClockwise = true;
+	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCCWcullMode);
+	rasterDesc.FrontCounterClockwise = false;
+	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCWcullMode);
+
+	m_pD3D11DeviceContext->RSSetState(m_pCWcullMode);
 
 	///////////////////////////Blend state/////////////////////////////
 	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof(blendDesc) );
+	ZeroMemory(&blendDesc, sizeof(blendDesc));
 	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
-	ZeroMemory( &rtbd, sizeof(rtbd) );
+	ZeroMemory(&rtbd, sizeof(rtbd));
 	rtbd.BlendEnable			 = true;
 	rtbd.SrcBlend				 = D3D11_BLEND_SRC_COLOR;
 	rtbd.DestBlend				 = D3D11_BLEND_BLEND_FACTOR;
@@ -170,6 +172,26 @@ void RenderSystem::init_camera()
 	XMMATRIX Proj      = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&m_View, XMMatrixTranspose(View) );
 	XMStoreFloat4x4(&m_Proj, XMMatrixTranspose(Proj) );
+}
+
+void RenderSystem::init_object()
+{
+	m_Cube.Init(m_pD3D11Device, GetHwnd());
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.0f, 0.0f, 0.0f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 }

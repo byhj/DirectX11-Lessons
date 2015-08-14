@@ -10,8 +10,8 @@ namespace byhj
 
 		m_Plane.Init(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 		m_Font.Init(m_pD3D11Device);
-		m_Timer.Reset();
-		m_Camera.InitDirectInput(GetAppInst(), GetHwnd());
+		m_Timer.Init();
+		m_Camera.Init(GetAppInst(), GetHwnd());
 
 		return true;
 	}

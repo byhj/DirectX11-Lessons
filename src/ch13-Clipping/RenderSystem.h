@@ -18,8 +18,6 @@ public:
 		m_pRenderTargetView   = nullptr;
 		m_pDepthStencilView   = nullptr;
 		m_pDepthStencilBuffer = nullptr;
-		m_pBlendState         = nullptr;
-		m_pRasterState        = nullptr;
 
 		XMMATRIX Imat = XMMatrixIdentity();
 	    XMStoreFloat4x4(&m_Model, Imat);
@@ -37,6 +35,9 @@ private:
 
 	void init_camera();
 	void init_device();
+	void init_object();
+	void BeginScene();
+	void EndScene();
 
 	byhj::Cube  m_Cube;
 	byhj::MatrixBuffer m_Matrix;
@@ -50,8 +51,9 @@ private:
 	ID3D11RenderTargetView  *m_pRenderTargetView;
 	ID3D11DepthStencilView  *m_pDepthStencilView;
 	ID3D11Texture2D         *m_pDepthStencilBuffer;
+	ID3D11RasterizerState   *m_pCCWcullMode;
+	ID3D11RasterizerState   *m_pCWcullMode;
 	ID3D11BlendState        *m_pBlendState;
-	ID3D11RasterizerState   *m_pRasterState;
 };
 
 

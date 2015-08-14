@@ -55,7 +55,7 @@ float D3DTimer::GetDeltaTime() const
 	return (float)m_DeltaTime;
 }
 
-void D3DTimer::Reset()
+void D3DTimer::Init()
 {
 	__int64 currTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currTime);

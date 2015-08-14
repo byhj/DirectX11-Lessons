@@ -115,8 +115,6 @@
   <ItemGroup>
     <None Include="cube.psh" />
     <None Include="cube.vsh" />
-    <None Include="triangle.psh" />
-    <None Include="triangle.vsh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\d3d\d3dApp.cpp" />

@@ -7,22 +7,17 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Cube.Init(m_pD3D11Device, GetHwnd());
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.0f, 0.0f, 0.0f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView );
+	BeginScene();
 
 	//"fine-tune" the blending equation
-	float blendFactor[] = {0.75f, 0.75f, 0.75f, 1.0f};
+	float blendFactor[] ={ 0.75f, 0.75f, 0.75f, 1.0f };
 	//Set the default blend state (no blending) for opaque objects
 	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 	m_pD3D11DeviceContext->OMSetBlendState(m_pBlendState, blendFactor, 0xffffffff);
@@ -32,30 +27,31 @@ void RenderSystem::v_Render()
 
 	static float rot = 0.0f;
 	rot += .0001f;
-	if(rot > 6.26f)
+	if (rot > 6.26f)
 		rot = 0.0f;
 
 	///////////////////////Cube 1/////////////////////////
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX Model  = XMMatrixTranslation( 0.0f, 0.0f, 3.0f );
+	XMMATRIX Model  = XMMatrixTranslation(0.0f, 0.0f, 3.0f);
 	Model *= XMMatrixRotationAxis(rotaxis, rot);
-	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );
+	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model));
 	m_Matrix.Model = m_Model;
 
 	m_pD3D11DeviceContext->RSSetState(m_pCCWcullMode);
 	m_Cube.Render(m_pD3D11DeviceContext, m_Matrix);
 
 	///////////////////////Cube 2/////////////////////////
-	Model  = XMMatrixRotationAxis( rotaxis, -rot);
-	Model *= XMMatrixScaling( 1.3f, 1.3f, 1.3f );
-	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );
+	Model  = XMMatrixRotationAxis(rotaxis, -rot);
+	Model *= XMMatrixScaling(1.3f, 1.3f, 1.3f);
+	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model));
 	m_Matrix.Model = m_Model;
 
 	m_pD3D11DeviceContext->RSSetState(m_pCWcullMode);
 	m_Cube.Render(m_pD3D11DeviceContext, m_Matrix);
 
 	///////////////////////////////////////////////////////
-	m_pSwapChain->Present(0, 0);
+
+	EndScene();
 }
 
 
@@ -128,6 +124,9 @@ void RenderSystem::init_device()
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
 	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
 
+
+
+
 	//////////////////////Raterizer State/////////////////////////////
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -145,9 +144,9 @@ void RenderSystem::init_device()
 
 	///////////////////////////Blend state/////////////////////////////
 	D3D11_BLEND_DESC blendDesc;
-	ZeroMemory( &blendDesc, sizeof(blendDesc) );
+	ZeroMemory(&blendDesc, sizeof(blendDesc));
 	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
-	ZeroMemory( &rtbd, sizeof(rtbd) );
+	ZeroMemory(&rtbd, sizeof(rtbd));
 	rtbd.BlendEnable			 = true;
 	rtbd.SrcBlend				 = D3D11_BLEND_SRC_COLOR;
 	rtbd.DestBlend				 = D3D11_BLEND_BLEND_FACTOR;
@@ -181,6 +180,26 @@ void RenderSystem::init_camera()
 	XMMATRIX Proj      = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&m_View, XMMatrixTranspose(View) );
 	XMStoreFloat4x4(&m_Proj, XMMatrixTranspose(Proj) );
+}
+
+void RenderSystem::init_object()
+{
+	m_Cube.Init(m_pD3D11Device, GetHwnd());
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.0f, 0.0f, 0.0f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 }

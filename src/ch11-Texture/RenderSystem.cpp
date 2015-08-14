@@ -7,20 +7,14 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Cube.Init(m_pD3D11Device, GetHwnd());
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.2f, 0.3f, 0.4f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView );
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	BeginScene();
 
 	static float rot = 0.0f;
 	rot += .0001f;
@@ -35,7 +29,7 @@ void RenderSystem::v_Render()
 	m_Matrix.Proj  = m_Proj;
 	m_Cube.Render(m_pD3D11DeviceContext, m_Matrix);
 
-	m_pSwapChain->Present(0, 0);
+	EndScene();
 }
 
 
@@ -136,6 +130,27 @@ void RenderSystem::init_camera()
 	XMMATRIX Proj      = XMMatrixPerspectiveFovLH( 0.4f*3.14f, GetAspect(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&m_View, XMMatrixTranspose(View) );
 	XMStoreFloat4x4(&m_Proj, XMMatrixTranspose(Proj) );
+}
+
+void RenderSystem::init_object()
+{
+	m_Cube.Init(m_pD3D11Device, GetHwnd());
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.2f, 0.3f, 0.4f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 }

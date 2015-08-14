@@ -231,7 +231,7 @@ void Cube::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 
 void Cube::init_texture(ID3D11Device *pD3D11Device)
 {
-	LPCWSTR  texFile = L"../../media/textures/byhj.jpg";
+	LPCWSTR  texFile = L"../../media/textures/crate.bmp";
 
 	HRESULT hr;
 	//Use shaderResourceView to make texture to the shader
