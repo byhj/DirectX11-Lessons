@@ -33,6 +33,7 @@ private:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
+
 	int m_VertexCount;
 	int m_IndexCount;
     byhj::MatrixBuffer m_cbMatrix;

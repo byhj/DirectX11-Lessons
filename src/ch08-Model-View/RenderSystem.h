@@ -35,6 +35,9 @@ private:
 
 	void init_camera();
 	void init_device();
+	void init_object();
+	void BeginScene();
+	void EndScene(); 
 
 	byhj::Triangle  m_Triangle;
 	byhj::MatrixBuffer m_Matrix;

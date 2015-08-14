@@ -7,24 +7,17 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Cube.Init(m_pD3D11Device, GetHwnd());
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.2f, 0.3f, 0.4f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView );
+	BeginScene();
 
 	static float rot = 0.0f;
-	rot += .001f;
-	if(rot > 6.26f)
-		rot = 0.0f;
+	rot += 0.001f;
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX Model = XMMatrixRotationAxis(rotaxis, rot);
 	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );
@@ -34,7 +27,7 @@ void RenderSystem::v_Render()
 	m_Matrix.Proj  = m_Proj;
 	m_Cube.Render(m_pD3D11DeviceContext, m_Matrix);
 
-	m_pSwapChain->Present(0, 0);
+	EndScene();
 }
 
 
@@ -118,6 +111,9 @@ void RenderSystem::init_camera()
 	vp.TopLeftY = 0;
 	vp.Width    = m_ScreenWidth;
 	vp.Height   = m_ScreenHeight;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
 
 	//MVP Matrix
@@ -130,4 +126,24 @@ void RenderSystem::init_camera()
 	XMStoreFloat4x4(&m_Proj, XMMatrixTranspose(Proj) );
 }
 
+void RenderSystem::init_object()
+{
+	m_Cube.Init(m_pD3D11Device, GetHwnd());
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.2f, 0.3f, 0.4f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
+}\
 }

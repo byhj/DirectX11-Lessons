@@ -8,22 +8,19 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Triangle.Init(m_pD3D11Device, GetHwnd());
+	init_object();
 
 	return true;
 }
 
 void RenderSystem::v_Render()
 {
-	//Set status and Render scene 
-	D3DXCOLOR bgColor( 0.2f, 0.3f, 0.4f, 1.0f );
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+
+	BeginScene();
 
 	m_Triangle.Render(m_pD3D11DeviceContext);
 
-	m_pSwapChain->Present(0, 0);
+	EndScene();
 }
 
 
@@ -77,7 +74,6 @@ void RenderSystem::init_device()
 
 void RenderSystem::init_camera()
 {
-	//Viewport Infomation
 	D3D11_VIEWPORT vp;
 	ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
 	vp.TopLeftX = 0;
@@ -86,6 +82,25 @@ void RenderSystem::init_camera()
 	vp.Height   = m_ScreenHeight;
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
 
+}
+
+void RenderSystem::init_object()
+{
+	m_Triangle.Init(m_pD3D11Device, GetHwnd());
+}
+
+void RenderSystem::BeginScene()
+{
+	//Set status and Render scene 
+	D3DXCOLOR bgColor(0.2f, 0.3f, 0.4f, 1.0f);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+
+}
+
+void RenderSystem::EndScene()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 }

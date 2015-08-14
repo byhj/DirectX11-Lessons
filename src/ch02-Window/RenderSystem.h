@@ -7,5 +7,6 @@ public:
 	{
 		m_AppName = L"DirectX11: ch02-Window";
 	}
+
 	~RenderSystem(){}
 };

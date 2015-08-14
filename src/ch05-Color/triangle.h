@@ -13,10 +13,7 @@ class Triangle
 {
 
 public:
-	Triangle()  
-	{
-		m_pVertexBuffer = nullptr;
-	}
+	Triangle()  {}
 	~Triangle() {}
 
 public:
@@ -34,11 +31,11 @@ private:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
-	int m_VertexCount;
-	int m_IndexCount;
 
 	Shader TestShader;
-	ID3D11Buffer  *m_pVertexBuffer;
+	int m_VertexCount = 0;
+	int m_IndexCount  = 0;
+	ID3D11Buffer  *m_pVertexBuffer = nullptr;
 };
 
 

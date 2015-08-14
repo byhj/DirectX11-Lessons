@@ -8,8 +8,7 @@ bool RenderSystem::v_InitD3D()
 {
 	init_device();
 	init_camera();
-
-	m_Triangle.Init(m_pD3D11Device, GetHwnd());
+	init_object();
 
 	return true;
 }
@@ -86,6 +85,11 @@ void RenderSystem::init_camera()
 	vp.Height   = m_ScreenHeight;
 	m_pD3D11DeviceContext->RSSetViewports(1, &vp);
 
+}
+
+void RenderSystem::init_object()
+{
+	m_Triangle.Init(m_pD3D11Device, GetHwnd() );
 }
 
 }
