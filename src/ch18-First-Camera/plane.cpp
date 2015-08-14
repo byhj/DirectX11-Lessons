@@ -21,6 +21,7 @@ namespace byhj
 		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &m_cbMatrix, 0, 0 );
 		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 		pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
+
 		// Set vertex buffer stride and offset
 		unsigned int stride;
 		unsigned int offset;

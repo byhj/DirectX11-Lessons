@@ -36,7 +36,7 @@ VS_OUT VS( VS_IN vs_in )
 
    vs_in.Pos.w = 1.0f;
    vs_out.Pos = mul(vs_in.Pos, mvp);
-   vs_out.Normal = mul(g_Mat.model, vs_in.Normal );
+   vs_out.Normal = mul( float3x3( transpose( inverse(g_Mat.model) ) ), vs_in.Normal );
    vs_out.Tex = vs_in.Tex;
    vs_out.worldPos = mul(g_Mat.model, vs_in.Pos);
 
