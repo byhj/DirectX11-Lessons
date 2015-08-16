@@ -93,7 +93,7 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 		texVIndex++;
 	}
 
-	/*   Use Face Normals
+
 	//////////////////////Compute Normals///////////////////////////
 	XMFLOAT3 normalized = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	float vecX, vecY, vecZ;
@@ -122,8 +122,7 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 	v[ indices[(i*3 + 1)] ].normal = normalized;
 	v[ indices[(i*3) + 2] ].normal = normalized;
 	}
-
-	*/
+	/*
 
 	//////////////////////Compute Normals///////////////////////////
 	//Now we will compute the normals for each vertex using normal averaging
@@ -200,6 +199,10 @@ bool Plane::init_buffer(ID3D11Device *pD3D11Device)
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		facesUsing = 0;
 	}
+	*/
+
+
+
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC VertexBufferDesc;
 	VertexBufferDesc.Usage               = D3D11_USAGE_DEFAULT;

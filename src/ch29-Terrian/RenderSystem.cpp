@@ -18,9 +18,8 @@ void RenderSystem::v_Render()
 
 	m_Camera.DetectInput(m_Timer.GetDeltaTime(), GetHwnd());
 
-	XMMATRIX Scale = XMMatrixScaling(500.0f, 1.0f, 500.0f);
-	XMMATRIX Translation = XMMatrixTranslation(0.0f, -3.0f, 0.0f);
-	XMMATRIX groundWorld = Scale * Translation;
+	XMMATRIX Translation = XMMatrixTranslation(0.0f, -20.0f, 0.0f);
+	XMMATRIX groundWorld =  Translation;
 	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(groundWorld));
 
 	m_Matrix.View  =   m_Camera.GetViewMatrix();
@@ -108,7 +107,7 @@ void RenderSystem::init_device()
 	D3D11_RASTERIZER_DESC rasterDesc;
 	ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
+	rasterDesc.CullMode = D3D11_CULL_FRONT;
 
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
 	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
