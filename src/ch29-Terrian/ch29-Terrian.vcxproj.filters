@@ -53,6 +53,12 @@
     <ClInclude Include="..\..\include\d3d\d3dModel.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="RenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ch29-Terrain.cpp">
@@ -81,6 +87,12 @@
     </ClCompile>
     <ClCompile Include="..\..\include\d3d\d3dModel.cpp">
       <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="plane.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

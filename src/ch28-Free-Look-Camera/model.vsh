@@ -22,7 +22,7 @@ struct VS_OUT
     float2 Tex       : TEXCOORD0;
 	float3 Tangent   : TANGENT;
 	float3 BiTangent : BITANGENT;
-	float3 worldPos  : POSITION;
+	float3 WorldPos  : POSITION;
 };
 
 VS_OUT VS( VS_IN vs_in )
@@ -37,7 +37,7 @@ VS_OUT VS( VS_IN vs_in )
    vs_out.Normal    = mul(vs_in.Normal,  (float3x3)model );
    vs_out.Tangent   = mul(vs_in.Tangent, (float3x3)model );
    vs_out.BiTangent = mul(vs_in.BiTangent, (float3x3)model );
-   vs_out.worldPos  = mul(vs_in.Pos, model);
+   vs_out.WorldPos  = mul(vs_in.Pos, model);
 
    vs_out.Tex = vs_in.Tex;
  
