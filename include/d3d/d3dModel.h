@@ -1,6 +1,7 @@
 #ifndef D3DMODEL_H
 #define D3DMODEL_H
 
+#pragma  comment(lib, "assimp.lib")
 // Std. Includes
 #include <string>
 #include <fstream>

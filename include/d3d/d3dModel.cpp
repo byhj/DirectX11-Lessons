@@ -59,53 +59,58 @@ void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 
 void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
-	HRESULT hr;
-	D3D11_INPUT_ELEMENT_DESC pInputLayoutDesc[5];
 
-	pInputLayoutDesc[0].SemanticName         = "POSITION";
-	pInputLayoutDesc[0].SemanticIndex        = 0;
-	pInputLayoutDesc[0].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-	pInputLayoutDesc[0].InputSlot            = 0;
-	pInputLayoutDesc[0].AlignedByteOffset    = 0;
-	pInputLayoutDesc[0].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[0].InstanceDataStepRate = 0;
+	//Shader interface infomation
+	D3D11_INPUT_ELEMENT_DESC InputLayout;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
 
-	pInputLayoutDesc[1].SemanticName         = "NORMAL";
-	pInputLayoutDesc[1].SemanticIndex        = 0;
-	pInputLayoutDesc[1].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-	pInputLayoutDesc[1].InputSlot            = 0;
-	pInputLayoutDesc[1].AlignedByteOffset    = 12;
-	pInputLayoutDesc[1].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[1].InstanceDataStepRate = 0;
+	InputLayout.SemanticName         = "POSITION";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 0;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
-	pInputLayoutDesc[2].SemanticName         = "TEXCOORD";
-	pInputLayoutDesc[2].SemanticIndex        = 0;
-	pInputLayoutDesc[2].Format               = DXGI_FORMAT_R32G32_FLOAT;
-	pInputLayoutDesc[2].InputSlot            = 0;
-	pInputLayoutDesc[2].AlignedByteOffset    = 24;
-	pInputLayoutDesc[2].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[2].InstanceDataStepRate = 0;
+	InputLayout.SemanticName         = "NORMAL";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 12;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
-	pInputLayoutDesc[3].SemanticName         = "TANGENT";
-	pInputLayoutDesc[3].SemanticIndex        = 0;
-	pInputLayoutDesc[3].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-	pInputLayoutDesc[3].InputSlot            = 0;
-	pInputLayoutDesc[3].AlignedByteOffset    = 32;
-	pInputLayoutDesc[3].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[3].InstanceDataStepRate = 0;
+	InputLayout.SemanticName         = "TEXCOORD";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 24;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
-	pInputLayoutDesc[4].SemanticName         = "BITANGENT";
-	pInputLayoutDesc[4].SemanticIndex        = 0;
-	pInputLayoutDesc[4].Format               = DXGI_FORMAT_R32G32B32_FLOAT;
-	pInputLayoutDesc[4].InputSlot            = 0;
-	pInputLayoutDesc[4].AlignedByteOffset    = 44;
-	pInputLayoutDesc[4].InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
-	pInputLayoutDesc[4].InstanceDataStepRate = 0;
+	InputLayout.SemanticName         = "TANGENT";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 32;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
-	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
+	InputLayout.SemanticName         = "BITANGENT";
+	InputLayout.SemanticIndex        = 0;
+	InputLayout.Format               = DXGI_FORMAT_R32G32B32_FLOAT;
+	InputLayout.InputSlot            = 0;
+	InputLayout.AlignedByteOffset    = 44;
+	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
+	InputLayout.InstanceDataStepRate = 0;
+	vInputLayoutDesc.push_back(InputLayout);
 
 	ModelShader.init(pD3D11Device, hWnd);
-	ModelShader.attachVS(L"model.vsh", pInputLayoutDesc, numElements);
+	ModelShader.attachVS(L"model.vsh", vInputLayoutDesc);
 	ModelShader.attachPS(L"model.psh");
 	ModelShader.end();
 }
