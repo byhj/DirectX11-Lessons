@@ -20,11 +20,6 @@ int TextureFromFile(const char* path, std::string directory);
 class Model
 {
 public:
-	Model()
-	{
-		m_VertexCount = 0;
-		m_IndexCount  = 0;
-	}
 
 	void loadModel(std::string path);
 	void processNode(aiNode* node, const aiScene* scene);

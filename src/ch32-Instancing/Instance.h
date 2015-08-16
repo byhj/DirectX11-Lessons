@@ -29,51 +29,7 @@ public:
 		m_pTreeMatrixBuffer = NULL;
 	}
 
-	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model,  XMFLOAT4X4  View, XMFLOAT4X4 Proj)
-	{	
-
-		unsigned int stride;
-		unsigned int offset;
-
-		cbMatrix.model  = Model;
-		cbMatrix.view   = View;
-		cbMatrix.proj   = Proj;
-
-		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
-		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-
-		pD3D11DeviceContext->VSSetConstantBuffers(2, 1, &m_pLeaveMatrixBuffer);
-		pD3D11DeviceContext->VSSetConstantBuffers(3, 1, &m_pTreeMatrixBuffer);
-		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	    pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
-
-		InstanceShader.use(pD3D11DeviceContext);
-
-		///////////////////////////////////////////////////////////////////////////////////
-		stride = sizeof(MeshStruct::Vertex); 
-		offset = 0;
-		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pLeaveVB, &stride, &offset);
-		pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
-		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pLeaveTexSRV);
-
-		cbInstance.isTree = 0.0f;
-		cbInstance.isLeaf = 2.0f;
-		pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0 );
-		pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
-		pD3D11DeviceContext->DrawIndexedInstanced(6, NumTrees * NumLeaves, 0, 0, 0);
-		///////////////////////////////////////////////////////////////////////////////////
-		stride = sizeof(MeshStruct::Vertex); 
-		offset = 0;
-		pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pTreeVB, &stride, &offset);
-		pD3D11DeviceContext->IASetIndexBuffer(m_pTreeIB, DXGI_FORMAT_R32_UINT, 0);
-		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTreeTexSRV);
-		
-		cbInstance.isTree = 2.0f;
-		cbInstance.isLeaf = 0.0f;
-		pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0 );
-		pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
-		pD3D11DeviceContext->DrawIndexedInstanced(treeModel.GetIndexCount(), NumTrees, 0, 0, 0);
-	}
+	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model, XMFLOAT4X4  View, XMFLOAT4X4 Proj);
 
 	void shutdown()
 	{

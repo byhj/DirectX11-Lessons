@@ -2,6 +2,10 @@
 
 void Model::loadModel(std::string path)
 {
+	m_IndexCount = 0;
+	m_VertexCount = 0;
+	m_VertexData.clear();
+	m_IndexData.clear();
 
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -30,6 +34,7 @@ std::vector<MeshStruct::Texture>  Model::loadMaterialTextures(aiMaterial* mat, a
 
 		// Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
 		bool skip = false;
+
 		for (int j = 0; j < textures_loaded.size(); j++)
 		{
 			if (textures_loaded[j].path == str)
@@ -194,6 +199,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			setBlend(blend, mat);
 		//std::cout << mat.ambient.w << std::endl;
 
+		/*
 		// 1. Diffuse maps
 		std::vector<MeshStruct::Texture> diffuseMaps = this->loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
@@ -205,7 +211,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 		// 3.normal maps
 		std::vector<MeshStruct::Texture> normalMaps = this->loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+		*/
 	}
+
 
 	m_VertexCount += vertices.size();
 	m_IndexCount  += indices.size();

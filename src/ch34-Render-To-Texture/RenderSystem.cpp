@@ -14,12 +14,11 @@ bool RenderSystem::v_InitD3D()
 
 void RenderSystem::v_Render()
 {
-	BeginScene();
+
 
 	m_Camera.DetectInput(m_Timer.GetDeltaTime(), GetHwnd());
 	m_Matrix.View  =   m_Camera.GetViewMatrix();
 	m_Matrix.Proj  =  m_Proj;
-
 
 	//////////////////////////////////////////////////////////////////
 	D3DXVECTOR4 bgColor = D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -35,10 +34,9 @@ void RenderSystem::v_Render()
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
 	////////////////////////////////////////////////////////
 
+	BeginScene();
 
 	ObjModel.Render(m_pD3D11DeviceContext, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
-
-	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
 	XMMATRIX sphereWorld = XMMatrixIdentity();
 	m_Matrix.View._14 = 0.0f;
@@ -57,7 +55,7 @@ void RenderSystem::v_Render()
 	XMMATRIX tProj = XMMatrixOrthographicLH(m_ScreenWidth, m_ScreenHeight, 1.0f, 1000.0f);
 	XMFLOAT4X4 ortho;
 	XMStoreFloat4x4(&ortho, XMMatrixTranspose(tProj));
-	d3dRtt.Render(m_pD3D11DeviceContext, pRttShaderResourceView, m_Matrix.Model, m_Matrix.View, ortho);
+	d3dRtt.Render(m_pD3D11DeviceContext, pRttShaderResourceView, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
 
 
 	DrawFps();
@@ -197,6 +195,11 @@ void RenderSystem::init_object()
 {
 	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
+
+	d3dRtt.init_window(400.0f / m_ScreenWidth * 2.0f, 400.0f / m_ScreenHeight * 2.0f,
+		200.0f * GetAspect() / m_ScreenWidth * 2.0f, 200.0f / m_ScreenHeight * 2.0f, GetAspect());
+	d3dRtt.init_buffer(m_pD3D11Device, m_pD3D11DeviceContext);
+	d3dRtt.init_shader(m_pD3D11Device, GetHwnd());
 
 	m_Skymap.createSphere(m_pD3D11Device, 10, 10);
 	m_Skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
