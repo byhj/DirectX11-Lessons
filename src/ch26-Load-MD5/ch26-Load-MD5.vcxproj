@@ -131,6 +131,7 @@
     <ClCompile Include="..\..\include\d3d\d3dTimer.cpp" />
     <ClCompile Include="ch26-Load-MD5.cpp" />
     <ClCompile Include="md5Model.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\d3d\d3dApp.h" />
@@ -141,7 +142,9 @@
     <ClInclude Include="..\..\include\d3d\d3dModel.h" />
     <ClInclude Include="..\..\include\d3d\d3dShader.h" />
     <ClInclude Include="..\..\include\d3d\d3dTimer.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="md5Model.h" />
+    <ClInclude Include="RenderSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
