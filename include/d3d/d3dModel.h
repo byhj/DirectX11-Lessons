@@ -21,7 +21,6 @@ int TextureFromFile(const char* path, std::string directory);
 class D3DModel
 {
 public:
-	D3DModel(){}
 
 	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj)
 	{

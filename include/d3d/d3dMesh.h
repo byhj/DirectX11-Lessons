@@ -96,7 +96,6 @@ public:
 	std::vector<Texture> textures;
 	Material mat;
 
-	D3DMesh() {}
 	// Constructor
 	D3DMesh(std::vector<Vertex> vertices, std::vector<unsigned long> indices, std::vector<Texture> textures, Material mat,
 	        ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)

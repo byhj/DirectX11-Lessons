@@ -18,7 +18,7 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
 	float4 diffuse = saturate(dot(float3(0.0f, 1.0f, -1.0f), ps_in.Normal) * float4(0.7f, 0.7f, 0.7f, 1.0f) );
 	float4 ambient = float4(0.2f, 0.2f, 0.2f, 1.0f);
 
-	return  saturate(ambient + diffuse) * texColor;
+	return  texColor * (ambient + diffuse);
 }
 
 
