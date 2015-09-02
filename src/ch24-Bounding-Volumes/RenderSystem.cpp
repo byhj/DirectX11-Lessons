@@ -233,7 +233,7 @@ void RenderSystem::init_object()
 	d3dPicking.InitPicking(m_ScreenWidth, m_ScreenHeight, BottomModel.GetPos(), BottomModel.GetIndex());
 	
 	m_Font.Init(m_pD3D11Device);
-	m_Timer.Init();
+	m_Timer.Reset();
 	m_Camera.Init(GetAppInst(), GetHwnd());
 }
 
@@ -273,7 +273,7 @@ void RenderSystem::CheckPick()
 void RenderSystem::BeginScene()
 {
 	//Set status and Render scene 
-	D3DXCOLOR bgColor(0.0f, 0.0f, 0.0f, 1.0f);
+	float bgColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);

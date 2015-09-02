@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Framework">
-      <UniqueIdentifier>{c1a44da8-700b-4b41-b13f-48c04e0ec8f3}</UniqueIdentifier>
+      <UniqueIdentifier>{0b775a9c-1bbc-4963-a791-b44f85d99001}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -29,26 +29,20 @@
     <ClCompile Include="ch13-Clipping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\d3d\d3dApp.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\d3d\d3dShader.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="RenderSystem.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="cube.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\include\d3d\Shader.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\d3d\App.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\d3d\d3dApp.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\d3d\d3dShader.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -57,6 +51,12 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\App.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\Shader.h">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

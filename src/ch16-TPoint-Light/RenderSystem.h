@@ -1,6 +1,6 @@
 #include "d3d/App.h"
-#include "d3d/d3dFont.h"
-#include "d3d/d3dTimer.h"
+#include "d3d/Font.h"
+#include "d3d/Timer.h"
 
 #include "Cube.h"
 #include "Common.h"
@@ -49,8 +49,8 @@ private:
 	float fps;
 
 	byhj::Cube  m_Cube;
-	byhj::D3DFont m_Font;
-	byhj::D3DTimer m_Timer;
+	d3d::Font m_Font;
+	d3d::Timer m_Timer;
 	byhj::MatrixBuffer m_Matrix;
 
 	XMFLOAT4X4 m_Model;

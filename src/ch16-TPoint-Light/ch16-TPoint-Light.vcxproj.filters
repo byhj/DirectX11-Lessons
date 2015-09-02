@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Framework">
-      <UniqueIdentifier>{f3b66617-26a0-42a0-a9af-7cfd3b23102d}</UniqueIdentifier>
+      <UniqueIdentifier>{5af1e053-d526-44b6-b689-3ae30ef76bb5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -29,38 +29,26 @@
     <ClCompile Include="ch16-TPoint-Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\d3d\d3dApp.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\d3d\d3dShader.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\d3d\d3dFont.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\include\d3d\d3dTimer.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="cube.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="RenderSystem.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\include\d3d\Shader.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\d3d\App.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\d3d\Font.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\d3d\Timer.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\d3d\d3dApp.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\d3d\d3dShader.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\d3d\d3dFont.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\d3d\d3dTimer.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
     <ClInclude Include="cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,6 +57,18 @@
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\App.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\Shader.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\Font.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\d3d\Timer.h">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

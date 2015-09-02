@@ -1,5 +1,5 @@
-#ifndef D3DSHADER_H
-#define D3DSHADER_H
+#ifndef SHADER_H
+#define SHADER_H
 
 #include <d3d11.h>
 #include <D3DX11async.h>

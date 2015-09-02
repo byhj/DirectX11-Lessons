@@ -117,19 +117,17 @@
     <None Include="cube.vsh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\include\d3d\d3dApp.cpp" />
-    <ClCompile Include="..\..\include\d3d\d3dFont.cpp" />
-    <ClCompile Include="..\..\include\d3d\d3dShader.cpp" />
-    <ClCompile Include="..\..\include\d3d\d3dTimer.cpp" />
+    <ClCompile Include="..\..\include\d3d\App.cpp" />
+    <ClCompile Include="..\..\include\d3d\Font.cpp" />
+    <ClCompile Include="..\..\include\d3d\Shader.cpp" />
     <ClCompile Include="ch14-Font.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\d3d\d3dApp.h" />
-    <ClInclude Include="..\..\include\d3d\d3dFont.h" />
-    <ClInclude Include="..\..\include\d3d\d3dShader.h" />
-    <ClInclude Include="..\..\include\d3d\d3dTimer.h" />
+    <ClInclude Include="..\..\include\d3d\App.h" />
+    <ClInclude Include="..\..\include\d3d\Font.h" />
+    <ClInclude Include="..\..\include\d3d\Shader.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="RenderSystem.h" />

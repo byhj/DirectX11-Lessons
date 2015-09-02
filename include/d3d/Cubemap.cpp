@@ -1,10 +1,13 @@
-#include "d3dCubemap.h"
+#include "Cubemap.h"
 
 
 namespace byhj
 {
 
-void D3DSkymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLines)
+namespace d3d
+{
+
+void Skymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLines)
 {
 	XMMATRIX sphereWorld;
 	XMMATRIX Rotationx;
@@ -134,7 +137,7 @@ void D3DSkymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLi
 	DebugHR(hr);
 }
 
-void D3DSkymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
+void Skymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 	HRESULT result;
 
@@ -175,7 +178,7 @@ void D3DSkymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 
 }
 
-void D3DSkymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
+void Skymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 {
 	HRESULT hr;
 
@@ -240,7 +243,7 @@ void D3DSkymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 
 }
 
-void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, const MatrixBuffer &mvpMatrix)
+void Skymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, const MatrixBuffer &mvpMatrix)
 {
 	// Set vertex buffer stride and offset.=
 	unsigned int stride;
@@ -271,5 +274,5 @@ void D3DSkymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, const MatrixBuf
 	pD3D11DeviceContext->OMSetDepthStencilState(NULL, 0);
 }
 
-
+	}
 }

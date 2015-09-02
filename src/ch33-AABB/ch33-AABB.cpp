@@ -4,11 +4,11 @@
 
 #include "d3d/App.h"
 #include "d3d/Shader.h"
-#include "d3d/d3dFont.h"
-#include "d3d/d3dTimer.h"
+#include "d3d/Font.h"
+#include "d3d/Timer.h"
 #include "d3d/d3dCubemap.h"
 #include "d3d/d3dModel.h"
-#include "d3d/d3dCamera.h"
+#include "d3d/Camera.h"
 
 #include "Instance.h"
 

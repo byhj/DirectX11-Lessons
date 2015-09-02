@@ -2,14 +2,18 @@
 #define _XM_NO_INTRINSICS_
 #endif 
 
-#include "d3dCamera.h"
+#include "Camera.h"
 
 #define SHADER_DEBUG
 
 namespace byhj
 {
 
-bool D3DCamera::Init(HINSTANCE hInstance, HWND hWnd)
+namespace d3d
+{
+
+
+bool Camera::Init(HINSTANCE hInstance, HWND hWnd)
 {
 
 	HRESULT hr;
@@ -35,7 +39,7 @@ bool D3DCamera::Init(HINSTANCE hInstance, HWND hWnd)
 	return true;
 }
 
-void D3DCamera::DetectInput(double time, HWND hWnd)
+void Camera::DetectInput(double time, HWND hWnd)
 {
 	DIMOUSESTATE mouseCurrState;
 
@@ -98,7 +102,7 @@ void D3DCamera::DetectInput(double time, HWND hWnd)
 	return;
 }
 
-void D3DCamera::UpdateCamera()
+void Camera::UpdateCamera()
 {	
 	static XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	static XMVECTOR DefaultRight   = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -143,34 +147,34 @@ void D3DCamera::UpdateCamera()
 	XMStoreFloat4x4(&m_camView, XMMatrixTranspose(camView));
 }
 
-XMFLOAT4X4  D3DCamera::GetViewMatrix()
+XMFLOAT4X4  Camera::GetViewMatrix()
 {
 	return m_camView;
 }
 
-XMFLOAT4  D3DCamera::GetCamPos()
+XMFLOAT4  Camera::GetCamPos()
 {
 	//XMStoreFloat4(&m_camPosition, camPosition);
 	return m_camPosition;
 }
 
-XMFLOAT4   D3DCamera::GetCamTarget()
+XMFLOAT4   Camera::GetCamTarget()
 {
 	//XMStoreFloat4(&m_camTarget, camTarget);
 	return m_camTarget;
 }
-float  D3DCamera::GetMouseX()
+float  Camera::GetMouseX()
 {
 	return m_mouseX;
 }
-float  D3DCamera::GetMouseY()
+float  Camera::GetMouseY()
 {
 	return m_mouseY;
 }
-bool  D3DCamera::GetRightMouseClicked()
+bool  Camera::GetRightMouseClicked()
 {
 	return rightMouseClicked;
 }
 
-
+}
 }

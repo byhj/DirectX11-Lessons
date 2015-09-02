@@ -8,18 +8,13 @@ void RenderSystem::v_Init()
 	init_device();
 	init_camera();
 	init_object();
-
-	return true;
 }
 
 void RenderSystem::v_Render()
 {
 	BeginScene();
 
-	static float rot = 0.0f;
-	rot += .0001f;
-	if(rot > 6.26f)
-		rot = 0.0f;
+	float rot = GetTickCount64() / 1000.0f;
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMMATRIX Model = XMMatrixRotationAxis(rotaxis, rot);
 	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );

@@ -1,8 +1,8 @@
 #include "d3d/App.h"
-#include "d3d/d3dFont.h"
-#include "d3d/d3dTimer.h"
-#include "d3d/d3dCamera.h"
-#include "d3d/d3dCubemap.h"
+#include "d3d/Font.h"
+#include "d3d/Timer.h"
+#include "d3d/Camera.h"
+#include "d3d/Cubemap.h"
 
 #include "Plane.h"
 #include "Common.h"
@@ -51,10 +51,10 @@ private:
 	float fps;
 
 	byhj::Plane  m_Plane;
-	byhj::D3DSkymap m_Skymap;
-	byhj::D3DFont m_Font;
-	byhj::D3DTimer m_Timer;
-	byhj::D3DCamera m_Camera;
+    d3d::Skymap m_Skymap;
+	d3d::Font m_Font;
+	d3d::Timer m_Timer;
+	d3d::Camera m_Camera;
 	byhj::MatrixBuffer m_Matrix;
 
 	XMFLOAT4X4 m_Model;

@@ -22,21 +22,6 @@ namespace byhj
 		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
 		pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
 
-		/*
-
-		cbLight.lightPos.x = XMVectorGetX(camPosition);
-		cbLight.lightPos.y = XMVectorGetY(camPosition);
-		cbLight.lightPos.z = XMVectorGetZ(camPosition);
-
-		cbLight.lightDir.x = XMVectorGetX(camTarget) - cbLight.lightPos.x;
-		cbLight.lightDir.y = XMVectorGetY(camTarget) - cbLight.lightPos.y;
-		cbLight.lightDir.z = XMVectorGetZ(camTarget) - cbLight.lightPos.z;
-
-		m_pD3D11DeviceContext->UpdateSubresource(m_pLightBuffer, 0, NULL, &cbLight, 0, 0);
-		m_pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
-
-		*/
-
 		// Set vertex buffer stride and offset
 		unsigned int stride;
 		unsigned int offset;

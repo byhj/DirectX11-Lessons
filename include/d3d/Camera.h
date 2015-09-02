@@ -10,10 +10,13 @@
 namespace byhj
 {
 
-class D3DCamera
+namespace d3d
+{
+
+class Camera
 {
 public:
-	D3DCamera()
+	Camera()
 	{
 		moveLeftRight   = 0.0f;
 		moveBackForward = 0.0f;
@@ -55,7 +58,7 @@ private:
 	bool rightMouseClicked;
 };
 
-
+}
 }
 
 #endif

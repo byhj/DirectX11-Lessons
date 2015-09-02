@@ -1,7 +1,7 @@
-#ifndef D3DCUBEMAP_H
-#define D3DCUBEMAP_H
+#ifndef CUBEMAP_H
+#define CUBEMAP_H
 
-#include "d3dShader.h"
+#include "Shader.h"
 #include "d3dDebug.h"
 
 #include <vector>
@@ -16,10 +16,13 @@
 namespace byhj
 {
 
-class D3DSkymap
+namespace d3d
+{
+
+class Skymap
 {
 public:
-	D3DSkymap() {}
+	Skymap() {}
 
 	void createSphere(ID3D11Device *pD3D11Device, int LatLines, int LongLines);
 	void load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile);
@@ -57,6 +60,8 @@ private:
 	Shader SkymapShader;
 };
 
+
+}
 
 }
 
