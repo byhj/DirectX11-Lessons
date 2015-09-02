@@ -2,8 +2,8 @@
 #pragma comment( linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
-#include "d3d/d3dApp.h"
-#include "d3d/d3dShader.h"
+#include "d3d/App.h"
+#include "d3d/Shader.h"
 #include "d3d/d3dFont.h"
 #include "d3d/d3dTimer.h"
 #include "d3d/d3dCubemap.h"
@@ -12,7 +12,7 @@
 
 #include "Instance.h"
 
-class D3DRenderSystem: public D3DApp
+class D3DRenderSystem: public d3d::App
 {
 public:
 	D3DRenderSystem()
@@ -29,7 +29,7 @@ public:
 
 	}
 
-	bool v_InitD3D();
+	void v_Init();
 	void v_Render();
 
 	void v_Shutdown()

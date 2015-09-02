@@ -3,7 +3,7 @@
 namespace byhj
 {
 
-bool RenderSystem::v_InitD3D()
+void RenderSystem::v_Init()
 {
 	init_device();
 	init_camera();

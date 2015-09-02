@@ -1,4 +1,4 @@
-#include "d3d/d3dApp.h"
+#include "d3d/App.h"
 #include "d3d/d3dFont.h"
 #include "d3d/d3dTimer.h"
 #include "d3d/d3dCamera.h"
@@ -11,7 +11,7 @@
 namespace byhj
 {
 
-class RenderSystem: public D3DApp
+class RenderSystem: public d3d::App
 {
 public:
 	RenderSystem()
@@ -36,7 +36,7 @@ public:
 	~RenderSystem(){}
 	
 public:
-	bool v_InitD3D();
+	void v_Init();
 	void v_Render();
 	void v_Shutdown();
 

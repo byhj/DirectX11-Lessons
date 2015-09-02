@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include <xnamath.h>
 
-#include "d3d/d3dShader.h"
+#include "d3d/Shader.h"
 
 namespace byhj
 {
@@ -32,7 +32,7 @@ private:
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
 
-	Shader TestShader;
+	d3d::d3d::Shader TestShader;
 	int m_VertexCount = 0;
 	int m_IndexCount  = 0;
 	ID3D11Buffer  *m_pVertexBuffer = nullptr;

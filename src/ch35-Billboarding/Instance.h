@@ -7,7 +7,7 @@
 #include <xnamath.h>
 #include "model.h"
 
-#include "d3d/d3dShader.h"
+#include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
 #include "d3d/d3dAABB.h"
 

@@ -1,6 +1,9 @@
-#include "d3d/d3dApp.h"
+#include "d3d/App.h"
 
-class RenderSystem: public D3DApp
+namespace byhj
+{
+
+class RenderSystem: public d3d::App
 {
 public:
 	RenderSystem()
@@ -9,4 +12,11 @@ public:
 	}
 
 	~RenderSystem(){}
+
+public:
+	void v_Init();
+	void v_Render();
+	void v_Shutdown();
 };
+
+}

@@ -4,13 +4,11 @@ namespace byhj
 {
 
 
-bool RenderSystem::v_InitD3D()
+void RenderSystem::v_Init()
 {
 	init_device();
 	init_camera();
 	init_object();
-
-	return true;
 }
 
 void RenderSystem::v_Render()
@@ -114,7 +112,7 @@ void RenderSystem::init_object()
 void RenderSystem::BeginScene()
 {
 	//Set status and Render scene 
-	D3DXCOLOR bgColor(0.2f, 0.3f, 0.4f, 1.0f);
+	float bgColor[] = {0.2f, 0.3f, 0.4f, 1.0f};
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);

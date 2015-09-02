@@ -1,4 +1,4 @@
-#include "d3d/d3dShader.h"
+#include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
 #include <d3d11.h>
 #include <xnamath.h>
@@ -86,7 +86,7 @@ private:
 	int m_VertexCount;
 	int m_IndexCount;
 
-	Shader TestShader;
+	d3d::Shader TestShader;
 };
 
 

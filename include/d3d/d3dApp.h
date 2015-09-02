@@ -38,7 +38,7 @@ public:
 	int Run();
 	LRESULT CALLBACK MessageHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	virtual	bool v_InitD3D();
+	virtual	void v_Init();
 	virtual bool v_Init();
 	virtual void v_Reshape()  {}
 	virtual void v_Shutdown() {}

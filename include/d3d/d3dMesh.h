@@ -9,7 +9,7 @@
 #include <xnamath.h>
 #include <D3DX10math.h>
 
-#include "d3d/d3dShader.h"
+#include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
 
 // Std. Includes

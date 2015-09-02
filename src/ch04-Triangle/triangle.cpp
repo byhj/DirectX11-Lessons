@@ -2,6 +2,7 @@
 #include "d3d/d3dDebug.h"
 
 #include <array>
+#include <vector>
 
 namespace byhj
 {

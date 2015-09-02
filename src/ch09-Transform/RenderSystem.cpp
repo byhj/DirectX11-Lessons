@@ -3,23 +3,22 @@
 namespace byhj
 {
 
-bool RenderSystem::v_InitD3D()
+void RenderSystem::v_Init()
 {
 	init_device();
 	init_camera();
 	init_object();
-
-	return true;
 }
 
 void RenderSystem::v_Render()
 {
 	BeginScene();
 
-	static float rot = 0.0f;
-	rot += 0.001f;
+	ULONGLONG timeCur = GetTickCount64();
+	float t = timeCur / 1000.0f;
+
 	XMVECTOR rotaxis = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMMATRIX Model = XMMatrixRotationAxis(rotaxis, rot);
+	XMMATRIX Model = XMMatrixRotationAxis(rotaxis, t);
 	XMStoreFloat4x4(&m_Model, XMMatrixTranspose(Model) );
 
 	m_Matrix.Model = m_Model;
@@ -134,7 +133,7 @@ void RenderSystem::init_object()
 void RenderSystem::BeginScene()
 {
 	//Set status and Render scene 
-	D3DXCOLOR bgColor(0.2f, 0.3f, 0.4f, 1.0f);
+	float bgColor[] = {0.2f, 0.3f, 0.4f, 1.0f};
 	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);

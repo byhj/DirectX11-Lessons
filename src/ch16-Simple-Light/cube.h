@@ -5,7 +5,7 @@
 #include <xnamath.h>
 
 #include "Common.h"
-#include "d3d/d3dShader.h"
+#include "d3d/Shader.h"
 
 namespace byhj
 {
@@ -40,7 +40,7 @@ private:
 	int m_IndexCount;
     byhj::MatrixBuffer m_cbMatrix;
 	byhj::LightBuffer cbLight;
-	Shader TestShader;
+	d3d::Shader TestShader;
 
 	ID3D11Buffer             *m_pVertexBuffer;
 	ID3D11Buffer             *m_pIndexBuffer;
