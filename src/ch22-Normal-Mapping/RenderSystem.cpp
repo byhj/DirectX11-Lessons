@@ -8,8 +8,6 @@ void RenderSystem::v_Init()
 	init_device();
 	init_camera();
 	init_object();
-
-	return true;
 }
 
 void RenderSystem::v_Render()

@@ -2,8 +2,8 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 #include "d3d/Camera.h"
-#include "d3d/d3dCubemap.h"
-#include "d3d/d3dModel.h"
+#include "d3d/Cubemap.h"
+#include "d3d/Model.h"
 
 #include "Common.h"
 
@@ -60,8 +60,8 @@ private:
 	int bottleHit[20];
 	int score;
 
-	D3DModel ObjModel;
-	D3DModel BottomModel;
+	d3d::Model ObjModel;
+	d3d::Model BottomModel;
 	D3DPicking d3dPicking;
 
 d3d::Skymap m_Skymap;

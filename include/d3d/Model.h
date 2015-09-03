@@ -14,11 +14,17 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "d3dMesh.h"
+#include "Mesh.h"
 
 int TextureFromFile(const char* path, std::string directory);
 
-class D3DModel
+namespace byhj
+{
+namespace d3d
+{
+
+
+class Model
 {
 public:
 
@@ -52,7 +58,7 @@ public:
 	void processNode(aiNode* node, const aiScene* scene);
 
 	//Processes a mesh and return the data information
-	D3DMesh processMesh(aiMesh* mesh, const aiScene* scene);
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 	
 	//Load the texture for material
 	std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
@@ -71,7 +77,7 @@ public:
 private:
 
 	//One model may include many meshes
-	std::vector<D3DMesh> meshes;
+	std::vector<Mesh> meshes;
 	std::string directory;
 	std::vector<Texture> textures_loaded;	
 
@@ -88,4 +94,7 @@ private:
 	std::vector<unsigned long> vIndex;	
 };
 
+}
+
+}
 #endif

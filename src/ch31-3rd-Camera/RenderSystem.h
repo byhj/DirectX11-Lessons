@@ -2,8 +2,8 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 //#include "d3d/Camera.h"
-#include "d3d/d3dCubemap.h"
-#include "d3d/d3dModel.h"
+#include "d3d/Cubemap.h"
+#include "d3d/Model.h"
 #include "md5Model.h"
 
 #include "Common.h"
@@ -52,7 +52,7 @@ private:
 
 	float fps;
 
-	D3DModel ObjModel;
+	d3d::Model ObjModel;
 	D3DCamera m_Camera;
 
 d3d::Skymap m_Skymap;

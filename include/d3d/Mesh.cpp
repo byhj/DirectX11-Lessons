@@ -1,14 +1,18 @@
-#include "d3dMesh.h"
+#include "Mesh.h"
+
+namespace byhj
+{
+namespace d3d
+{
 
 
-
-void D3DMesh::init_Mesh(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
+void Mesh::init_Mesh(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
 {
 	init_state(pD3D11Device, pD3D11DeviceContext);
 	init_buffer(pD3D11Device);
 }
 
-void D3DMesh::init_state(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
+void Mesh::init_state(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
 {
 	HRESULT hr;
 	//////////////////////Raterizer State/////////////////////////////
@@ -22,7 +26,7 @@ void D3DMesh::init_state(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 }
 
 
-void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
+void Mesh::init_buffer(ID3D11Device *pD3D11Device)
 {
 	HRESULT hr;
 
@@ -82,7 +86,7 @@ void D3DMesh::init_buffer(ID3D11Device *pD3D11Device)
 	DebugHR(hr);
 
 }
-void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj)
+void Mesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj)
 {	
 
 	// Bind appropriate textures
@@ -123,4 +127,8 @@ void D3DMesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model,
 
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);
+}
+
+}
+
 }

@@ -2,8 +2,8 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 #include "d3d/Camera.h"
-#include "d3d/d3dCubemap.h"
-#include "d3d/d3dModel.h"
+#include "d3d/Cubemap.h"
+#include "d3d/Model.h"
 
 #include "Common.h"
 
@@ -50,7 +50,7 @@ private:
 
 	float fps;
 
-	D3DModel ObjModel;
+	d3d::Model ObjModel;
 d3d::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;

@@ -8,8 +8,6 @@ void RenderSystem::v_Init()
 	init_device();
 	init_camera();
 	init_object();
-
-	return true;
 }
 
 void RenderSystem::v_Render()
@@ -44,7 +42,7 @@ void RenderSystem::v_Render()
 
 	WCHAR scoreInfo[255];
 	swprintf(scoreInfo, L"Score: %d ", score);
-	m_Font.drawText(m_pD3D11DeviceContext, scoreInfo, 22.0f, 10.0f, 100.0f, 0xff0099ff);
+	m_Font.drawText(m_pD3D11DeviceContext, scoreInfo, 22.0f, 10.0f, 100.0f);
 
 	////////////////////////////////////////////////////////
 

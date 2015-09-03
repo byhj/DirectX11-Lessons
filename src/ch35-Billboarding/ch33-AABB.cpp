@@ -6,8 +6,8 @@
 #include "d3d/Shader.h"
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
-#include "d3d/d3dCubemap.h"
-#include "d3d/d3dModel.h"
+#include "d3d/Cubemap.h"
+#include "d3d/Model.h"
 #include "d3d/Camera.h"
 
 #include "Instance.h"
@@ -66,7 +66,7 @@ private:
 	D3DTimer timer;
 	D3DFont font;
 	D3DCamera camera;
-	D3DModel ObjModel;
+	d3d::Model ObjModel;
 
 	Instance instanceModel;
 

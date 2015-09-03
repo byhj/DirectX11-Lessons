@@ -1,7 +1,12 @@
-#include "d3dModel.h"
+#include "Model.h"
 
+namespace byhj
+{
 
-void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
+namespace d3d
+{
+
+void Model::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
 {
 	this->pD3D11Device = pD3D11Device;
 	this->pD3D11DeviceContext = pD3D11DeviceContext;
@@ -57,7 +62,7 @@ void D3DModel::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 	pD3D11Device->CreateBlendState(&blendDesc, &Transparency);
 }
 
-void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
+void Model::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 
 	//Shader interface infomation
@@ -115,7 +120,7 @@ void D3DModel::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	ModelShader.end();
 }
 
-void D3DModel::loadModel(std::string path)
+void Model::loadModel(std::string path)
 {
 	// Read file via ASSIMP
 	Assimp::Importer importer;
@@ -135,7 +140,7 @@ void D3DModel::loadModel(std::string path)
 	this->processNode(scene->mRootNode, scene);
 }
 
-std::vector<Texture>  D3DModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::vector<Texture>  Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
 	std::vector<Texture> textures;
 	for (int i = 0; i < mat->GetTextureCount(type); i++)
@@ -181,7 +186,7 @@ void setBlend(float blend, Material &mat)
 	mat.emissive.w = blend;
 }
 
-D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
+Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	//Mesh Data to fill
 	std::vector<Vertex> vertices;
@@ -326,10 +331,10 @@ D3DMesh D3DModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// Return a mesh object created from the extracted mesh data
-	return D3DMesh(vertices, indices, textures, mat, pD3D11Device, pD3D11DeviceContext, hWnd);
+	return Mesh(vertices, indices, textures, mat, pD3D11Device, pD3D11DeviceContext, hWnd);
 }
 
-void D3DModel::processNode(aiNode* node, const aiScene* scene)
+void Model::processNode(aiNode* node, const aiScene* scene)
 {
 	// Process each mesh located at the current node
 	for (int i = 0; i < node->mNumMeshes; i++)
@@ -348,7 +353,7 @@ void D3DModel::processNode(aiNode* node, const aiScene* scene)
 
 }
 
-ID3D11ShaderResourceView * D3DModel::TextureFromFile(const char* path, std::string directory)
+ID3D11ShaderResourceView * Model::TextureFromFile(const char* path, std::string directory)
 {
 	//Generate texture ID and load texture data 
 	std::string filename = std::string(path);
@@ -361,4 +366,8 @@ ID3D11ShaderResourceView * D3DModel::TextureFromFile(const char* path, std::stri
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, sw, NULL,NULL, &m_pTexture, NULL);
 	DebugHR(hr);
 	return m_pTexture;
+}
+
+}
+
 }
