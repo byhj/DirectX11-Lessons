@@ -4,8 +4,8 @@
 #include <windows.h>
 #include <d3dx11.h>
 #include <xnamath.h>
-#include "model.h"
 
+#include "d3d/model.h"
 #include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
 
@@ -111,7 +111,7 @@ private:
 	ID3D11SamplerState       *m_pTexSamplerState;
 	ID3D11InputLayout        *m_pInputLayout;
 
-	Model treeModel;
+	byhj::d3d::Model treeModel;
 	byhj::d3d::Shader InstanceShader;
 };
 

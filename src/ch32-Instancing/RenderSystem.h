@@ -4,6 +4,7 @@
 #include "d3d/Camera.h"
 #include "d3d/Cubemap.h"
 #include "d3d/Model.h"
+
 #include "Instance.h"
 #include "Common.h"
 
@@ -50,9 +51,9 @@ private:
 
 	float fps;
 
-	d3d::Model ObjModel;
 	Instance instanceModel;
-d3d::Skymap m_Skymap;
+	d3d::Model ObjModel;
+    d3d::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;
 	d3d::Camera m_Camera;
