@@ -182,7 +182,7 @@ private:
 	ID3D11InputLayout        *m_pInputLayout;
 
 	Model treeModel;
-	Shader InstanceShader;
+	byhj::d3d::Shader InstanceShader;
 	int m_CullLeftNum;
 	D3DAABB m_D3DAABB;
 };

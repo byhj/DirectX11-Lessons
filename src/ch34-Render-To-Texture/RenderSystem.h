@@ -4,7 +4,7 @@
 #include "d3d/Camera.h"
 #include "d3d/Cubemap.h"
 #include "d3d/Model.h"
-#include "d3d/d3dRTT.h"
+#include "d3d/RTT.h"
 
 #include "Common.h"
 
@@ -63,7 +63,7 @@ d3d::Skymap m_Skymap;
 	ID3D11Texture2D          *pRttRenderTargetTexture;
 	ID3D11RenderTargetView   *pRttRenderTargetView;
 	ID3D11ShaderResourceView *pRttShaderResourceView;
-	D3DRTT d3dRtt;
+	d3d::RTT d3dRtt;
 
 	XMFLOAT4X4 m_Model;
 	XMFLOAT4X4 m_View;

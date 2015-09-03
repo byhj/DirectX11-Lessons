@@ -12,6 +12,10 @@
 
 #include "Instance.h"
 
+namespace byhj
+{
+
+
 class D3DRenderSystem: public d3d::App
 {
 public:
@@ -62,10 +66,10 @@ private:
 	ID3D11RasterizerState    *m_pCWcullMode;
 
 	///////////////**************new**************////////////////////
-	D3DSkymap skymap;
-	D3DTimer timer;
-	D3DFont font;
-	D3DCamera camera;
+	d3d::Skymap skymap;
+    d3d::Timer timer;
+	d3d::Font font;
+	d3d::Camera camera;
 	d3d::Model ObjModel;
 
 	Instance instanceModel;
@@ -328,4 +332,6 @@ void  D3DRenderSystem::BeginScene()
 void D3DRenderSystem::EndScene()
 {
 	m_pSwapChain->Present(0, 0);
+}
+
 }

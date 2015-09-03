@@ -112,7 +112,7 @@ private:
 	ID3D11InputLayout        *m_pInputLayout;
 
 	Model treeModel;
-	Shader InstanceShader;
+	byhj::d3d::Shader InstanceShader;
 };
 
 

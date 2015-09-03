@@ -1,7 +1,13 @@
-#include "d3dRTT.h"
+#include "RTT.h"
+
+namespace byhj
+{
+
+namespace d3d
+{
 
 
-void D3DRTT::init_window(float posX, float posY, float width, float height, float aspect)
+void RTT::init_window(float posX, float posY, float width, float height, float aspect)
 {
 	m_posX  = posX;
 	m_posY  = posY;
@@ -10,7 +16,7 @@ void D3DRTT::init_window(float posX, float posY, float width, float height, floa
 	m_aspect = aspect;
 }
 
-void D3DRTT::Render(ID3D11DeviceContext *pD3D11DeviceContext, ID3D11ShaderResourceView *pTexture, const XMFLOAT4X4  &Model,
+void RTT::Render(ID3D11DeviceContext *pD3D11DeviceContext, ID3D11ShaderResourceView *pTexture, const XMFLOAT4X4  &Model,
 	const XMFLOAT4X4 &View, const XMFLOAT4X4  &Proj)
 {
 
@@ -36,7 +42,7 @@ void D3DRTT::Render(ID3D11DeviceContext *pD3D11DeviceContext, ID3D11ShaderResour
 
 }
 
-bool D3DRTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
+bool RTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
 {
 	HRESULT hr;
 
@@ -65,24 +71,24 @@ bool D3DRTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 	}
 
 	// First triangle.
-	VertexData[0].Pos = D3DXVECTOR3(m_posX, m_posY, 0.0f);  // Top left.
-	VertexData[0].Tex = D3DXVECTOR2(0.0f, 0.0f);
+	VertexData[0].Pos = XMFLOAT3(m_posX, m_posY, 0.0f);  // Top left.
+	VertexData[0].Tex = XMFLOAT2(0.0f, 0.0f);
 
-	VertexData[1].Pos = D3DXVECTOR3(m_posX + m_width, m_posY, 0.0f);  
-	VertexData[1].Tex = D3DXVECTOR2(1.0f, 0.0f);
+	VertexData[1].Pos = XMFLOAT3(m_posX+m_width, m_posY, 0.0f);
+	VertexData[1].Tex = XMFLOAT2(1.0f, 0.0f);
 
-	VertexData[2].Pos = D3DXVECTOR3(m_posX + m_width, m_posY - m_height, 0.0f);   //Bottom right
-	VertexData[2].Tex = D3DXVECTOR2(1.0f, 1.0f);
+	VertexData[2].Pos = XMFLOAT3(m_posX+m_width, m_posY-m_height, 0.0f);   //Bottom right
+	VertexData[2].Tex = XMFLOAT2(1.0f, 1.0f);
 
-	// Second triangle.
-	VertexData[3].Pos = D3DXVECTOR3(m_posX + m_width, m_posY - m_height, 0.0f);   
-	VertexData[3].Tex = D3DXVECTOR2(1.0f, 1.0f);
+		// Second triangle.	XMFLOAT
+	VertexData[3].Pos = XMFLOAT3(m_posX+m_width, m_posY-m_height, 0.0f);
+	VertexData[3].Tex = XMFLOAT2(1.0f, 1.0f);
 
-	VertexData[4].Pos = D3DXVECTOR3(m_posX, m_posY - m_height, 0.0f); 
-	VertexData[4].Tex = D3DXVECTOR2(0.0f, 1.0f);
+	VertexData[4].Pos = XMFLOAT3(m_posX, m_posY-m_height, 0.0f);
+	VertexData[4].Tex = XMFLOAT2(0.0f, 1.0f);
 
-	VertexData[5].Pos = D3DXVECTOR3(m_posX, m_posY, 0.0f); 
-	VertexData[5].Tex = D3DXVECTOR2(0.0f, 0.0f);
+	VertexData[5].Pos = XMFLOAT3(m_posX, m_posY, 0.0f);
+	VertexData[5].Tex = XMFLOAT2(0.0f, 0.0f);
 
 
 	///////////////////////////Index Buffer ////////////////////////////////
@@ -162,7 +168,7 @@ bool D3DRTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11
 }
 
 
-bool D3DRTT::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
+bool RTT::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 {
 	HRESULT result;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
@@ -191,4 +197,7 @@ bool D3DRTT::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	D3DRTTShader.end();
 
 	return true;
+}
+
+}
 }
