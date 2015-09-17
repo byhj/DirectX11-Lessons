@@ -16,6 +16,7 @@ public:
 	
 public:
 	void v_Init();
+	void v_Update();
 	void v_Render();
 	void v_Shutdown();
 

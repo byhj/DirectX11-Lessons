@@ -53,6 +53,10 @@ void RenderSystem::v_Render()
 	EndScene();
 }
 
+void RenderSystem::v_Update()
+{
+
+}
 
 void RenderSystem::v_Shutdown()
 {

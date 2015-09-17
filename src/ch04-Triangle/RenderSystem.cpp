@@ -11,7 +11,10 @@ void RenderSystem::v_Init()
 	init_object();
 
 }
+void RenderSystem::v_Update()
+{
 
+}
 void RenderSystem::v_Render()
 {
 

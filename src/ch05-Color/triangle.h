@@ -32,7 +32,7 @@ private:
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
 
-	d3d::d3d::Shader TestShader;
+	d3d::Shader TestShader;
 	int m_VertexCount = 0;
 	int m_IndexCount  = 0;
 	ID3D11Buffer  *m_pVertexBuffer = nullptr;

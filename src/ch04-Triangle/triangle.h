@@ -36,7 +36,7 @@ private:
 	int m_VertexCount;
 	int m_IndexCount;
 
-	d3d::d3d::Shader TestShader;
+	d3d::Shader TestShader;
 	ID3D11Buffer  *m_pVertexBuffer;
 };
 

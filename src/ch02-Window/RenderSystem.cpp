@@ -7,7 +7,11 @@ namespace byhj
 	{
 
 	}
+	
+	void RenderSystem::v_Update()
+	{
 
+	}
 	void RenderSystem::v_Render()
 	{
 

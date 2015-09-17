@@ -65,9 +65,6 @@
     <ClCompile Include="..\..\include\d3d\App.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\include\d3d\Mesh.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -102,12 +99,6 @@
     </ClInclude>
     <ClInclude Include="..\..\include\d3d\Timer.h">
       <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\d3d\Mesh.h">
       <Filter>Framework</Filter>

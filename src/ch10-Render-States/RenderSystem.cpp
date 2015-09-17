@@ -9,7 +9,10 @@ void RenderSystem::v_Init()
 	init_camera();
 	init_object();
 }
+void RenderSystem::v_Update()
+{
 
+}
 void RenderSystem::v_Render()
 {
 	BeginScene();
