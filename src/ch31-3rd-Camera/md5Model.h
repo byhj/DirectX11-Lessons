@@ -202,6 +202,6 @@ private:
 	std::vector<VertexType> VertexData;
 	std::vector<unsigned int> IndexData;
 
-    Shader CubeShader;
+    d3d::Shader CubeShader;
 };
 #endif

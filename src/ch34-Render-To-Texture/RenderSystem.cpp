@@ -10,6 +10,10 @@ void RenderSystem::v_Init()
 	init_object();
 }
 
+void RenderSystem::v_Update()
+{
+
+}
 void RenderSystem::v_Render()
 {
 
@@ -50,10 +54,10 @@ void RenderSystem::v_Render()
 	///////////////////////////////////////////////////////
 
 	// Create an orthographic projection matrix for 2D rendering. 
-	XMMATRIX tProj = XMMatrixOrthographicLH(m_ScreenWidth, m_ScreenHeight, 1.0f, 1000.0f);
+	XMMATRIX tProj = XMMatrixOrthographicLH(2.0f, 2.0f, 0.1f, 1000.0f);
 	XMFLOAT4X4 ortho;
 	XMStoreFloat4x4(&ortho, XMMatrixTranspose(tProj));
-	d3dRtt.Render(m_pD3D11DeviceContext, pRttShaderResourceView, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
+	d3dRtt.Render(m_pD3D11DeviceContext, pRttShaderResourceView, m_Matrix.Model, m_Matrix.View, ortho);
 
 
 	DrawFps();

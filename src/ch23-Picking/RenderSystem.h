@@ -40,6 +40,7 @@ public:
 	
 public:
 	void v_Init();
+	void v_Update();
 	void v_Render();
 	void v_Shutdown();
 
@@ -62,13 +63,13 @@ private:
 
 	d3d::Model ObjModel;
 	d3d::Model BottomModel;
-	D3DPicking d3dPicking;
-
-d3d::Skymap m_Skymap;
+    d3d::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;
 	d3d::Camera m_Camera;
 	byhj::MatrixBuffer m_Matrix;
+
+	D3DPicking d3dPicking;
 
 	XMFLOAT4X4 m_Model;
 	XMFLOAT4X4 m_View;
