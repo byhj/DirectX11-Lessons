@@ -26,7 +26,7 @@ void RenderSystem::v_Render()
 	//////////////////////////////////////////////////////////////////
 	XMMATRIX objectModel = XMMatrixTranslation(0.0f, -1.0f, 0.0f);
 	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(objectModel));
-	ObjModel.Render(m_pD3D11DeviceContext, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
+	ObjModel.Render(m_pD3D11DeviceContext.Get(), m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
 
 	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
@@ -180,12 +180,12 @@ void RenderSystem::init_camera()
 
 void RenderSystem::init_object()
 {
-	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
+	ObjModel.initModel(m_pD3D11Device.Get(), m_pD3D11DeviceContext.Get(), GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
 
-	m_Skymap.createSphere(m_pD3D11Device, 10, 10);
-	m_Skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
-	m_Skymap.init_shader(m_pD3D11Device, GetHwnd());
+	m_Skymap.createSphere(m_pD3D11Device.Get(), 10, 10);
+	m_Skymap.load_texture(m_pD3D11Device.Get(), L"../../media/textures/skymap.dds");
+	m_Skymap.init_shader(m_pD3D11Device.Get(), GetHwnd());
 
 
 	m_Font.Init(m_pD3D11Device.Get());

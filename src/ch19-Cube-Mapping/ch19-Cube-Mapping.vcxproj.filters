@@ -56,8 +56,8 @@
     <ClCompile Include="..\..\include\d3d\Camera.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\d3d\Cubemap.cpp">
-      <Filter>Framework</Filter>
+    <ClCompile Include="Cubemap.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,8 +85,8 @@
     <ClInclude Include="..\..\include\d3d\Camera.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\d3d\Cubemap.h">
-      <Filter>Framework</Filter>
+    <ClInclude Include="Cubemap.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

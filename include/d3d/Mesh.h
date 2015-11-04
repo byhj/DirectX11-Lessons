@@ -1,16 +1,15 @@
 #ifndef D3DMESH_H
 #define D3DMESH_H
 
-
-#include <d3d11.h>
-#include <D3DX11.h>
-#include <windows.h>
-#include <d3dx11.h>
-#include <DirectXMath.h> using namespace DirectX;
-#include <D3DX10math.h>
-
 #include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
+#include <d3d11.h>
+#include <windows.h>
+
+#include <DirectXMath.h> 
+using namespace DirectX;
+
+
 
 // Std. Includes
 #include <string>
@@ -141,17 +140,17 @@ namespace byhj
 				float   shininess;
 			};
 
-			ID3D11Buffer *m_pIndexBuffer;
-			ID3D11Buffer *m_pVertexBuffer;
-			ID3D11Buffer *m_pMVPBuffer;
+			ComPtr<ID3D11Buffer> m_pIndexBuffer;
+			ComPtr<ID3D11Buffer> m_pVertexBuffer;
+			ComPtr<ID3D11Buffer> m_pMVPBuffer;
 
 			int m_VertexCount = 0;
 			int m_IndexCount = 0;
 
-			ID3D11ShaderResourceView *m_pShaderResourceView;
-			ID3D11DepthStencilView   *m_pDepthStencilView;
-			ID3D11Texture2D          *m_pDepthStencilBuffer;
-			ID3D11RasterizerState    *m_pRasterState;
+			ComPtr<ID3D11ShaderResourceView> m_pShaderResourceView;
+			ComPtr<ID3D11DepthStencilView  > m_pDepthStencilView;
+			ComPtr<ID3D11Texture2D         > m_pDepthStencilBuffer;
+			ComPtr<ID3D11RasterizerState   > m_pRasterState;
 			ComPtr<ID3D11SamplerState> m_pTexSamplerState;
 
 		};

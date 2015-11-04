@@ -121,22 +121,22 @@
   <ItemGroup>
     <ClCompile Include="..\..\include\d3d\App.cpp" />
     <ClCompile Include="..\..\include\d3d\Camera.cpp" />
-    <ClCompile Include="..\..\include\d3d\Cubemap.cpp" />
     <ClCompile Include="..\..\include\d3d\Font.cpp" />
     <ClCompile Include="..\..\include\d3d\Shader.cpp" />
     <ClCompile Include="..\..\include\d3d\Timer.cpp" />
     <ClCompile Include="ch20-Spot-Light.cpp" />
+    <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="plane.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\d3d\App.h" />
     <ClInclude Include="..\..\include\d3d\Camera.h" />
-    <ClInclude Include="..\..\include\d3d\Cubemap.h" />
     <ClInclude Include="..\..\include\d3d\Font.h" />
     <ClInclude Include="..\..\include\d3d\Shader.h" />
     <ClInclude Include="..\..\include\d3d\Timer.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Cubemap.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="RenderSystem.h" />
   </ItemGroup>

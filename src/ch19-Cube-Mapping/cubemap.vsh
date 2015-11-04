@@ -30,6 +30,7 @@ VS_OUT VS(VS_IN vs_in)
    mvp = mul(g_Mat.model, g_Mat.view);
    mvp = mul(mvp, g_Mat.proj);
 
+   //Set the z value to 1.0
    vs_out.Pos = mul(float4(vs_in.Pos, 1.0f), mvp).xyww;
    vs_out.Tex = vs_in.Pos;
 

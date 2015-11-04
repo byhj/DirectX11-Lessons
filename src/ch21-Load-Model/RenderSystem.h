@@ -2,10 +2,10 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 #include "d3d/Camera.h"
-#include "d3d/Cubemap.h"
 #include "d3d/Model.h"
 
 #include "Common.h"
+#include "Cubemap.h"
 
 namespace byhj
 {
@@ -52,11 +52,12 @@ private:
 	float fps;
 
 	d3d::Model ObjModel;
-    d3d::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;
 	d3d::Camera m_Camera;
+
 	byhj::MatrixBuffer m_Matrix;
+	byhj::Skymap m_Skymap;
 
 	XMFLOAT4X4 m_Model;
 	XMFLOAT4X4 m_View;

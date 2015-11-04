@@ -120,10 +120,10 @@ void Mesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XM
 	cbMatrix.View  = view;
 	cbMatrix.Porj  = proj;
 
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, m_pMVPBuffer.GetAddressOf());
 
-	pD3D11DeviceContext->RSSetState(m_pRasterState);
+	pD3D11DeviceContext->RSSetState(m_pRasterState.Get());
 
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pD3D11DeviceContext->DrawIndexed(m_IndexCount, 0, 0);

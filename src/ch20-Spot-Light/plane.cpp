@@ -1,5 +1,6 @@
 #include "Plane.h"
 #include "d3d/d3dDebug.h"
+#include "DirectXTK/WICTextureLoader.h"
 
 #include <array>
 
@@ -43,10 +44,7 @@ namespace byhj
 
 	void Plane::Shutdown()
 	{
-		ReleaseCOM(m_pVertexBuffer)
-		ReleaseCOM(m_pIndexBuffer)
-		ReleaseCOM(m_pTexture)
-		ReleaseCOM(m_pTexSamplerState)
+
 	}
 
 	void Plane::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
@@ -177,10 +175,10 @@ namespace byhj
 		InputLayout.InstanceDataStepRate = 0;
 		vInputLayoutDesc.push_back(InputLayout);     
 
-		TestShader.init(pD3D11Device, hWnd);
-		TestShader.attachVS(L"Plane.vsh", vInputLayoutDesc);
-		TestShader.attachPS(L"Plane.psh");
-		TestShader.end();
+		TestShader.init(pD3D11Device, vInputLayoutDesc);
+		TestShader.attachVS(L"Plane.vsh", "VS", "vs_5_0");
+		TestShader.attachPS(L"Plane.psh", "PS", "ps_5_0");
+
 	}
 
 	void Plane::init_texture(ID3D11Device *pD3D11Device)
@@ -189,8 +187,9 @@ namespace byhj
 
 		HRESULT hr;
 		//Use shaderResourceView to make texture to the shader
-		hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
+		hr = CreateWICTextureFromFile(pD3D11Device, texFile, NULL, &m_pTexture);
 		//DebugHR(hr);
+
 
 		// Create a texture sampler state description.
 		D3D11_SAMPLER_DESC samplerDesc;

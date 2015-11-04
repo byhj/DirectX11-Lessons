@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "DirectXTK/WICTextureLoader.h"
 
 namespace byhj
 {
@@ -114,9 +115,9 @@ void Model::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);
 
-	ModelShader.init(pD3D11Device, hWnd);
-	ModelShader.attachVS(L"model.vsh", vInputLayoutDesc);
-	ModelShader.attachPS(L"model.psh");
+	ModelShader.init(pD3D11Device, vInputLayoutDesc);
+	ModelShader.attachVS(L"model.vsh", "VS", "vs_5_0");
+	ModelShader.attachPS(L"model.psh", "PS", "ps_5_0");
 	ModelShader.end();
 }
 
@@ -331,7 +332,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// Return a mesh object created from the extracted mesh data
-	return Mesh(vertices, indices, textures, mat, pD3D11Device, pD3D11DeviceContext, hWnd);
+	return Mesh(vertices, indices, textures, mat, pD3D11Device.Get(), pD3D11DeviceContext.Get(), hWnd);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -363,9 +364,9 @@ ID3D11ShaderResourceView * Model::TextureFromFile(const char* path, std::string 
 	LPCWSTR sw = stemp.c_str();
 
 	HRESULT hr;
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, sw, NULL,NULL, &m_pTexture, NULL);
-	//DebugHR(hr);
-	return m_pTexture;
+	hr = CreateWICTextureFromFile(pD3D11Device.Get(), sw, NULL,  &m_pTexture);
+
+	return m_pTexture.Get();
 }
 
 }

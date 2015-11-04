@@ -2,8 +2,8 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 #include "d3d/Camera.h"
-#include "d3d/Cubemap.h"
 
+#include "Cubemap.h"
 #include "Plane.h"
 #include "Common.h"
 
@@ -44,7 +44,7 @@ private:
 	float fps;
 
 	byhj::Plane  m_Plane;
-    d3d::Skymap m_Skymap;
+    byhj::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;
 	d3d::Camera m_Camera;
