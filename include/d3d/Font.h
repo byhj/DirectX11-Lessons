@@ -22,7 +22,7 @@ public:
 	{
 		HRESULT hr = FW1CreateFactory(FW1_VERSION, &m_pFW1Factory);
 		hr = m_pFW1Factory->CreateFontWrapper(pD3D11Device, L"Arial", &m_pFontWrapper);
-		DebugHR(hr);
+		//DebugHR(hr);
 		m_pFW1Factory->Release();
 	}
 	void drawText(ID3D11DeviceContext *pD3D11DeivceContext, const WCHAR *text, 

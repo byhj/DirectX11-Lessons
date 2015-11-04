@@ -65,7 +65,7 @@ void Skymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLines
 	ZeroMemory( &vertexBufferData, sizeof(vertexBufferData) );
 	vertexBufferData.pSysMem = &vertices[0];
 	hr = pD3D11Device->CreateBuffer( &vertexBufferDesc, &vertexBufferData, &m_pVertexBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	std::vector<DWORD> indices(NumSphereFaces * 3);
 
@@ -134,7 +134,7 @@ void Skymap::createSphere(ID3D11Device*pD3D11Device, int LatLines, int LongLines
 
 	iinitData.pSysMem = &indices[0];
 	hr = pD3D11Device->CreateBuffer(&indexBufferDesc, &iinitData, &m_pIndexBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 }
 
 void Skymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
@@ -187,7 +187,7 @@ void Skymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 
 	ID3D11Texture2D* SMTexture = 0;
 	hr = D3DX11CreateTextureFromFile(pD3D11Device, texFile, &loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
 	SMTexture->GetDesc(&SMTextureDesc);
@@ -219,7 +219,7 @@ void Skymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
 	hr = pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRSCullNone);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	//////////////////////////////////////////////////////////////////////
 	D3D11_DEPTH_STENCIL_DESC dssDesc;
@@ -228,7 +228,7 @@ void Skymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dssDesc.DepthFunc      = D3D11_COMPARISON_LESS_EQUAL;
 	hr = pD3D11Device->CreateDepthStencilState(&dssDesc, &m_pDSLessEqual);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	///////////////////////////////////////////////////////////////////
 	D3D11_BUFFER_DESC mvpDesc;	
@@ -239,7 +239,7 @@ void Skymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&mvpDesc, NULL, &m_pMVPBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 }
 

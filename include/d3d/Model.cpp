@@ -32,7 +32,7 @@ void Model::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 	HRESULT hr;
 	// Create the texture sampler state.
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	///////////////////////////////////////////////////////////////////
 	D3D11_BUFFER_DESC cbMaterialDesc;	
@@ -43,7 +43,7 @@ void Model::initModel(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 	cbMaterialDesc.CPUAccessFlags = 0;
 	cbMaterialDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&cbMaterialDesc, NULL, &m_pMatBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory( &blendDesc, sizeof(blendDesc) );
@@ -364,7 +364,7 @@ ID3D11ShaderResourceView * Model::TextureFromFile(const char* path, std::string 
 
 	HRESULT hr;
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, sw, NULL,NULL, &m_pTexture, NULL);
-	DebugHR(hr);
+	//DebugHR(hr);
 	return m_pTexture;
 }
 

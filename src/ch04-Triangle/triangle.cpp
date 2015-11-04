@@ -79,10 +79,9 @@ void Triangle::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);   
 
-	TestShader.init(pD3D11Device, hWnd);
-	TestShader.attachVS(L"triangle.vsh", vInputLayoutDesc);
-	TestShader.attachPS(L"triangle.psh");
-	TestShader.end();
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
+	TestShader.attachVS(L"triangle.vsh", "VS", "vs_5_0");
+	TestShader.attachPS(L"triangle.psh", "PS", "ps_5_0");
 }
 
 

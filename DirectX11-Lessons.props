@@ -5,15 +5,15 @@
   <PropertyGroup>
     <IntDir>$(SolutionDir)\temp</IntDir>
     <OutDir>$(SolutionDir)\bin\x86</OutDir>
-    <IncludePath>$(VCInstallDir)atlmfc\include;$(VCInstallDir)include</IncludePath>
+    <IncludePath>$(VCInstallDir)atlmfc\include;$(VCInstallDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(Windows7Sdk)\include;$(SolutionDir)\include;$(DXSDK_DIR)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(Window7SDK)\lib\x86;$(DXSDK_DIR)\lib\x86;$(SolutionDir)\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>D3D10_1.lib;DXGI.lib;D2D1.lib;dwrite.lib;dinput8.lib;d3d11.lib;d3dx11.lib;d3dx10.lib;D3DCompiler.lib;dxerr.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>D3D10_1.lib;DXGI.lib;D2D1.lib;dwrite.lib;dinput8.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

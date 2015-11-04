@@ -110,7 +110,7 @@ bool RTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 
 	// Now create the vertex buffer.
 	hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 
@@ -130,7 +130,7 @@ bool RTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 	IBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	////////////////////////////////MVP Buffer//////////////////////////////////////
 
@@ -142,7 +142,7 @@ bool RTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 	mvpBufferDesc.CPUAccessFlags = 0;
 	mvpBufferDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&mvpBufferDesc, NULL, &m_pMVPBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	// Create a texture sampler state description.
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -162,7 +162,7 @@ bool RTT::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 
 	// Create the texture sampler state.
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	return true;
 }

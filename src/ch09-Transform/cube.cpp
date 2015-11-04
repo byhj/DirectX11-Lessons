@@ -73,7 +73,7 @@ void Cube::init_buffer(ID3D11Device *pD3D11Device)
 
 	// Now create the vertex buffer.
 	HRESULT hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-    DebugHR(hr);
+    //DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 	m_IndexCount = 36;
@@ -157,10 +157,9 @@ void Cube::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);     
 
-	TestShader.init(pD3D11Device, hWnd);
-	TestShader.attachVS(L"Cube.vsh", vInputLayoutDesc);
-	TestShader.attachPS(L"Cube.psh");
-	TestShader.end();
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
+	TestShader.attachVS(L"cube.vsh", "VS", "vs_5_0");
+	TestShader.attachPS(L"cube.psh", "PS", "ps_5_0");
 }
 
 

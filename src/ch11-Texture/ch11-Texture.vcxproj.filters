@@ -41,6 +41,9 @@
     <ClCompile Include="..\..\include\d3d\App.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\include\DirectXTK\DDSTextureLoader.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cube.h">
@@ -56,6 +59,9 @@
       <Filter>Framework</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\d3d\Shader.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\DirectXTK\DDSTextureLoader.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>

@@ -229,11 +229,11 @@ bool D3DRenderSystem::init_device()
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise =  true;
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCCWcullMode);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	rasterDesc.FrontCounterClockwise = false;
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pCWcullMode);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	//////////////////////////Device Information//////////////////////////////
 	// Create the state using the device.

@@ -22,7 +22,7 @@ void Mesh::init_state(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11Dev
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	rasterDesc.FrontCounterClockwise = false;
 	hr = pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
-	DebugHR(hr);
+	//DebugHR(hr);
 }
 
 
@@ -50,7 +50,7 @@ void Mesh::init_buffer(ID3D11Device *pD3D11Device)
 
 	// Now create the vertex buffer.
 	hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 
@@ -72,7 +72,7 @@ void Mesh::init_buffer(ID3D11Device *pD3D11Device)
 	IBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(&IndexBufferDesc, &IBO, &m_pIndexBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	///////////////////////////////////////////////////////////////////
 	D3D11_BUFFER_DESC mvpDesc;	
@@ -83,7 +83,7 @@ void Mesh::init_buffer(ID3D11Device *pD3D11Device)
 	mvpDesc.CPUAccessFlags = 0;
 	mvpDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&mvpDesc, NULL, &m_pMVPBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 }
 void Mesh::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4 view, XMFLOAT4X4 proj)

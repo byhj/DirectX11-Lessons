@@ -1,8 +1,7 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef D3DSHADER_H
+#define D3DSHADER_H
 
 #include <d3d11.h>
-#include <D3DX11async.h>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -14,7 +13,6 @@ namespace byhj
 namespace d3d
 {
 
-
 class Shader
 {
 public:
@@ -22,18 +20,20 @@ public:
 		      pGS_Shader(0), pCS_Shader(0), pInputLayout(0), pD3D11Device(0) {}
 	~Shader() {}
 
-	void init(ID3D11Device *pD3D11Device, HWND hWnd);
-	bool attachVS(WCHAR* Filename, std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc);
-	bool attachHS(WCHAR* Filename);
-	bool attachDS(WCHAR* Filename);
-	bool attachGS(WCHAR* Filename);
-	bool attachCS(WCHAR* Filename);
-	bool attachPS(WCHAR* Filename);
+	void init(ID3D11Device *pD3D11Device, const std::vector<D3D11_INPUT_ELEMENT_DESC> &vInputDesc);
+
+	void attachVS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel);
+	void attachHS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel);
+	void attachDS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel);
+	void attachGS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel);
+	void attachCS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel);
+	void attachPS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel);
 	void use(ID3D11DeviceContext *pD3D111DeviceContext);
-	void Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName);
 	void end();
 
 private:
+	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+
 	ID3D11VertexShader    *pVS_Shader;
 	ID3D11HullShader      *pHS_Shader;
 	ID3D11DomainShader    *pDS_Shader;
@@ -41,14 +41,13 @@ private:
 	ID3D11ComputeShader   *pCS_Shader;
 	ID3D11PixelShader     *pPS_Shader;
 
+	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
 	ID3D11InputLayout  *pInputLayout;
 	ID3D11Device *pD3D11Device;
-	HWND hWnd;
 };
 
 
 }
-
 }
 
 #endif

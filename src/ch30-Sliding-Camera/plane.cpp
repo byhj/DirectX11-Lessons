@@ -307,7 +307,7 @@ void Plane::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 {
 	HRESULT hr;
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL, NULL, &m_pTexture, NULL);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	// Create a texture sampler state description.
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -327,7 +327,7 @@ void Plane::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 
 	// Create the texture sampler state.
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-	DebugHR(hr);
+	//DebugHR(hr);
 }
 
 bool Plane::HeightMapLoad(char* filename, HeightMapInfo &hminfo)

@@ -1,222 +1,164 @@
 #include "Shader.h"
 
+#include <d3dcompiler.h>
+#include "d3d/Utility.h"
+
 namespace byhj
 {
 
 namespace d3d
 {
 
-void Shader::init(ID3D11Device *pD3D11Device, HWND hWnd)
+
+void Shader::init(ID3D11Device *pD3D11Device, const std::vector<D3D11_INPUT_ELEMENT_DESC> &vInputDesc)
 {
 	this->pD3D11Device = pD3D11Device;
-	this->hWnd = hWnd;
+	this->vInputLayoutDesc = vInputDesc;
+
 }
 
-void Shader::Debug(ID3D10Blob *pErrorMessage, HWND hwnd, WCHAR *shaderFileName)
+HRESULT Shader::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut)
 {
-	char *pCompileErrors;
-	unsigned long bufferSize, i;
+	HRESULT hr = S_OK;
 
-	pCompileErrors = (char*)(pErrorMessage->GetBufferPointer());
-	std::string errorStr = pCompileErrors;
-	//unsigned found = errorStr.find_last_of("\\") ;
-	//errorStr = errorStr.substr( found + 1);
-	std::cerr << pCompileErrors;
+	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+	// Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
+	// Setting this flag improves the shader debugging experience, but still allows 
+	// the shaders to be optimized and to run exactly the way they will run in 
+	// the release configuration of this program.
+	dwShaderFlags |= D3DCOMPILE_DEBUG;
 
-	pErrorMessage->Release();
-	pErrorMessage = 0;
+	// Disable optimizations to further improve shader debugging
+	dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
 
-	//MessageBox(hwnd, L"Error compiling shader", shaderFileName, MB_OK);
+	ID3DBlob* pErrorBlob = nullptr;
+	hr = D3DCompileFromFile(szFileName, nullptr, nullptr, szEntryPoint, szShaderModel,
+		dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
+	if (FAILED(hr))
+	{
+		if (pErrorBlob)
+		{
+			//OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
+			std::cout << reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()) << std::endl;
+			pErrorBlob->Release();
+		}
+		return hr;
+	}
+	if (pErrorBlob) pErrorBlob->Release();
 
-	//return;
-	// Pop a message up on the screen to notify the user to check the text file for compile errors.
-
+	return S_OK;
 }
 
-bool Shader::attachVS(WCHAR* Filename, std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc)
+
+void Shader::attachVS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel)
 {	
 	HRESULT result;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* VertexShaderBuffer = 0;
+	ID3DBlob* VertexShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile(Filename, NULL, NULL, "VS", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		&VertexShaderBuffer, &errorMessage, NULL);
-	if(FAILED(result))
-	{
-		if(errorMessage)
-			Debug(errorMessage, hWnd, Filename);
-		else
-			MessageBox(hWnd, Filename, L"Can not open Vertex Shader File", MB_OK);
-	}
-
+	CompileShaderFromFile(szFileName, szEntryPoint, szShaderModel, &VertexShaderBuffer);
+	
 
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreateVertexShader(VertexShaderBuffer->GetBufferPointer(), VertexShaderBuffer->GetBufferSize(), NULL, &pVS_Shader);
-	if(FAILED(result))
-	{
-		return false;
-	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	auto numElements = vInputLayoutDesc.size();
 	result = pD3D11Device->CreateInputLayout(&vInputLayoutDesc[0], numElements, VertexShaderBuffer->GetBufferPointer(), 
-		VertexShaderBuffer->GetBufferSize(), &pInputLayout);
-	if(FAILED(result))
-	{
-		return false;
-	}
+	                                     	VertexShaderBuffer->GetBufferSize(), &pInputLayout);
+
 
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	VertexShaderBuffer->Release();
 	VertexShaderBuffer = 0;
 
-	return true;
 }
 
-bool Shader::attachHS(WCHAR* Filename)
+void Shader::attachHS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel)
 {	
 	HRESULT result;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* HullShaderBuffer = 0;
+	ID3DBlob* errorMessage = 0;
+	ID3DBlob* HullShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile(Filename, NULL, NULL, "HS", "hs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		&HullShaderBuffer, &errorMessage, NULL);
-	if(FAILED(result))
-	{
-		if(errorMessage)
-			Debug(errorMessage, hWnd, Filename);
-		else
-			MessageBox(hWnd, Filename, L"Can not open Hull Shader File", MB_OK);
-	}
 
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreateHullShader(HullShaderBuffer->GetBufferPointer(), HullShaderBuffer->GetBufferSize(), NULL, &pHS_Shader);
-	if(FAILED(result))
-	{
-		return false;
-	}
 
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	HullShaderBuffer->Release();
 	HullShaderBuffer = 0;
-
-	return true;
 }
-bool Shader::attachDS(WCHAR* Filename)
+void Shader::attachDS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel)
 {	
 	HRESULT result;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* DomainShaderBuffer = 0;
+	ID3DBlob* errorMessage = 0;
+	ID3DBlob* DomainShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile(Filename, NULL, NULL, "DS", "ds_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		&DomainShaderBuffer, &errorMessage, NULL);
-	if(FAILED(result))
-	{
-		if(errorMessage)
-			Debug(errorMessage, hWnd, Filename);
-		else
-			MessageBox(hWnd, Filename, L"Can not open Domain Shader File", MB_OK);
-	}
+	CompileShaderFromFile(szFileName, szEntryPoint, szShaderModel, &DomainShaderBuffer);
 
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreateDomainShader(DomainShaderBuffer->GetBufferPointer(), DomainShaderBuffer->GetBufferSize(), NULL, &pDS_Shader);
-	if(FAILED(result))
-	{
-		return false;
-	}
 
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	DomainShaderBuffer->Release();
 	DomainShaderBuffer = 0;
 
-	return true;
 }
-bool Shader::attachGS(WCHAR* Filename)
+
+void Shader::attachGS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel)
 {	
 	HRESULT result;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* GeometryShaderBuffer = 0;
+	ID3DBlob* errorMessage = 0;
+	ID3DBlob* GeometryShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile(Filename, NULL, NULL, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		&GeometryShaderBuffer, &errorMessage, NULL);
-	if(FAILED(result))
-	{
-		if(errorMessage)
-			Debug(errorMessage, hWnd, Filename);
-		else
-			MessageBox(hWnd, Filename, L"Can not open Geometry Shader File", MB_OK);
-	}
+	CompileShaderFromFile(szFileName, szEntryPoint, szShaderModel, &GeometryShaderBuffer);
 
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreateGeometryShader(GeometryShaderBuffer->GetBufferPointer(), GeometryShaderBuffer->GetBufferSize(), NULL, &pGS_Shader);
-	if(FAILED(result))
-	{
-		return false;
-	}
 
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	GeometryShaderBuffer->Release();
 	GeometryShaderBuffer = 0;
 
-	return true;
 }
 
-bool Shader::attachCS(WCHAR* Filename)
+void Shader::attachCS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel)
 {	
 	HRESULT result;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* ComputeShaderBuffer = 0;
+	ID3DBlob* errorMessage = 0;
+	ID3DBlob* ComputeShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile(Filename, NULL, NULL, "CS", "cs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		&ComputeShaderBuffer, &errorMessage, NULL);
-	if(FAILED(result))
-	{
-		if(errorMessage)
-			Debug(errorMessage, hWnd, Filename);
-		else
-			MessageBox(hWnd, Filename, L"Can not open Compute Shader File", MB_OK);
-	}
+
+	CompileShaderFromFile(szFileName, szEntryPoint, szShaderModel, &ComputeShaderBuffer);
 
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreateComputeShader(ComputeShaderBuffer->GetBufferPointer(), ComputeShaderBuffer->GetBufferSize(), NULL, &pCS_Shader);
-	if(FAILED(result))
-	{
-		return false;
-	}
+
 
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	ComputeShaderBuffer->Release();
 	ComputeShaderBuffer = 0;
 
-	return true;
 }
 
-bool Shader::attachPS(WCHAR* Filename)
+void Shader::attachPS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel)
 {	
 	HRESULT result;
-	ID3D10Blob* errorMessage = 0;
-	ID3D10Blob* PixelShaderBuffer = 0;
+	ID3DBlob* errorMessage = 0;
+	ID3DBlob* PixelShaderBuffer = 0;
 
-	result = D3DX11CompileFromFile(Filename, NULL, NULL, "PS", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-		&PixelShaderBuffer, &errorMessage, NULL);
-	if(FAILED(result))
-	{
-		if(errorMessage)
-			Debug(errorMessage, hWnd, Filename);
-		else
-			MessageBox(hWnd, Filename, L"Can not open Pixel Shader File", MB_OK);
-	}
+
+	CompileShaderFromFile(szFileName, szEntryPoint, szShaderModel, &PixelShaderBuffer);
 
 	// Create the vertex shader from the buffer.
 	result = pD3D11Device->CreatePixelShader(PixelShaderBuffer->GetBufferPointer(), PixelShaderBuffer->GetBufferSize(), NULL, &pPS_Shader);
-	if(FAILED(result))
-	{
-		return false;
-	}
+
 
 	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
 	PixelShaderBuffer->Release();
 	PixelShaderBuffer = 0;
 
-	return true;
 }
 
 void Shader::use(ID3D11DeviceContext *pD3D11DeviceContext)
@@ -239,7 +181,13 @@ void Shader::use(ID3D11DeviceContext *pD3D11DeviceContext)
 void Shader::end()
 {
 	pD3D11Device = 0;
-	hWnd = 0;
+	ReleaseCOM(pInputLayout)
+	ReleaseCOM(pVS_Shader)
+	ReleaseCOM(pHS_Shader)
+	ReleaseCOM(pDS_Shader)
+	ReleaseCOM(pGS_Shader)
+	ReleaseCOM(pCS_Shader)
+	ReleaseCOM(pPS_Shader)
 }
 
 }

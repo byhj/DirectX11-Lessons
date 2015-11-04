@@ -101,7 +101,7 @@ void RenderSystem::init_device()
 	ID3D11Texture2D *pBackBuffer;
 	hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
 	hr = m_pD3D11Device->CreateRenderTargetView(pBackBuffer, NULL, &m_pRenderTargetView);
-	DebugHR(hr);
+	//DebugHR(hr);
 	pBackBuffer->Release();
 
 

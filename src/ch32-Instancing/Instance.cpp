@@ -80,7 +80,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 
 	// Now create the vertex buffer.
 	hr = pD3D11Device->CreateBuffer(&LeaveVBDesc, &LeaveVBO, &m_pLeaveVB);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 
 	DWORD LeaveIndexData[] = 
@@ -105,7 +105,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	 LeaveIBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(&LeaveIBDesc, &LeaveIBO, &m_pLeaveIB);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 
 	///////////////////////////Index Buffer ////////////////////////////////
@@ -129,7 +129,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 
 	// Now create the vertex buffer.
 	hr = pD3D11Device->CreateBuffer(&TreeVBDesc, &TreeVBO, &m_pTreeVB);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 
 	D3D11_BUFFER_DESC TreeIBDesc;
@@ -148,7 +148,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	TreeIBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(& TreeIBDesc, &TreeIBO, &m_pTreeIB);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 
 	////////////////////////////////MVP Buffer//////////////////////////////////////
@@ -161,7 +161,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	mvpBufferDesc.CPUAccessFlags = 0;
 	mvpBufferDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&mvpBufferDesc, NULL, &m_pMVPBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	XMVECTOR tempPos;
 	srand(100);
@@ -187,7 +187,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	treeMatrixVBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(&treeMatrixBufferDesc, &treeMatrixVBO, &m_pTreeMatrixBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	srand(100);
 	XMFLOAT3 fTPos;
@@ -234,7 +234,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	leaveMatrixVBO.SysMemSlicePitch = 0;
 
 	hr = pD3D11Device->CreateBuffer(&leaveMatrixBufferDesc, &leaveMatrixVBO, &m_pLeaveMatrixBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 
 	D3D11_BUFFER_DESC instanceBufferDesc;	
@@ -245,7 +245,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	instanceBufferDesc.CPUAccessFlags = 0;
 	instanceBufferDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&instanceBufferDesc, NULL, &m_pInstanceBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	///////////////////////////////////////Light buffer////////////////////////////////////////
 	D3D11_BUFFER_DESC lightBufferDesc;	
@@ -257,10 +257,10 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	lightBufferDesc.MiscFlags      = 0;
 
 	hr = pD3D11Device->CreateBuffer(&lightBufferDesc, NULL, &m_pLightBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, L"../../media/objects/treeBark.jpg", NULL,NULL, &m_pTreeTexSRV, NULL);
-	DebugHR(hr);
+	//DebugHR(hr);
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, L"../../media/objects/leaf.png", NULL,NULL, &m_pLeaveTexSRV, NULL);
     init_texture(pD3D11Device);
 
@@ -350,6 +350,6 @@ void Instance::init_texture(ID3D11Device *pD3D11Device)
 
 	HRESULT hr;
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 }

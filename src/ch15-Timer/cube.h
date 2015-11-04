@@ -2,7 +2,7 @@
 #define TRIANGLE_H
 
 #include <d3d11.h>
-#include <xnamath.h>
+#include <DirectXMath.h> using namespace DirectX;
 
 #include "Common.h"
 #include "d3d/Shader.h"

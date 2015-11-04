@@ -4,7 +4,7 @@
 
 #include <windows.h>
 #include <d3dx11.h>
-#include <xnamath.h>
+#include <DirectXMath.h> using namespace DirectX;
 #include "model.h"
 
 #include "d3d/Shader.h"

@@ -63,7 +63,7 @@ void Triangle::init_buffer(ID3D11Device *pD3D11Device)
 
 	// Now create the vertex buffer.
 	HRESULT hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-    DebugHR(hr);
+    //DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 	m_IndexCount = 6;
@@ -110,12 +110,11 @@ void Triangle::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.AlignedByteOffset    = D3D11_APPEND_ALIGNED_ELEMENT;
 	InputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	InputLayout.InstanceDataStepRate = 0;
-	vInputLayoutDesc.push_back(InputLayout);     
+	vInputLayoutDesc.push_back(InputLayout);    
 
-	TestShader.init(pD3D11Device, hWnd);
-	TestShader.attachVS(L"triangle.vsh", vInputLayoutDesc);
-	TestShader.attachPS(L"triangle.psh");
-	TestShader.end();
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
+	TestShader.attachVS(L"triangle.vsh", "VS", "vs_5_0");
+	TestShader.attachPS(L"triangle.psh", "PS", "ps_5_0");
 }
 
 

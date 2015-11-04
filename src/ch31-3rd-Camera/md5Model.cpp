@@ -47,7 +47,7 @@ void MD5Model::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	mvpBufferDesc.CPUAccessFlags = 0;
 	mvpBufferDesc.MiscFlags      = 0;
 	hr = pD3D11Device->CreateBuffer(&mvpBufferDesc, NULL, &m_pMVPBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	///////////////////////////////////////Light buffer////////////////////////////////////////
 	D3D11_BUFFER_DESC lightBufferDesc;	
@@ -59,12 +59,12 @@ void MD5Model::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	lightBufferDesc.MiscFlags      = 0;
 
 	hr = pD3D11Device->CreateBuffer(&lightBufferDesc, NULL, &m_pLightBuffer);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	// Lock the light constant buffer so it can be written to.
 	hr = pD3D11DeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	// Get a pointer to the data in the constant buffer.
 	LightBuffer *dataPtr2 = (LightBuffer*)mappedResource.pData;
@@ -146,7 +146,7 @@ void MD5Model::init_texture(ID3D11Device *pD3D11Device)
 {
 	HRESULT hr;
 	//hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
-	//DebugHR(hr);
+	////DebugHR(hr);
 
 	// Create a texture sampler state description.
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -166,7 +166,7 @@ void MD5Model::init_texture(ID3D11Device *pD3D11Device)
 
 	// Create the texture sampler state.
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 }
 

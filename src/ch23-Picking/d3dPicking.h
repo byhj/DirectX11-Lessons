@@ -2,7 +2,7 @@
 #define D3DPICKING_H
 
 #include <windows.h>
-#include <xnamath.h>
+#include <DirectXMath.h> using namespace DirectX;
 #include <vector>
 
 class D3DPicking

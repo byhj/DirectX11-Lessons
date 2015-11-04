@@ -1,5 +1,6 @@
 #include "triangle.h"
 #include "d3d/d3dDebug.h"
+#include <d3dcompiler.h>
 
 #include <array>
 
@@ -61,7 +62,7 @@ void Triangle::init_buffer(ID3D11Device *pD3D11Device)
 
 	// Now create the vertex buffer.
 	HRESULT hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-    DebugHR(hr);
+    //DebugHR(hr);
 }
 
 void Triangle::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
@@ -88,10 +89,10 @@ void Triangle::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);     
 
-	TestShader.init(pD3D11Device, hWnd);
-	TestShader.attachVS(L"triangle.vsh", vInputLayoutDesc);
-	TestShader.attachPS(L"triangle.psh");
-	TestShader.end();
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
+	TestShader.attachVS(L"triangle.vsh", "VS", "vs_5_0");
+	TestShader.attachPS(L"triangle.psh", "PS", "ps_5_0");
+
 }
 
 

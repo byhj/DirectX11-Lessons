@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <d3dx11.h>
-#include <xnamath.h>
+#include <DirectXMath.h> using namespace DirectX;
 
 #include "d3d/d3dDebug.h"
 #include "d3d/Shader.h"

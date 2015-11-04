@@ -2,7 +2,7 @@
 #define MESH_H
 
 #include <windows.h>
-#include <xnamath.h>
+#include <DirectXMath.h> using namespace DirectX;
 
 // Std. Includes
 #include <string>

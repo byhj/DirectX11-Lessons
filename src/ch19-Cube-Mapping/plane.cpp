@@ -78,7 +78,7 @@ namespace byhj
 
 		// Now create the vertex buffer.
 		HRESULT hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-		DebugHR(hr);
+		//DebugHR(hr);
 
 		/////////////////////////////////Index Buffer ///////////////////////////////////////
 		m_IndexCount = 6;
@@ -125,11 +125,11 @@ namespace byhj
 		cbLightDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbLightDesc.MiscFlags      = 0;
 		hr = pD3D11Device->CreateBuffer(&cbLightDesc, NULL, &m_pLightBuffer);
-		DebugHR(hr);
+		//DebugHR(hr);
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		hr = pD3D11DeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		DebugHR(hr);
+		//DebugHR(hr);
 		LightBuffer *plightData = (LightBuffer *)mappedResource.pData;
 
 		plightData->ambient   = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -190,7 +190,7 @@ namespace byhj
 		HRESULT hr;
 		//Use shaderResourceView to make texture to the shader
 		hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
-		DebugHR(hr);
+		//DebugHR(hr);
 
 		// Create a texture sampler state description.
 		D3D11_SAMPLER_DESC samplerDesc;
@@ -210,7 +210,7 @@ namespace byhj
 
 		// Create the texture sampler state.
 		hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-		DebugHR(hr);
+		//DebugHR(hr);
 	}
 }
 

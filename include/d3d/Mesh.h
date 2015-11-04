@@ -6,7 +6,7 @@
 #include <D3DX11.h>
 #include <windows.h>
 #include <d3dx11.h>
-#include <xnamath.h>
+#include <DirectXMath.h> using namespace DirectX;
 #include <D3DX10math.h>
 
 #include "d3d/Shader.h"

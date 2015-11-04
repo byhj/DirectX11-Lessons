@@ -108,7 +108,7 @@ void Cube::init_buffer(ID3D11Device *pD3D11Device)
 
 	// Now create the vertex buffer.
 	HRESULT hr = pD3D11Device->CreateBuffer(&VertexBufferDesc, &VBO, &m_pVertexBuffer);
-    DebugHR(hr);
+    //DebugHR(hr);
 
 	/////////////////////////////////Index Buffer ///////////////////////////////////////
 	m_IndexCount = 36;
@@ -206,7 +206,7 @@ void Cube::init_texture(ID3D11Device *pD3D11Device)
 	HRESULT hr;
 	//Use shaderResourceView to make texture to the shader
 	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
-	DebugHR(hr);
+	//DebugHR(hr);
 
 	// Create a texture sampler state description.
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -226,7 +226,7 @@ void Cube::init_texture(ID3D11Device *pD3D11Device)
 
 	// Create the texture sampler state.
 	hr = pD3D11Device->CreateSamplerState(&samplerDesc, &m_pTexSamplerState);
-	DebugHR(hr);
+	//DebugHR(hr);
 }
 }
 
