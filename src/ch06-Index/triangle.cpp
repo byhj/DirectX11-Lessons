@@ -19,8 +19,8 @@ void Triangle::Render(ID3D11DeviceContext *pD3D11DeviceContext)
 	unsigned int offset;
 	stride = sizeof(Vertex); 
 	offset = 0;
-	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pD3D11DeviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	TestShader.use(pD3D11DeviceContext);
 
@@ -30,8 +30,7 @@ void Triangle::Render(ID3D11DeviceContext *pD3D11DeviceContext)
 
 void Triangle::Shutdown()
 {
-	ReleaseCOM(m_pVertexBuffer);
-	ReleaseCOM(m_pIndexBuffer);
+
 }
 
 void Triangle::init_buffer(ID3D11Device *pD3D11Device)

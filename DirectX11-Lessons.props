@@ -13,7 +13,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86</AdditionalLibraryDirectories>
-      <AdditionalDependencies>D3D10_1.lib;DXGI.lib;D2D1.lib;dwrite.lib;dinput8.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D3D10_1.lib;DXGI.lib;D2D1.lib;dwrite.lib;dinput8.lib;d3d11.lib;D3DCompiler.lib;dxguid.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

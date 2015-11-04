@@ -3,6 +3,7 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h> 
+
 using namespace DirectX;
 
 #include "d3d/Shader.h"
@@ -14,11 +15,8 @@ class Triangle
 {
 
 public:
-	Triangle() 
-	{
-		m_pVertexBuffer = nullptr;
-	}
-	~Triangle() {}
+	Triangle() 	  = default;
+	~Triangle()   = default;
 
 public:
 	void Init(ID3D11Device *pD3D11Device, HWND hWnd);
@@ -34,11 +32,11 @@ private:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount  = 0;
 
 	d3d::Shader TestShader;
-	ID3D11Buffer  *m_pVertexBuffer;
+	ComPtr<ID3D11Buffer>  m_pVertexBuffer;
 };
 
 

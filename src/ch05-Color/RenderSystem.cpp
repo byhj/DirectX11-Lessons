@@ -20,10 +20,10 @@ void RenderSystem::v_Render()
 {
 	//Set status and Render scene 
 	float bgColor[] = {0.2f, 0.3f, 0.4f, 1.0f};
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), bgColor);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
 
-	m_Triangle.Render(m_pD3D11DeviceContext);
+	m_Triangle.Render(m_pD3D11DeviceContext.Get());
 
 	m_pSwapChain->Present(0, 0);
 }
@@ -31,10 +31,7 @@ void RenderSystem::v_Render()
 
 void RenderSystem::v_Shutdown()
 {
-	ReleaseCOM(m_pSwapChain          );
-	ReleaseCOM(m_pD3D11Device        );
-	ReleaseCOM(m_pD3D11DeviceContext );
-	ReleaseCOM(m_pRenderTargetView   );
+
 }
 
 void RenderSystem::init_device()
@@ -92,7 +89,7 @@ void RenderSystem::init_camera()
 
 void RenderSystem::init_object()
 {
-	m_Triangle.Init(m_pD3D11Device, GetHwnd() );
+	m_Triangle.Init(m_pD3D11Device.Get(), GetHwnd() );
 }
 
 }

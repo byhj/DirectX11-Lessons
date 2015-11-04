@@ -31,6 +31,7 @@ int App::Run()
 		}
 
 	}
+
 	v_Shutdown();
 	return (int)msg.wParam;
 }

@@ -26,14 +26,14 @@ void RenderSystem::v_Render()
 	D3DXVECTOR4 bgColor = D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f);
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, &pRttRenderTargetView, m_pDepthStencilView);
 	m_pD3D11DeviceContext->ClearRenderTargetView(pRttRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	XMMATRIX objectModel = XMMatrixTranslation(0.0f, -1.0f, 0.0f);
 	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(objectModel));
 	ObjModel.Render(m_pD3D11DeviceContext, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
 	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 	////////////////////////////////////////////////////////
 
 	BeginScene();
@@ -49,7 +49,7 @@ void RenderSystem::v_Render()
 	m_Matrix.View._43 = 0.0f;
 	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(sphereWorld));
 
-	m_Skymap.Render(m_pD3D11DeviceContext, m_Matrix);
+	m_Skymap.Render(m_pD3D11DeviceContext.Get(), m_Matrix);
 
 	///////////////////////////////////////////////////////
 
@@ -68,12 +68,12 @@ void RenderSystem::v_Render()
 
 void RenderSystem::v_Shutdown()
 {
-	ReleaseCOM(m_pSwapChain          );
-	ReleaseCOM(m_pD3D11Device        );
-	ReleaseCOM(m_pD3D11DeviceContext );
-	ReleaseCOM(m_pRenderTargetView   );
-	ReleaseCOM(m_pBlendState);
-	ReleaseCOM(m_pRasterState);
+	
+	
+	
+	
+	
+	
 
 }
 
@@ -134,7 +134,7 @@ void RenderSystem::init_device()
 
 	//Same as color buffer, depthStencil use renderTarget view to make the buffer is a texture
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
-	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
+	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), NULL, &m_pDepthStencilView);
 
 	//////////////////////Raterizer State/////////////////////////////
 	D3D11_RASTERIZER_DESC rasterDesc;
@@ -143,7 +143,7 @@ void RenderSystem::init_device()
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 
 	hr = m_pD3D11Device->CreateRasterizerState(&rasterDesc, &m_pRasterState);
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	m_pD3D11DeviceContext->RSSetState(m_pRasterState.Get());
 
 	///////////////////////////Blend state/////////////////////////////
 	D3D11_BLEND_DESC blendDesc;
@@ -208,7 +208,7 @@ void RenderSystem::init_object()
 	m_Skymap.init_shader(m_pD3D11Device, GetHwnd());
 
 
-	m_Font.Init(m_pD3D11Device);
+	m_Font.Init(m_pD3D11Device.Get());
 	m_Timer.Reset();
 	m_Camera.Init(GetAppInst(), GetHwnd());
 
@@ -260,10 +260,10 @@ void RenderSystem::BeginScene()
 {
 	//Set status and Render scene 
 	float bgColor[] = {0.0f, 0.0f, 0.0f, 1.0f};
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-	m_pD3D11DeviceContext->RSSetState(m_pRasterState);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
+	m_pD3D11DeviceContext->RSSetState(m_pRasterState.Get());
 }
 
 void RenderSystem::EndScene()
@@ -291,7 +291,7 @@ void RenderSystem::DrawFps()
 		timeElapsed += 1.0f;
 	}
 
-	m_Font.drawFps(m_pD3D11DeviceContext, (UINT)fps);
+	m_Font.drawFps(m_pD3D11DeviceContext.Get(), (UINT)fps);
 }
 
 }

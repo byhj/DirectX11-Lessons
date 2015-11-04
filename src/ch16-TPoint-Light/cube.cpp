@@ -1,6 +1,6 @@
 #include "Cube.h"
 #include "d3d/d3dDebug.h"
-
+#include "DirectXTK/WICTextureLoader.h"
 #include <array>
 
 namespace byhj
@@ -18,21 +18,21 @@ void Cube::Render(ID3D11DeviceContext *pD3D11DeviceContext, const byhj::MatrixBu
     m_cbMatrix.Model = matrix.Model;
 	m_cbMatrix.View  = matrix.View;
 	m_cbMatrix.Proj  = matrix.Proj;
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &m_cbMatrix, 0, 0 );
-	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
-	pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pLightBuffer);
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &m_cbMatrix, 0, 0 );
+	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, m_pMVPBuffer.GetAddressOf());
+	pD3D11DeviceContext->PSSetConstantBuffers(0, 1, m_pLightBuffer.GetAddressOf());
 	// Set vertex buffer stride and offset
 	unsigned int stride;
 	unsigned int offset;
 	stride = sizeof(Vertex); 
 	offset = 0;
-	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pD3D11DeviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//Set the texture for shader resoucres and the texture  samplers status
-	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture );
-	pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+	pD3D11DeviceContext->PSSetShaderResources( 0, 1, m_pTexture.GetAddressOf() );
+	pD3D11DeviceContext->PSSetSamplers( 0, 1, m_pTexSamplerState.GetAddressOf());
 
 	TestShader.use(pD3D11DeviceContext);
 
@@ -42,10 +42,10 @@ void Cube::Render(ID3D11DeviceContext *pD3D11DeviceContext, const byhj::MatrixBu
 
 void Cube::Shutdown()
 {
-	ReleaseCOM(m_pVertexBuffer);
-	ReleaseCOM(m_pIndexBuffer);
-	ReleaseCOM(m_pTexture           )   
-	ReleaseCOM(m_pTexSamplerState   ) 
+	
+	
+	  
+	
 }
 
 void Cube::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
@@ -179,7 +179,7 @@ void Cube::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11De
 	//DebugHR(hr);
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	hr = pD3D11DeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	hr = pD3D11DeviceContext->Map(m_pLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	//DebugHR(hr);
 	LightBuffer *plightData = (LightBuffer *)mappedResource.pData;
 
@@ -192,7 +192,7 @@ void Cube::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11De
 	plightData->att       = XMFLOAT3(0.0f, 0.2f, 0.0f);
 	plightData->padding2  = 0.0f;
 
-	pD3D11DeviceContext->Unmap(m_pLightBuffer, 0);
+	pD3D11DeviceContext->Unmap(m_pLightBuffer.Get(), 0);
 }
 
 void Cube::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
@@ -228,10 +228,10 @@ void Cube::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);     
 
-	TestShader.init(pD3D11Device, hWnd);
-	TestShader.attachVS(L"Cube.vsh", vInputLayoutDesc);
-	TestShader.attachPS(L"Cube.psh");
-	TestShader.end();
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
+	TestShader.attachVS(L"Cube.vsh", "VS", "vs_5_0");
+	TestShader.attachPS(L"Cube.psh", "PS", "ps_5_0");
+
 }
 
 void Cube::init_texture(ID3D11Device *pD3D11Device)
@@ -240,7 +240,7 @@ void Cube::init_texture(ID3D11Device *pD3D11Device)
 
 	HRESULT hr;
 	//Use shaderResourceView to make texture to the shader
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL,NULL, &m_pTexture, NULL);
+	hr = CreateWICTextureFromFile(pD3D11Device, texFile, NULL, &m_pTexture);
 	//DebugHR(hr);
 
 	// Create a texture sampler state description.

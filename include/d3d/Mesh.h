@@ -145,14 +145,14 @@ namespace byhj
 			ID3D11Buffer *m_pVertexBuffer;
 			ID3D11Buffer *m_pMVPBuffer;
 
-			int m_VertexCount;
-			int m_IndexCount;
+			int m_VertexCount = 0;
+			int m_IndexCount = 0;
 
 			ID3D11ShaderResourceView *m_pShaderResourceView;
 			ID3D11DepthStencilView   *m_pDepthStencilView;
 			ID3D11Texture2D          *m_pDepthStencilBuffer;
 			ID3D11RasterizerState    *m_pRasterState;
-			ID3D11SamplerState       *m_pTexSamplerState;
+			ComPtr<ID3D11SamplerState> m_pTexSamplerState;
 
 		};
 

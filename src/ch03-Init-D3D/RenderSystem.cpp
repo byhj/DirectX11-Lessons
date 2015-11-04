@@ -60,22 +60,20 @@ void RenderSystem::v_Update()
 
 void RenderSystem::v_Shutdown()
 {
-	ReleaseCOM(m_pSwapChain          );
-	ReleaseCOM(m_pD3D11Device        );
-	ReleaseCOM(m_pD3D11DeviceContext );
-	ReleaseCOM(m_pRenderTargetView   );
+
 }
 
 void RenderSystem::BeginScene()
 {
-	//Set status and Render scene 
+	//Clear the framebuffer color buffer
 	float bgColor[4] ={0.2f, 0.3f, 0.4f, 1.0f};
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), bgColor);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), NULL);
 }
 
 void RenderSystem::EndScene()
 {
+	//The presentation occurs immediately, there is no synchronization. 
 	m_pSwapChain->Present(0, 0);
 }
 

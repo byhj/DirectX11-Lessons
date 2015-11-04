@@ -14,10 +14,10 @@ public:
 	~RenderSystem(){}
 
 public:
-	void v_Init();
-	void v_Update();
-	void v_Render();
-	void v_Shutdown();
+	void v_Init()     override ;
+	void v_Update()   override ;
+	void v_Render()   override ;
+	void v_Shutdown() override ;
 };
 
 }

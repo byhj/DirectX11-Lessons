@@ -32,7 +32,7 @@ public:
 	{
 		ModelShader.use(pD3D11DeviceContext);
 
-		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+		pD3D11DeviceContext->PSSetSamplers( 0, 1, m_pTexSamplerState.GetAddressOf());
 
 		for (int i = 0; i < this->meshes.size(); i++)
 		{
@@ -83,7 +83,7 @@ private:
 
 	ID3D11Device *pD3D11Device;
 	ID3D11DeviceContext *pD3D11DeviceContext; 
-	ID3D11ShaderResourceView *m_pTexture;
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;
 	HWND hWnd;
 	Shader ModelShader;
 	ID3D11SamplerState   *m_pTexSamplerState;

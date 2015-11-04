@@ -5,13 +5,13 @@
 #include "d3dDebug.h"
 
 #include <vector>
-#include <d3dx11.h>
-#include <DirectXMath.h> using namespace DirectX;
 #include <dxgi.h>
 #include <d3dcommon.h>
 #include <d3d11.h>
-#include <D3DX11async.h>
 #include "Common.h"
+
+#include <DirectXMath.h> 
+using namespace DirectX;
 
 namespace byhj
 {
@@ -43,12 +43,12 @@ private:
 
 	byhj::MatrixBuffer cbMatrix;
 
-	ID3D11Buffer *m_pIndexBuffer;
-	ID3D11Buffer *m_pVertexBuffer;
-	ID3D11Buffer *m_pMVPBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pMVPBuffer;
 
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
 
 	int NumSphereVertices;
 	int NumSphereFaces;
@@ -56,7 +56,7 @@ private:
 	ID3D11ShaderResourceView *m_pShaderResourceView;
 	ID3D11DepthStencilState  *m_pDSLessEqual;
 	ID3D11RasterizerState    *m_pRSCullNone;
-	ID3D11SamplerState       *m_pTexSamplerState;
+	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
 	Shader SkymapShader;
 };
 

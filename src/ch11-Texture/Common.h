@@ -2,7 +2,9 @@
 #define COMMON_H
 
 #include <windows.h>
-#include <DirectXMath.h> using namespace DirectX;
+
+#include <DirectXMath.h> 
+using namespace DirectX;
 
 namespace byhj
 {

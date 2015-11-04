@@ -61,11 +61,11 @@ public:
 		cbMatrix.view   = View;
 		cbMatrix.proj   = Proj;
 		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
-		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
+		pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, m_pMVPBuffer.GetAddressOf());
 		pD3D11DeviceContext->VSSetConstantBuffers(2, 1, &m_pLeaveMatrixBuffer);
 
 		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+		pD3D11DeviceContext->PSSetSamplers( 0, 1, m_pTexSamplerState.GetAddressOf());
 
 		InstanceShader.use(pD3D11DeviceContext);
 
@@ -164,8 +164,8 @@ private:
 	};
 
 	ID3D11RenderTargetView   *m_pRenderTargetView;
-	ID3D11Buffer             *m_pMVPBuffer;
-	ID3D11Buffer             *m_pLightBuffer;
+	ComPtr<ID3D11Buffer> m_pMVPBuffer;
+	ComPtr<ID3D11Buffer> m_pLightBuffer;
 	ID3D11Buffer             *m_pLeaveMatrixBuffer;
 	ID3D11Buffer             *m_pTreeMatrixBuffer;
 	ID3D11Buffer             *m_pInstanceBuffer;
@@ -177,7 +177,7 @@ private:
 	ID3D11ShaderResourceView *m_pLeaveTexSRV;
 	ID3D11ShaderResourceView *m_pTreeTexSRV;
 
-	ID3D11SamplerState       *m_pTexSamplerState;
+	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
 	ID3D11InputLayout        *m_pInputLayout;
 
 	Model treeModel;

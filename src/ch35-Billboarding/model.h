@@ -66,8 +66,8 @@ private:
 	std::vector<DWORD>  m_IndexData;
 
 	std::vector<XMFLOAT3> m_vPos;
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
 };
 
 #endif

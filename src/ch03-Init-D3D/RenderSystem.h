@@ -13,19 +13,19 @@ public:
 	~RenderSystem(){}
 	
 public:
-	void v_Init();
-	void v_Update();
-	void v_Render();
-	void v_Shutdown();
+	void v_Init() override;
+	void v_Update() override;
+	void v_Render() override;
+	void v_Shutdown() override;
 
 private:
 	void BeginScene();
 	void EndScene();
 
-	IDXGISwapChain          *m_pSwapChain         = nullptr;
-	ID3D11Device            *m_pD3D11Device       = nullptr;
-	ID3D11DeviceContext     *m_pD3D11DeviceContext= nullptr;
-	ID3D11RenderTargetView  *m_pRenderTargetView  = nullptr;
+	ComPtr<IDXGISwapChain>          m_pSwapChain;
+	ComPtr<ID3D11Device>            m_pD3D11Device;
+	ComPtr<ID3D11DeviceContext>     m_pD3D11DeviceContext;
+	ComPtr<ID3D11RenderTargetView>  m_pRenderTargetView;
 };
 
 

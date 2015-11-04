@@ -95,8 +95,8 @@ private:
 	};
 
 	ID3D11RenderTargetView   *m_pRenderTargetView;
-	ID3D11Buffer             *m_pMVPBuffer;
-	ID3D11Buffer             *m_pLightBuffer;
+	ComPtr<ID3D11Buffer> m_pMVPBuffer;
+	ComPtr<ID3D11Buffer> m_pLightBuffer;
 	ID3D11Buffer             *m_pLeaveMatrixBuffer;
 	ID3D11Buffer             *m_pTreeMatrixBuffer;
 	ID3D11Buffer             *m_pInstanceBuffer;
@@ -108,7 +108,7 @@ private:
 	ID3D11ShaderResourceView *m_pLeaveTexSRV;
 	ID3D11ShaderResourceView *m_pTreeTexSRV;
 
-	ID3D11SamplerState       *m_pTexSamplerState;
+	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
 	ID3D11InputLayout        *m_pInputLayout;
 
 	byhj::d3d::Model treeModel;

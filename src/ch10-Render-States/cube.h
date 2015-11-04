@@ -14,14 +14,8 @@ class Cube
 {
 
 public:
-	Cube() 
-	{
-		m_VertexCount = 0;
-		m_IndexCount  = 0;
-		m_pVertexBuffer = nullptr;
-		m_pIndexBuffer  = nullptr;
-	}
-	~Cube() {}
+	Cube() 	 = default;
+	~Cube()  = default;
 
 public:
 	void Init(ID3D11Device *pD3D11Device, HWND hWnd);
@@ -33,13 +27,15 @@ private:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
+
     byhj::MatrixBuffer m_cbMatrix;
 	d3d::Shader TestShader;
-	ID3D11Buffer  *m_pVertexBuffer;
-	ID3D11Buffer  *m_pIndexBuffer;
-	ID3D11Buffer  *m_pMVPBuffer;
+
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;
+	ComPtr<ID3D11Buffer> m_pMVPBuffer;
 };
 
 

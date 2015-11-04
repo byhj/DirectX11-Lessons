@@ -21,7 +21,7 @@ void RenderSystem::v_Render()
 	m_Matrix.Model = m_Model;
 	m_Matrix.View  = m_View;
 	m_Matrix.Proj  = m_Proj;
-	m_Triangle.Render(m_pD3D11DeviceContext, m_Matrix);
+	m_Triangle.Render(m_pD3D11DeviceContext.Get(), m_Matrix);
 
 	EndScene();
 }
@@ -29,10 +29,7 @@ void RenderSystem::v_Render()
 
 void RenderSystem::v_Shutdown()
 {
-	ReleaseCOM(m_pSwapChain          );
-	ReleaseCOM(m_pD3D11Device        );
-	ReleaseCOM(m_pD3D11DeviceContext );
-	ReleaseCOM(m_pRenderTargetView   );
+
 }
 
 void RenderSystem::init_device()
@@ -92,7 +89,7 @@ void RenderSystem::init_device()
 
 	//Same as color buffer, depthStencil use renderTarget view to make the buffer is a texture
 	m_pD3D11Device->CreateTexture2D(&depthStencilDesc, NULL, &m_pDepthStencilBuffer);
-	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer, NULL, &m_pDepthStencilView);
+	m_pD3D11Device->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), NULL, &m_pDepthStencilView);
 
 }
 
@@ -119,16 +116,16 @@ void RenderSystem::init_camera()
 
 void RenderSystem::init_object()
 {
-	m_Triangle.Init(m_pD3D11Device, GetHwnd());
+	m_Triangle.Init(m_pD3D11Device.Get(), GetHwnd());
 }
 
 void RenderSystem::BeginScene()
 {
 	//Set status and Render scene 
 	float bgColor[] = {0.2f, 0.3f, 0.4f, 1.0f};
-	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView, bgColor);
-	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	m_pD3D11DeviceContext->ClearRenderTargetView(m_pRenderTargetView.Get(), bgColor);
+	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 }
 
 void RenderSystem::EndScene()

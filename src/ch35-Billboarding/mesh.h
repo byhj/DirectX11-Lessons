@@ -87,8 +87,8 @@ public:
 	}
 
 public:
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
 };
 
 #endif

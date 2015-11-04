@@ -36,10 +36,10 @@ public:
 	~RenderSystem(){}
 	
 public:
-	void v_Init();
-	void v_Update();
-	void v_Render();
-	void v_Shutdown();
+	void v_Init() override;
+	void v_Update() override;
+	void v_Render() override;
+	void v_Shutdown() override;
 
 private:
 
@@ -64,14 +64,14 @@ private:
 	XMFLOAT4X4 m_View;
 	XMFLOAT4X4 m_Proj;
 
-	IDXGISwapChain          *m_pSwapChain;
-	ID3D11Device            *m_pD3D11Device;
-	ID3D11DeviceContext     *m_pD3D11DeviceContext;
-	ID3D11RenderTargetView  *m_pRenderTargetView;
-	ID3D11DepthStencilView  *m_pDepthStencilView;
-	ID3D11Texture2D         *m_pDepthStencilBuffer;
-	ID3D11BlendState        *m_pBlendState;
-	ID3D11RasterizerState   *m_pRasterState;
+	ComPtr<IDXGISwapChain> m_pSwapChain;
+	ComPtr<ID3D11Device> m_pD3D11Device;
+	ComPtr<ID3D11DeviceContext> m_pD3D11DeviceContext;
+	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
+	ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+	ComPtr<ID3D11Texture2D> m_pDepthStencilBuffer;
+	ComPtr<ID3D11BlendState> m_pBlendState;
+	ComPtr<ID3D11RasterizerState> m_pRasterState;
 };
 
 

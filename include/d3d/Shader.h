@@ -6,6 +6,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <wrl.h>
+
+using namespace Microsoft::WRL;
 
 namespace byhj
 {
@@ -34,16 +37,16 @@ public:
 private:
 	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
-	ID3D11VertexShader    *pVS_Shader;
-	ID3D11HullShader      *pHS_Shader;
-	ID3D11DomainShader    *pDS_Shader;
-	ID3D11GeometryShader  *pGS_Shader;
-	ID3D11ComputeShader   *pCS_Shader;
-	ID3D11PixelShader     *pPS_Shader;
+	ComPtr<ID3D11VertexShader  > pVS_Shader;
+	ComPtr<ID3D11HullShader    > pHS_Shader;
+	ComPtr<ID3D11DomainShader  > pDS_Shader;
+	ComPtr<ID3D11GeometryShader> pGS_Shader;
+	ComPtr<ID3D11ComputeShader > pCS_Shader;
+	ComPtr<ID3D11PixelShader   > pPS_Shader;
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
-	ID3D11InputLayout  *pInputLayout;
-	ID3D11Device *pD3D11Device;
+	ComPtr<ID3D11InputLayout>  pInputLayout;
+	ComPtr<ID3D11Device>       pD3D11Device;
 };
 
 

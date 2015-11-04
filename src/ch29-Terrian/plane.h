@@ -32,8 +32,8 @@ public:
 		ReleaseCOM(m_pDepthStencilBuffer)
 		ReleaseCOM(m_pVertexBuffer      )
 		ReleaseCOM(m_pIndexBuffer       )
-		ReleaseCOM(m_pTexture           )   
-		ReleaseCOM(m_pTexSamplerState   ) 
+		  
+		
 	}
 	int NumFaces;
 	int NumVertices;
@@ -78,13 +78,13 @@ private:
 	ID3D11DepthStencilView   *m_pDepthStencilView;
 	ID3D11Texture2D          *m_pDepthStencilBuffer;
 	ID3D11RasterizerState    *m_pRasterState;
-	ID3D11Buffer             *m_pVertexBuffer;
-	ID3D11Buffer             *m_pMVPBuffer;
-	ID3D11Buffer             *m_pIndexBuffer;
-	ID3D11ShaderResourceView *m_pTexture;
-	ID3D11SamplerState       *m_pTexSamplerState;
-	int m_VertexCount;
-	int m_IndexCount;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pMVPBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;
+	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
 
 	d3d::Shader TestShader;
 };

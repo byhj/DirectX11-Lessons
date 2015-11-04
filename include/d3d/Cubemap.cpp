@@ -1,5 +1,5 @@
 #include "Cubemap.h"
-
+#include "DirectXTK/DDSTextureLoader.h"
 
 namespace byhj
 {
@@ -171,9 +171,9 @@ void Skymap::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);
 
-	SkymapShader.init(pD3D11Device, hWnd);
-	SkymapShader.attachVS(L"cubemap.vsh", vInputLayoutDesc);
-	SkymapShader.attachPS(L"cubemap.psh");
+	SkymapShader.init(pD3D11Device, vInputLayoutDesc);
+	SkymapShader.attachVS(L"cubemap.vsh", "VS", "vs_5_0");
+	SkymapShader.attachPS(L"cubemap.psh", "PS", "ps_5_0");
 	SkymapShader.end();
 
 }
@@ -182,11 +182,11 @@ void Skymap::load_texture(ID3D11Device *pD3D11Device, WCHAR *texFile)
 {
 	HRESULT hr;
 
-	D3DX11_IMAGE_LOAD_INFO loadSMInfo;
-	loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	//D3DX11_IMAGE_LOAD_INFO loadSMInfo;
+	//loadSMInfo.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	ID3D11Texture2D* SMTexture = 0;
-	hr = D3DX11CreateTextureFromFile(pD3D11Device, texFile, &loadSMInfo, 0, (ID3D11Resource**)&SMTexture, 0);
+	hr = CreateDDSTextureFromFile(pD3D11Device, texFile, 0, SMTexture);
 	//DebugHR(hr);
 
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
@@ -251,15 +251,15 @@ void Skymap::Render(ID3D11DeviceContext *pD3D11DeviceContext, const MatrixBuffer
 	stride = sizeof(Vertex); 
 	offset = 0;
 
-	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	pD3D11DeviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	cbMatrix.Model = mvpMatrix.Model;
 	cbMatrix.View  = mvpMatrix.View;
 	cbMatrix.Proj  = mvpMatrix.Proj;
 
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
-	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &cbMatrix, 0, 0 );
+	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, m_pMVPBuffer.GetAddressOf());
 	pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pShaderResourceView);
 	pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState);
 

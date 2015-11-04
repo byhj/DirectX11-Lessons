@@ -1,11 +1,16 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
+#include "d3d/Shader.h"
+
 #include <d3d11.h>
 #include <DirectXMath.h> 
+#include <wrl.h>
+
+using namespace Microsoft::WRL;
 using namespace DirectX;
 
-#include "d3d/Shader.h"
+
 
 namespace byhj
 {
@@ -14,12 +19,8 @@ class Triangle
 {
 
 public:
-	Triangle() 
-	{
-		m_pVertexBuffer = nullptr;
-		m_pIndexBuffer  = nullptr;
-	}
-	~Triangle() {}
+	Triangle() 	 = default;
+	~Triangle()  = default;
 
 public:
 	void Init(ID3D11Device *pD3D11Device, HWND hWnd);
@@ -41,12 +42,12 @@ private:
 	void init_buffer(ID3D11Device *pD3D11Device);
 	void init_shader(ID3D11Device *pD3D11Device, HWND hWnd);
 
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
 
 	d3d::Shader TestShader;
-	ID3D11Buffer  *m_pVertexBuffer;
-	ID3D11Buffer  *m_pIndexBuffer;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer ;
 };
 
 

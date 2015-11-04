@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\include\d3d\App.cpp" />
     <ClCompile Include="..\..\include\d3d\Shader.cpp" />
-    <ClCompile Include="..\..\include\DirectXTK\DDSTextureLoader.cpp" />
+    <ClCompile Include="..\..\include\DirectXTK\WICTextureLoader.cpp" />
     <ClCompile Include="ch11-Texture.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
@@ -33,7 +33,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\d3d\App.h" />
     <ClInclude Include="..\..\include\d3d\Shader.h" />
-    <ClInclude Include="..\..\include\DirectXTK\DDSTextureLoader.h" />
+    <ClInclude Include="..\..\include\DirectXTK\WICTextureLoader.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="RenderSystem.h" />

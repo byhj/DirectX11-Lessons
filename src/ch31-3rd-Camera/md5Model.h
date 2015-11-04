@@ -184,21 +184,21 @@ private:
 	LightBuffer cbLight;
 
 	ID3D11RenderTargetView   *m_pRenderTargetView;
-	ID3D11Buffer             *m_pMVPBuffer;
-	ID3D11Buffer             *m_pLightBuffer;
+	ComPtr<ID3D11Buffer> m_pMVPBuffer;
+	ComPtr<ID3D11Buffer> m_pLightBuffer;
 	ID3D11Buffer             *m_CameraBuffer;
-	ID3D11Buffer             *m_pVertexBuffer;
-	ID3D11Buffer             *m_pIndexBuffer;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;
 	std::vector<ID3D11ShaderResourceView*> m_pTexture;
-	ID3D11SamplerState       *m_pTexSamplerState;
+	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
 	ID3D11InputLayout        *m_pInputLayout;
 
 	std::vector<SurfaceMaterial> material;
 	Model3D NewMD5Model;
 	std::vector<std::wstring> texFile;
 
-	int m_VertexCount;
-	int m_IndexCount;
+	int m_VertexCount = 0;
+	int m_IndexCount = 0;
 	std::vector<VertexType> VertexData;
 	std::vector<unsigned int> IndexData;
 

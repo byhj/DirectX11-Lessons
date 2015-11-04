@@ -2,10 +2,11 @@
 #define D3DCAMERA_H
 
 #include <windows.h>
-#include <d3dx11.h>
 #include <dinput.h>
 #include <d3d11.h>
-#include <DirectXMath.h> using namespace DirectX;
+
+#include <DirectXMath.h> 
+using namespace DirectX;
 
 namespace byhj
 {
@@ -25,6 +26,7 @@ public:
 		rot = 0.01f;
 		rightMouseClicked = false;
 	}
+
 	bool Init(HINSTANCE hInstance , HWND hWnd);
 	void DetectInput(double time , HWND hWnd);
 	void UpdateCamera();

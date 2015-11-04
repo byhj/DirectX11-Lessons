@@ -163,31 +163,24 @@ void Shader::attachPS(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderMod
 
 void Shader::use(ID3D11DeviceContext *pD3D11DeviceContext)
 {
-	pD3D11DeviceContext->IASetInputLayout(pInputLayout);
+	pD3D11DeviceContext->IASetInputLayout(pInputLayout.Get());
 
 	//Not Conside Computer now
 	if (pVS_Shader != 0)
-		pD3D11DeviceContext->VSSetShader(pVS_Shader, NULL, 0);
-	if (pHS_Shader != 0)
-		pD3D11DeviceContext->HSSetShader(pHS_Shader, NULL, 0);
-	if (pDS_Shader != 0)
-		pD3D11DeviceContext->DSSetShader(pDS_Shader, NULL, 0);
-	if (pGS_Shader != 0)
-		pD3D11DeviceContext->GSSetShader(pGS_Shader, NULL, 0);
-	if (pVS_Shader != 0)
-		pD3D11DeviceContext->PSSetShader(pPS_Shader, NULL, 0);
+		pD3D11DeviceContext->VSSetShader(pVS_Shader.Get(), NULL, 0);
+	if (pHS_Shader != 0)						   
+		pD3D11DeviceContext->HSSetShader(pHS_Shader.Get(), NULL, 0);
+	if (pDS_Shader != 0)						
+		pD3D11DeviceContext->DSSetShader(pDS_Shader.Get(), NULL, 0);
+	if (pGS_Shader != 0)					
+		pD3D11DeviceContext->GSSetShader(pGS_Shader.Get(), NULL, 0);
+	if (pVS_Shader != 0)						  
+		pD3D11DeviceContext->PSSetShader(pPS_Shader.Get(), NULL, 0);
 }
 
 void Shader::end()
 {
-	pD3D11Device = 0;
-	ReleaseCOM(pInputLayout)
-	ReleaseCOM(pVS_Shader)
-	ReleaseCOM(pHS_Shader)
-	ReleaseCOM(pDS_Shader)
-	ReleaseCOM(pGS_Shader)
-	ReleaseCOM(pCS_Shader)
-	ReleaseCOM(pPS_Shader)
+
 }
 
 }

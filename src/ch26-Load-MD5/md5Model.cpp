@@ -7,7 +7,7 @@ void MD5Model::Render(ID3D11DeviceContext *pD3D11DeviceContext,  XMFLOAT4X4 Mode
 	cbMatrix.view   = View;
 	cbMatrix.proj   = Proj;
 	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
-	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, &m_pMVPBuffer);
+	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, m_pMVPBuffer.GetAddressOf());
 
 	unsigned int stride;
 	unsigned int offset;
@@ -20,7 +20,7 @@ void MD5Model::Render(ID3D11DeviceContext *pD3D11DeviceContext,  XMFLOAT4X4 Mode
 		pD3D11DeviceContext->IASetVertexBuffers( 0, 1, &NewMD5Model.subsets[i].vertBuff, &stride, &offset );
 
 		pD3D11DeviceContext->PSSetShaderResources( 0, 1, &m_pTexture[NewMD5Model.subsets[i].texArrayIndex] );
-		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState );
+		pD3D11DeviceContext->PSSetSamplers( 0, 1, m_pTexSamplerState.GetAddressOf());
 		pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		CubeShader.use(pD3D11DeviceContext);
 		//pD3D11DeviceContext->RSSetState(RSCullNone);
@@ -64,7 +64,7 @@ void MD5Model::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	// Lock the light constant buffer so it can be written to.
-	hr = pD3D11DeviceContext->Map(m_pLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	hr = pD3D11DeviceContext->Map(m_pLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	//DebugHR(hr);
 
 	// Get a pointer to the data in the constant buffer.
@@ -75,7 +75,7 @@ void MD5Model::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	dataPtr2->lightDirection = XMFLOAT3(0.0f, 0.0f, 1.0f);
 
 
-	pD3D11DeviceContext->Unmap(m_pLightBuffer, 0);
+	pD3D11DeviceContext->Unmap(m_pLightBuffer.Get(), 0);
 
 	int lightSlot = 0;
 	pD3D11DeviceContext->PSSetConstantBuffers(lightSlot, 1, &m_pLightBuffer);
