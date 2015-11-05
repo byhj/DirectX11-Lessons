@@ -32,17 +32,17 @@ public:
 	{
 		ModelShader.use(pD3D11DeviceContext);
 
-		pD3D11DeviceContext->PSSetSamplers( 0, 1, m_pTexSamplerState.GetAddressOf());
+		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState);
 
 		for (int i = 0; i < this->meshes.size(); i++)
 		{
 		   float blendFactor[] = {0.4f, 0.4f, 0.4f, 0.3f};
 		   if (this->meshes[i].mat.ambient.w < 1.0f)
-			 pD3D11DeviceContext->OMSetBlendState(Transparency.Get(), blendFactor, 0xffffffff);
+			 pD3D11DeviceContext->OMSetBlendState(Transparency, blendFactor, 0xffffffff);
 		   //"fine-tune" the blending equation
 	
-			pD3D11DeviceContext->UpdateSubresource(m_pMatBuffer.Get(), 0, NULL, &this->meshes[i].mat, 0, 0 );
-			pD3D11DeviceContext->PSSetConstantBuffers(0, 1, m_pMatBuffer.GetAddressOf());
+			pD3D11DeviceContext->UpdateSubresource(m_pMatBuffer, 0, NULL, &this->meshes[i].mat, 0, 0 );
+			pD3D11DeviceContext->PSSetConstantBuffers(0, 1, &m_pMatBuffer);
 			this->meshes[i].Render(pD3D11DeviceContext, model, view, proj);
 
 		   pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
@@ -83,12 +83,12 @@ private:
 	HWND hWnd;
 	Shader ModelShader;
 
-	ComPtr<ID3D11Device> pD3D11Device;
-	ComPtr<ID3D11DeviceContext> pD3D11DeviceContext; 
-	ComPtr<ID3D11ShaderResourceView> m_pTexture;
-	ComPtr<ID3D11SamplerState>       m_pTexSamplerState;
-	ComPtr<ID3D11Buffer>             m_pMatBuffer;
-	ComPtr<ID3D11BlendState>         Transparency;
+	ID3D11Device *             pD3D11Device;
+	ID3D11DeviceContext *      pD3D11DeviceContext;
+	ID3D11ShaderResourceView * m_pTexture;
+	ID3D11SamplerState *       m_pTexSamplerState;
+	ID3D11Buffer *             m_pMatBuffer;
+	ID3D11BlendState *         Transparency;
 
 	std::vector<XMFLOAT3> vPos;
 	std::vector<unsigned long> vIndex;	

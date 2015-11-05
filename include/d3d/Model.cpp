@@ -332,7 +332,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	// Return a mesh object created from the extracted mesh data
-	return Mesh(vertices, indices, textures, mat, pD3D11Device.Get(), pD3D11DeviceContext.Get(), hWnd);
+	return Mesh(vertices, indices, textures, mat, pD3D11Device, pD3D11DeviceContext, hWnd);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -364,9 +364,9 @@ ID3D11ShaderResourceView * Model::TextureFromFile(const char* path, std::string 
 	LPCWSTR sw = stemp.c_str();
 
 	HRESULT hr;
-	hr = CreateWICTextureFromFile(pD3D11Device.Get(), sw, NULL,  &m_pTexture);
+	hr = CreateWICTextureFromFile(pD3D11Device, sw, NULL,  &m_pTexture);
 
-	return m_pTexture.Get();
+	return m_pTexture;
 }
 
 }

@@ -35,11 +35,6 @@ void RenderSystem::v_Render()
 
 void RenderSystem::v_Shutdown()
 {
-	
-	
-	
-	
-
 	m_Cube.Shutdown();
 }
 
