@@ -4,7 +4,8 @@
 #include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
 #include <d3d11.h>
-#include <DirectXMath.h> using namespace DirectX;
+#include <DirectXMath.h> 
+using namespace DirectX;
 
 namespace byhj
 {
@@ -17,21 +18,13 @@ namespace byhj
 		public:
 			RTT()
 			{
-				m_pInputLayout        = NULL;
-				m_pMVPBuffer          = NULL;
-				m_pVertexBuffer       = NULL;
-				m_pIndexBuffer        = NULL;
 			}
 
 			void Render(ID3D11DeviceContext *pD3D11DeviceContext, ID3D11ShaderResourceView *pTexture, const XMFLOAT4X4  &Model,
 				const XMFLOAT4X4 &View, const XMFLOAT4X4  &Proj);
 
-			void shutdown()
+			void Shutdown()
 			{
-				ReleaseCOM(m_pRenderTargetView)
-					ReleaseCOM(m_pMVPBuffer)
-					ReleaseCOM(m_pVertexBuffer)
-					ReleaseCOM(m_pIndexBuffer)
 			}
 
 			void init_window(float posX, float posY, float width, float height, float aspect);
@@ -55,12 +48,12 @@ namespace byhj
 				XMFLOAT2 Tex;
 			};
 
-			ID3D11RenderTargetView   *m_pRenderTargetView;
+			ComPtr<ID3D11RenderTargetView>   m_pRenderTargetView;
 			ComPtr<ID3D11Buffer> m_pMVPBuffer;
 			ComPtr<ID3D11Buffer> m_pVertexBuffer;
 			ComPtr<ID3D11Buffer> m_pIndexBuffer;
 			ComPtr<ID3D11SamplerState> m_pTexSamplerState;
-			ID3D11InputLayout        *m_pInputLayout;
+			ComPtr<ID3D11InputLayout> m_pInputLayout;
 
 
 			int m_VertexCount = 0;

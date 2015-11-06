@@ -1,4 +1,5 @@
 #include "plane.h"
+#include "DirectXTK/DDSTextureLoader.h"
 
 namespace byhj
 
@@ -25,7 +26,7 @@ void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, X
 		cbMatrix.model = model;
 		cbMatrix.view  = view;
 		cbMatrix.proj  = proj;
-		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0);
+		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &cbMatrix, 0, 0);
 		pD3D11DeviceContext->VSSetConstantBuffers(0, 1, &m_pMVPBuffer);
 		pD3D11DeviceContext->DrawIndexed(NumFaces * 3, 0, 0);
 
@@ -295,9 +296,9 @@ bool Plane::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);
 
-	TestShader.init(pD3D11Device, hWnd);
-	TestShader.attachVS(L"Plane.vsh", vInputLayoutDesc);
-	TestShader.attachPS(L"Plane.psh");
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
+	TestShader.attachVS(L"Plane.vsh", "VS", "vs_5_0");
+	TestShader.attachPS(L"Plane.psh", "PS", "ps_5_0");
 	TestShader.end();
 
 	return true;
@@ -306,7 +307,7 @@ bool Plane::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 void Plane::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 {
 	HRESULT hr;
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL, NULL, &m_pTexture, NULL);
+	hr = CreateDDSTextureFromFile(pD3D11Device, texFile, NULL, &m_pTexture);
 	//DebugHR(hr);
 
 	// Create a texture sampler state description.

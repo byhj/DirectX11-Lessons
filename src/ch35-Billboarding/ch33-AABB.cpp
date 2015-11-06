@@ -6,7 +6,7 @@
 #include "d3d/Shader.h"
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
-#include "d3d/Cubemap.h"
+#include "Cubemap.h"
 #include "d3d/Model.h"
 #include "d3d/Camera.h"
 

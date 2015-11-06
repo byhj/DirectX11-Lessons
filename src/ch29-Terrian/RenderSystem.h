@@ -15,14 +15,6 @@ public:
 	RenderSystem()
 	{
 		m_AppName = L"DirectX11: ch07-Depth";
-		m_pSwapChain          = nullptr;
-		m_pD3D11Device        = nullptr;
-		m_pD3D11DeviceContext = nullptr;
-		m_pRenderTargetView   = nullptr;
-		m_pDepthStencilView   = nullptr;
-		m_pDepthStencilBuffer = nullptr;
-		m_pBlendState         = nullptr;
-		m_pRasterState        = nullptr;
 
 		XMMATRIX Imat = XMMatrixIdentity();
 	    XMStoreFloat4x4(&m_Model, Imat);

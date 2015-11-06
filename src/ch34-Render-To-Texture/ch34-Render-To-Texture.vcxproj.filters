@@ -71,6 +71,9 @@
     <ClCompile Include="..\..\include\d3d\RTT.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
+    <ClCompile Include="Cubemap.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RenderSystem.h">
@@ -105,6 +108,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\d3d\RTT.h">
       <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Cubemap.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

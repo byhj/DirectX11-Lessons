@@ -23,14 +23,14 @@ void RenderSystem::v_Render()
 	m_Matrix.Proj  =  m_Proj;
 
 	//////////////////////////////////////////////////////////////////
-	D3DXVECTOR4 bgColor = D3DXVECTOR4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_pD3D11DeviceContext->OMSetRenderTargets(1, &pRttRenderTargetView, m_pDepthStencilView);
+	float bgColor[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	m_pD3D11DeviceContext->OMSetRenderTargets(1, &pRttRenderTargetView, m_pDepthStencilView.Get());
 	m_pD3D11DeviceContext->ClearRenderTargetView(pRttRenderTargetView, bgColor);
 	m_pD3D11DeviceContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	XMMATRIX objectModel = XMMatrixTranslation(0.0f, -1.0f, 0.0f);
 	XMStoreFloat4x4(&m_Matrix.Model, XMMatrixTranspose(objectModel));
-	ObjModel.Render(m_pD3D11DeviceContext, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
+	ObjModel.Render(m_pD3D11DeviceContext.Get(), m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
 	m_pD3D11DeviceContext->OMSetBlendState(0, 0, 0xffffffff);
 
 	m_pD3D11DeviceContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
@@ -38,7 +38,7 @@ void RenderSystem::v_Render()
 
 	BeginScene();
 
-	ObjModel.Render(m_pD3D11DeviceContext, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
+	ObjModel.Render(m_pD3D11DeviceContext.Get(), m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
 
 	XMMATRIX sphereWorld = XMMatrixIdentity();
 	m_Matrix.View._14 = 0.0f;
@@ -57,7 +57,7 @@ void RenderSystem::v_Render()
 	XMMATRIX tProj = XMMatrixOrthographicLH(2.0f, 2.0f, 0.1f, 1000.0f);
 	XMFLOAT4X4 ortho;
 	XMStoreFloat4x4(&ortho, XMMatrixTranspose(tProj));
-	d3dRtt.Render(m_pD3D11DeviceContext, pRttShaderResourceView, m_Matrix.Model, m_Matrix.View, ortho);
+	d3dRtt.Render(m_pD3D11DeviceContext.Get(), pRttShaderResourceView, m_Matrix.Model, m_Matrix.View, ortho);
 
 
 	DrawFps();
@@ -68,12 +68,6 @@ void RenderSystem::v_Render()
 
 void RenderSystem::v_Shutdown()
 {
-	
-	
-	
-	
-	
-	
 
 }
 
@@ -195,17 +189,17 @@ void RenderSystem::init_camera()
 
 void RenderSystem::init_object()
 {
-	ObjModel.initModel(m_pD3D11Device, m_pD3D11DeviceContext, GetHwnd());
+	ObjModel.initModel(m_pD3D11Device.Get(), m_pD3D11DeviceContext.Get(), GetHwnd());
 	ObjModel.loadModel("../../media/objects/ground.obj");
 
 	d3dRtt.init_window(400.0f / m_ScreenWidth * 2.0f, 400.0f / m_ScreenHeight * 2.0f,
 		200.0f * GetAspect() / m_ScreenWidth * 2.0f, 200.0f / m_ScreenHeight * 2.0f, GetAspect());
-	d3dRtt.init_buffer(m_pD3D11Device, m_pD3D11DeviceContext);
-	d3dRtt.init_shader(m_pD3D11Device, GetHwnd());
+	d3dRtt.init_buffer(m_pD3D11Device.Get(), m_pD3D11DeviceContext.Get());
+	d3dRtt.init_shader(m_pD3D11Device.Get(), GetHwnd());
 
-	m_Skymap.createSphere(m_pD3D11Device, 10, 10);
-	m_Skymap.load_texture(m_pD3D11Device, L"../../media/textures/skymap.dds");
-	m_Skymap.init_shader(m_pD3D11Device, GetHwnd());
+	m_Skymap.createSphere(m_pD3D11Device.Get(), 10, 10);
+	m_Skymap.load_texture(m_pD3D11Device.Get(), L"../../media/textures/skymap.dds");
+	m_Skymap.init_shader( m_pD3D11Device.Get(), GetHwnd());
 
 
 	m_Font.Init(m_pD3D11Device.Get());

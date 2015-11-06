@@ -23,7 +23,7 @@ void RTT::Render(ID3D11DeviceContext *pD3D11DeviceContext, ID3D11ShaderResourceV
 	cbMatrix.model  = Model;
 	cbMatrix.view   = View;
 	cbMatrix.proj   = Proj;
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0 );
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &cbMatrix, 0, 0 );
 	pD3D11DeviceContext->VSSetConstantBuffers( 0, 1, m_pMVPBuffer.GetAddressOf());
 
 	unsigned int stride;
@@ -191,9 +191,9 @@ bool RTT::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	pInputLayoutDesc.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(pInputLayoutDesc);
 
-	D3DRTTShader.init(pD3D11Device, hWnd);
-	D3DRTTShader.attachVS(L"rtt.vsh", vInputLayoutDesc);
-	D3DRTTShader.attachPS(L"rtt.psh");
+	D3DRTTShader.init(pD3D11Device, vInputLayoutDesc);
+	D3DRTTShader.attachVS(L"rtt.vsh", "VS", "vs_5_0");
+	D3DRTTShader.attachPS(L"rtt.psh", "PS", "ps_5_0");
 	D3DRTTShader.end();
 
 	return true;

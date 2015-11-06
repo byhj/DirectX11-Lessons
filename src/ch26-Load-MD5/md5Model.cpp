@@ -135,7 +135,7 @@ bool MD5Model::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.InstanceDataStepRate = 0;
 	vpInputLayoutDesc.push_back(inputLayout);
 
-	CubeShader.init(pD3D11Device, hWnd);
+	CubeShader.init(pD3D11Device, vInputLayoutDesc);
 	CubeShader.attachVS(L"md5.vsh", vpInputLayoutDesc);
 	CubeShader.attachPS(L"md5.psh");
 	CubeShader.end();

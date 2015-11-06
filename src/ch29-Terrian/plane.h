@@ -1,7 +1,8 @@
 #include "d3d/Shader.h"
 #include "d3d/d3dDebug.h"
 #include <d3d11.h>
-#include <DirectXMath.h> using namespace DirectX;
+#include <DirectXMath.h> 
+using namespace DirectX;
 #include <vector>
 
 namespace byhj
@@ -12,27 +13,12 @@ class Plane
 public:
 	Plane()
 	{
-		m_pRenderTargetView   = NULL;
-		m_pDepthStencilView   = NULL;
-		m_pDepthStencilBuffer = NULL;
-		m_pMVPBuffer          = NULL;
-		m_pVertexBuffer       = NULL;
-		m_pIndexBuffer        = NULL;
-		m_pTexture            = NULL;
-		m_pTexSamplerState    = NULL;
 	}
 
 	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, XMFLOAT4X4  view, XMFLOAT4X4  proj);
 
 	void Shutdown()
 	{
-		ReleaseCOM(m_pRenderTargetView  )
-		ReleaseCOM(m_pDepthStencilView  )
-		ReleaseCOM(m_pMVPBuffer         )
-		ReleaseCOM(m_pDepthStencilBuffer)
-		ReleaseCOM(m_pVertexBuffer      )
-		ReleaseCOM(m_pIndexBuffer       )
-		  
 		
 	}
 	int NumFaces;
@@ -74,15 +60,16 @@ private:
 	};
 	MatrixBuffer cbMatrix;
 
-	ID3D11RenderTargetView   *m_pRenderTargetView;
-	ID3D11DepthStencilView   *m_pDepthStencilView;
-	ID3D11Texture2D          *m_pDepthStencilBuffer;
-	ID3D11RasterizerState    *m_pRasterState;
+	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
+	ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+	ComPtr<ID3D11Texture2D       > m_pDepthStencilBuffer;
+	ComPtr<ID3D11RasterizerState > m_pRasterState;
 	ComPtr<ID3D11Buffer> m_pVertexBuffer;
 	ComPtr<ID3D11Buffer> m_pMVPBuffer;
 	ComPtr<ID3D11Buffer> m_pIndexBuffer;
 	ComPtr<ID3D11ShaderResourceView> m_pTexture;
 	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
+
 	int m_VertexCount = 0;
 	int m_IndexCount = 0;
 

@@ -27,7 +27,7 @@ void RenderSystem::v_Render()
 
 	m_Matrix.View  =   m_Camera.GetViewMatrix();
 	m_Matrix.Proj  =  m_Proj;
-	m_Plane.Render(m_pD3D11DeviceContext, m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
+	m_Plane.Render(m_pD3D11DeviceContext.Get(), m_Matrix.Model, m_Matrix.View, m_Matrix.Proj);
 
 	DrawFps();
 	///////////////////////////////////////////////////////
@@ -165,9 +165,9 @@ void RenderSystem::init_camera()
 
 void RenderSystem::init_object()
 {
-	m_Plane.init_buffer(m_pD3D11Device);
-	m_Plane.init_shader(m_pD3D11Device, GetHwnd());
-	m_Plane.init_texture(m_pD3D11Device, L"../../media/textures/grass.jpg");
+	m_Plane.init_buffer( m_pD3D11Device.Get());
+	m_Plane.init_shader( m_pD3D11Device.Get(), GetHwnd());
+	m_Plane.init_texture(m_pD3D11Device.Get(), L"../../media/textures/grass.jpg");
 
 	m_Font.Init(m_pD3D11Device.Get());
 	m_Timer.Reset();

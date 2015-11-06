@@ -321,7 +321,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.InstanceDataStepRate = 0;
 	vpInputLayoutDesc.push_back(inputLayout);
 
-	InstanceShader.init(pD3D11Device, hWnd);
+	InstanceShader.init(pD3D11Device, vInputLayoutDesc);
 	InstanceShader.attachVS(L"instance.vsh", vpInputLayoutDesc);
 	InstanceShader.attachPS(L"instance.psh");
 	InstanceShader.end();

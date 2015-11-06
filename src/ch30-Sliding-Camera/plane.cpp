@@ -295,7 +295,7 @@ bool Plane::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	InputLayout.InstanceDataStepRate = 0;
 	vInputLayoutDesc.push_back(InputLayout);
 
-	TestShader.init(pD3D11Device, hWnd);
+	TestShader.init(pD3D11Device, vInputLayoutDesc);
 	TestShader.attachVS(L"Plane.vsh", vInputLayoutDesc);
 	TestShader.attachPS(L"Plane.psh");
 	TestShader.end();
@@ -306,7 +306,7 @@ bool Plane::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 void Plane::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 {
 	HRESULT hr;
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, texFile, NULL, NULL, &m_pTexture, NULL);
+	hr = CreateDDSTextureFromFile(pD3D11Device, texFile, NULL, &m_pTexture);
 	//DebugHR(hr);
 
 	// Create a texture sampler state description.

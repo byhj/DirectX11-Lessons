@@ -2,7 +2,7 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 //#include "d3d/Camera.h"
-#include "d3d/Cubemap.h"
+#include "Cubemap.h"
 #include "d3d/Model.h"
 #include "md5Model.h"
 
@@ -56,7 +56,7 @@ private:
 	d3d::Model ObjModel;
 	D3DCamera m_Camera;
 
-d3d::Skymap m_Skymap;
+byhj::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;
 	byhj::MatrixBuffer m_Matrix;

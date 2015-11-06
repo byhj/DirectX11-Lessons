@@ -2,9 +2,10 @@
 #include "d3d/Font.h"
 #include "d3d/Timer.h"
 #include "d3d/Camera.h"
-#include "d3d/Cubemap.h"
 #include "d3d/Model.h"
 #include "d3d/RTT.h"
+
+#include "Cubemap.h"
 
 #include "Common.h"
 
@@ -55,10 +56,10 @@ private:
 	float fps;
 
 	d3d::Model ObjModel;
-d3d::Skymap m_Skymap;
 	d3d::Font m_Font;
 	d3d::Timer m_Timer;
 	d3d::Camera m_Camera;
+	byhj::Skymap m_Skymap;
 	byhj::MatrixBuffer m_Matrix;
 
 	ID3D11Texture2D          *pRttRenderTargetTexture;

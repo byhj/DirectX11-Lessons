@@ -274,7 +274,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 
 	unsigned numElements = ARRAYSIZE(pInputLayoutDesc);
 
-	InstanceShader.init(pD3D11Device, hWnd);
+	InstanceShader.init(pD3D11Device, vInputLayoutDesc);
 	InstanceShader.attachVS(L"instance.vsh", pInputLayoutDesc, numElements);
 	InstanceShader.attachPS(L"instance.psh");
 	InstanceShader.end();
