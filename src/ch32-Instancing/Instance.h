@@ -2,43 +2,38 @@
 #define INSTANCE_H
 
 #include <windows.h>
-#include <d3dx11.h>
-#include <DirectXMath.h> using namespace DirectX;
-
 #include "d3d/model.h"
 #include "d3d/Shader.h"
-#include "d3d/d3dDebug.h"
+#include <DirectXMath.h> 
+
+using namespace DirectX;
 
 const int NumLeaves = 1000;
 const int NumTrees  = 400;
 
+namespace MeshStruct
+{
+	struct Vertex
+	{
+
+	XMFLOAT3 Position;
+	XMFLOAT3 Normal;
+	XMFLOAT2 TexCoords;
+	XMFLOAT3 Tangent;
+	XMFLOAT3 BiTangent;
+
+	};
+}
+
 class Instance
 {
 public:
-	Instance()
-	{
-		m_pInputLayout        = NULL;
-		m_pMVPBuffer          = NULL;
-		m_pLightBuffer        = NULL;
-		m_pTreeIB  = NULL;
-		m_pTreeVB  = NULL;
-		m_pLeaveIB = NULL;
-		m_pLeaveVB = NULL;
-		m_pInstanceBuffer = NULL;
-		m_pLeaveMatrixBuffer = NULL;
-		m_pTreeMatrixBuffer = NULL;
-	}
+	Instance(){}
 
 	void Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model, XMFLOAT4X4  View, XMFLOAT4X4 Proj);
+	void Shutdown() {}
 
-	void shutdown()
-	{
-		ReleaseCOM(m_pRenderTargetView  )
-		ReleaseCOM(m_pMVPBuffer         )
-		ReleaseCOM(m_pLightBuffer       )
-	}
-
-	bool init_buffer (ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext);
+	bool init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd);
 	bool init_shader (ID3D11Device *pD3D11Device, HWND hWnd);
 	void init_texture(ID3D11Device *pD3D11Device);
 
@@ -82,6 +77,8 @@ private:
 	};
 	LightBuffer cbLight;
 
+
+
 	struct  Vertex
 	{
 		Vertex(float px, float py, float pz, float tu, float tv,
@@ -94,22 +91,21 @@ private:
 		XMFLOAT3 Normal;
 	};
 
-	ID3D11RenderTargetView   *m_pRenderTargetView;
+	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
 	ComPtr<ID3D11Buffer> m_pMVPBuffer;
 	ComPtr<ID3D11Buffer> m_pLightBuffer;
-	ID3D11Buffer             *m_pLeaveMatrixBuffer;
-	ID3D11Buffer             *m_pTreeMatrixBuffer;
-	ID3D11Buffer             *m_pInstanceBuffer;
-	ID3D11Buffer             *m_pTreeVB;
-	ID3D11Buffer             *m_pTreeIB;
-	ID3D11Buffer             *m_pLeaveVB;
-	ID3D11Buffer             *m_pLeaveIB;
+	ComPtr<ID3D11Buffer> m_pLeaveMatrixBuffer;
+	ComPtr<ID3D11Buffer> m_pTreeMatrixBuffer;
+	ComPtr<ID3D11Buffer> m_pInstanceBuffer;
+	ComPtr<ID3D11Buffer> m_pTreeVB;
+	ComPtr<ID3D11Buffer> m_pTreeIB;
+	ComPtr<ID3D11Buffer> m_pLeaveVB;
+	ComPtr<ID3D11Buffer> m_pLeaveIB;
 
-	ID3D11ShaderResourceView *m_pLeaveTexSRV;
-	ID3D11ShaderResourceView *m_pTreeTexSRV;
-
+	ComPtr<ID3D11ShaderResourceView> m_pLeaveTexSRV;
+	ComPtr<ID3D11ShaderResourceView> m_pTreeTexSRV;
 	ComPtr<ID3D11SamplerState> m_pTexSamplerState;
-	ID3D11InputLayout        *m_pInputLayout;
+	ComPtr<ID3D11InputLayout> m_pInputLayout;
 
 	byhj::d3d::Model treeModel;
 	byhj::d3d::Shader InstanceShader;

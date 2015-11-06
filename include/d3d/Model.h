@@ -33,7 +33,7 @@ public:
 		ModelShader.use(pD3D11DeviceContext);
 
 		pD3D11DeviceContext->PSSetSamplers( 0, 1, &m_pTexSamplerState);
-
+		
 		for (int i = 0; i < this->meshes.size(); i++)
 		{
 		   float blendFactor[] = {0.4f, 0.4f, 0.4f, 0.3f};
@@ -73,6 +73,22 @@ public:
 	std::vector<unsigned long> GetIndex()
 	{
 		return vIndex;
+	}
+	std::vector<XMFLOAT3>  GetVertexData()
+	{
+		return vPos;
+	}
+	std::vector<unsigned long> GetIndexData()
+	{
+		return vIndex;
+	}
+	int GetIndexCount()
+	{
+		return vIndex.size();
+	}
+	int GetVertexCount()
+	{
+		return vPos.size();
 	}
 private:
 

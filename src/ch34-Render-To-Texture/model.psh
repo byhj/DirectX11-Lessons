@@ -38,7 +38,7 @@ float4 PS(VS_OUT ps_in) : SV_TARGET
 	ps_in.Normal = normalize(mul(normalMap, texSpace));
 
 	//calc the diffuse light with normal map
-	float3 lightDir = float3(0.5f, 0.75f, -0.5f);
+	float3 lightDir = float3(0.5f, 0.75f, 0.5f);
     float intensity = dot(lightDir, ps_in.Normal);
     float4 diff = saturate( max(intensity, 0.0f) * diffuse );
 	

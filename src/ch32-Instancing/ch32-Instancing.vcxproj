@@ -133,6 +133,7 @@
     <ClCompile Include="..\..\include\d3d\Shader.cpp" />
     <ClCompile Include="..\..\include\d3d\Timer.cpp" />
     <ClCompile Include="ch32-Instancing.cpp" />
+    <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="..\..\include\d3d\Shader.h" />
     <ClInclude Include="..\..\include\d3d\Timer.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Cubemap.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="RenderSystem.h" />
   </ItemGroup>

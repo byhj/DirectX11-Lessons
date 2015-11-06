@@ -1,5 +1,5 @@
 #include "Instance.h"
-
+#include "DirectXTK/WICTextureLoader.h"
 
 void Instance::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model, XMFLOAT4X4  View, XMFLOAT4X4 Proj)
 {
@@ -11,13 +11,13 @@ void Instance::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model
 	cbMatrix.view   = View;
 	cbMatrix.proj   = Proj;
 
-	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer, 0, NULL, &cbMatrix, 0, 0);
-	pD3D11DeviceContext->VSSetConstantBuffers(0, 1, &m_pMVPBuffer);
+	pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &cbMatrix, 0, 0);
+	pD3D11DeviceContext->VSSetConstantBuffers(0, 1, m_pMVPBuffer.GetAddressOf());
 
-	pD3D11DeviceContext->VSSetConstantBuffers(2, 1, &m_pLeaveMatrixBuffer);
-	pD3D11DeviceContext->VSSetConstantBuffers(3, 1, &m_pTreeMatrixBuffer);
+	pD3D11DeviceContext->VSSetConstantBuffers(2, 1, m_pLeaveMatrixBuffer.GetAddressOf());
+	pD3D11DeviceContext->VSSetConstantBuffers(3, 1, m_pTreeMatrixBuffer.GetAddressOf());
 	pD3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pD3D11DeviceContext->PSSetSamplers(0, 1, &m_pTexSamplerState);
+	pD3D11DeviceContext->PSSetSamplers(0, 1, m_pTexSamplerState.GetAddressOf());
 
 	InstanceShader.use(pD3D11DeviceContext);
 
@@ -25,31 +25,34 @@ void Instance::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 Model
 	stride = sizeof(MeshStruct::Vertex);
 	offset = 0;
 	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pLeaveVB, &stride, &offset);
-	pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB, DXGI_FORMAT_R32_UINT, 0);
-	pD3D11DeviceContext->PSSetShaderResources(0, 1, &m_pLeaveTexSRV);
+	pD3D11DeviceContext->IASetIndexBuffer(m_pLeaveIB.Get(), DXGI_FORMAT_R32_UINT, 0);
+	pD3D11DeviceContext->PSSetShaderResources(0, 1, m_pLeaveTexSRV.GetAddressOf());
 
 	cbInstance.isTree = 0.0f;
 	cbInstance.isLeaf = 2.0f;
-	pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0);
-	pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
+	pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer.Get(), 0, NULL, &cbInstance, 0, 0);
+	pD3D11DeviceContext->VSSetConstantBuffers(1, 1, m_pInstanceBuffer.GetAddressOf());
 	pD3D11DeviceContext->DrawIndexedInstanced(6, NumTrees * NumLeaves, 0, 0, 0);
 
 	///////////////////////////////////////////////////////////////////////////////////
 	stride = sizeof(MeshStruct::Vertex);
 	offset = 0;
 	pD3D11DeviceContext->IASetVertexBuffers(0, 1, &m_pTreeVB, &stride, &offset);
-	pD3D11DeviceContext->IASetIndexBuffer(m_pTreeIB, DXGI_FORMAT_R32_UINT, 0);
-	pD3D11DeviceContext->PSSetShaderResources(0, 1, &m_pTreeTexSRV);
+	pD3D11DeviceContext->IASetIndexBuffer(m_pTreeIB.Get(), DXGI_FORMAT_R32_UINT, 0);
+	pD3D11DeviceContext->PSSetShaderResources(0, 1, m_pTreeTexSRV.GetAddressOf());
 
 	cbInstance.isTree = 2.0f;
 	cbInstance.isLeaf = 0.0f;
-	pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer, 0, NULL, &cbInstance, 0, 0);
-	pD3D11DeviceContext->VSSetConstantBuffers(1, 1, &m_pInstanceBuffer);
+	pD3D11DeviceContext->UpdateSubresource(m_pInstanceBuffer.Get(), 0, NULL, &cbInstance, 0, 0);
+	pD3D11DeviceContext->VSSetConstantBuffers(1, 1, m_pInstanceBuffer.GetAddressOf());
 	pD3D11DeviceContext->DrawIndexedInstanced(treeModel.GetIndexCount(), NumTrees, 0, 0, 0);
 }
 
-bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext)
+bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D11DeviceContext, HWND hWnd)
 {
+	treeModel.initModel(pD3D11Device, pD3D11DeviceContext, hWnd);
+	treeModel.loadModel("../../media/objects/tree.obj");
+
 	HRESULT hr;
 
 	/************************************New Stuff****************************************************/
@@ -109,7 +112,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 
 
 	///////////////////////////Index Buffer ////////////////////////////////
-	treeModel.loadModel("../../media/objects/tree.obj");
+
 
 	// Set up the description of the static vertex buffer.
 	D3D11_BUFFER_DESC TreeVBDesc;
@@ -119,7 +122,7 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	TreeVBDesc.CPUAccessFlags      = 0;
 	TreeVBDesc.MiscFlags           = 0;
 	TreeVBDesc.StructureByteStride = 0;
-	std::vector<MeshStruct::Vertex> TreeVertex = treeModel.GetVertexData();
+	std::vector<XMFLOAT3> TreeVertex = treeModel.GetVertexData();
 
 	// Give the subresource structure a pointer to the vertex data.
 	D3D11_SUBRESOURCE_DATA TreeVBO;
@@ -259,9 +262,10 @@ bool Instance::init_buffer(ID3D11Device *pD3D11Device, ID3D11DeviceContext *pD3D
 	hr = pD3D11Device->CreateBuffer(&lightBufferDesc, NULL, &m_pLightBuffer);
 	//DebugHR(hr);
 
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, L"../../media/objects/treeBark.jpg", NULL,NULL, &m_pTreeTexSRV, NULL);
-	//DebugHR(hr);
-	hr = D3DX11CreateShaderResourceViewFromFile(pD3D11Device, L"../../media/objects/leaf.png", NULL,NULL, &m_pLeaveTexSRV, NULL);
+	hr = CreateWICTextureFromFile(pD3D11Device, L"../../media/objects/treeBark.jpg", NULL, &m_pTreeTexSRV);
+	//DebugHR(hr);																						 
+	hr = CreateWICTextureFromFile(pD3D11Device, L"../../media/objects/leaf.png",  NULL, &m_pLeaveTexSRV);
+
     init_texture(pD3D11Device);
 
 	return true;
@@ -273,7 +277,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	HRESULT result;
 
 
-	std::vector<D3D11_INPUT_ELEMENT_DESC> vpInputLayoutDesc;
+	std::vector<D3D11_INPUT_ELEMENT_DESC> vInputLayoutDesc;
 	D3D11_INPUT_ELEMENT_DESC inputLayout;
 
 	inputLayout.SemanticName         = "POSITION";
@@ -283,7 +287,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.AlignedByteOffset    = 0;
 	inputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	inputLayout.InstanceDataStepRate = 0;
-	vpInputLayoutDesc.push_back(inputLayout);
+	vInputLayoutDesc.push_back(inputLayout);
 
 	inputLayout.SemanticName         = "TEXCOORD";
 	inputLayout.SemanticIndex        = 0;
@@ -292,7 +296,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.AlignedByteOffset    = 12;
 	inputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	inputLayout.InstanceDataStepRate = 0;
-	vpInputLayoutDesc.push_back(inputLayout);
+	vInputLayoutDesc.push_back(inputLayout);
 
 	inputLayout.SemanticName         = "NORMAL";
 	inputLayout.SemanticIndex        = 0;
@@ -301,7 +305,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.AlignedByteOffset    = 20;
 	inputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	inputLayout.InstanceDataStepRate = 0;
-	vpInputLayoutDesc.push_back(inputLayout);
+	vInputLayoutDesc.push_back(inputLayout);
 
 	inputLayout.SemanticName         = "TANGENT";
 	inputLayout.SemanticIndex        = 0;
@@ -310,7 +314,7 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.AlignedByteOffset    = 32;
 	inputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	inputLayout.InstanceDataStepRate = 0;
-	vpInputLayoutDesc.push_back(inputLayout);
+	vInputLayoutDesc.push_back(inputLayout);
 
 	inputLayout.SemanticName         = "BITANGENT";
 	inputLayout.SemanticIndex        = 0;
@@ -319,11 +323,11 @@ bool Instance::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 	inputLayout.AlignedByteOffset    = 44;
 	inputLayout.InputSlotClass       = D3D11_INPUT_PER_VERTEX_DATA;
 	inputLayout.InstanceDataStepRate = 0;
-	vpInputLayoutDesc.push_back(inputLayout);
+	vInputLayoutDesc.push_back(inputLayout);
 
 	InstanceShader.init(pD3D11Device, vInputLayoutDesc);
-	InstanceShader.attachVS(L"instance.vsh", vpInputLayoutDesc);
-	InstanceShader.attachPS(L"instance.psh");
+	InstanceShader.attachVS(L"instance.vsh", "VS", "vs_5_0");
+	InstanceShader.attachPS(L"instance.psh", "PS", "ps_5_0");
 	InstanceShader.end();
 
 	return true;

@@ -1,5 +1,5 @@
 #include "plane.h"
-#include "DirectXTK/DDSTextureLoader.h"
+#include "DirectXTK/WICTextureLoader.h"
 
 namespace byhj
 
@@ -20,14 +20,14 @@ void Plane::Render(ID3D11DeviceContext *pD3D11DeviceContext, XMFLOAT4X4 model, X
 
 		TestShader.use(pD3D11DeviceContext);
 
-		pD3D11DeviceContext->PSSetShaderResources(0, 1, &m_pTexture);
-		pD3D11DeviceContext->PSSetSamplers(0, 1, &m_pTexSamplerState);
+		pD3D11DeviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
+		pD3D11DeviceContext->PSSetSamplers(0, 1, m_pTexSamplerState.GetAddressOf());
 
 		cbMatrix.model = model;
 		cbMatrix.view  = view;
 		cbMatrix.proj  = proj;
 		pD3D11DeviceContext->UpdateSubresource(m_pMVPBuffer.Get(), 0, NULL, &cbMatrix, 0, 0);
-		pD3D11DeviceContext->VSSetConstantBuffers(0, 1, &m_pMVPBuffer);
+		pD3D11DeviceContext->VSSetConstantBuffers(0, 1, m_pMVPBuffer.GetAddressOf());
 		pD3D11DeviceContext->DrawIndexed(NumFaces * 3, 0, 0);
 
 	}
@@ -307,7 +307,7 @@ bool Plane::init_shader(ID3D11Device *pD3D11Device, HWND hWnd)
 void Plane::init_texture(ID3D11Device *pD3D11Device, LPCWSTR texFile)
 {
 	HRESULT hr;
-	hr = CreateDDSTextureFromFile(pD3D11Device, texFile, NULL, &m_pTexture);
+	hr = CreateWICTextureFromFile(pD3D11Device, texFile, NULL, &m_pTexture);
 	//DebugHR(hr);
 
 	// Create a texture sampler state description.
